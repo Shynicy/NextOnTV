@@ -64,43 +64,43 @@ const SAGA_DEFINITIONS = [
 ];
 
 const CLIENT_SAGAS = [
-  { it: "Harry Potter e la pietra filosofale", orig: "Harry Potter and the Sorcerer's Stone", type: "movie", year: "2001", saga: "harry_potter", rank: 1, aliases: ["harry potter 1", "pietra filosofale"] },
-  { it: "Harry Potter e la camera dei segreti", orig: "Harry Potter and the Chamber of Secrets", type: "movie", year: "2002", saga: "harry_potter", rank: 2, aliases: ["harry potter 2", "camera dei segreti"] },
-  { it: "Harry Potter e il prigioniero di Azkaban", orig: "Harry Potter and the Prisoner of Azkaban", type: "movie", year: "2004", saga: "harry_potter", rank: 3, aliases: ["harry potter 3", "prigioniero di azkaban"] },
-  { it: "Harry Potter e il calice di fuoco", orig: "Harry Potter and the Goblet of Fire", type: "movie", year: "2005", saga: "harry_potter", rank: 4, aliases: ["harry potter 4", "calice di fuoco"] },
-  { it: "Harry Potter e l'Ordine della Fenice", orig: "Harry Potter and the Order of the Phoenix", type: "movie", year: "2007", saga: "harry_potter", rank: 5, aliases: ["harry potter 5", "ordine della fenice"] },
-  { it: "Harry Potter e il principe mezzosangue", orig: "Harry Potter and the Half-Blood Prince", type: "movie", year: "2009", saga: "harry_potter", rank: 6, aliases: ["harry potter 6", "principe mezzosangue"] },
-  { it: "Harry Potter e i Doni della Morte - Parte 1", orig: "Harry Potter and the Deathly Hallows: Part 1", type: "movie", year: "2010", saga: "harry_potter", rank: 7, aliases: ["harry potter 7", "doni della morte 1", "doni della morte parte 1"] },
-  { it: "Harry Potter e i Doni della Morte - Parte 2", orig: "Harry Potter and the Deathly Hallows: Part 2", type: "movie", year: "2011", saga: "harry_potter", rank: 8, aliases: ["harry potter 8", "doni della morte 2", "doni della morte parte 2"] },
-  { it: "Fast and Furious", orig: "The Fast and the Furious", type: "movie", year: "2001", saga: "fast_furious", rank: 1, aliases: ["fast and furious 1", "fast & furious 1", "fast 1", "the fast and the furious", "the fast and the furious 1"] },
-  { it: "2 Fast 2 Furious", orig: "2 Fast 2 Furious", type: "movie", year: "2003", saga: "fast_furious", rank: 2, aliases: ["fast and furious 2", "fast & furious 2", "fast 2", "2fast2furious", "2 fast 2 furious"] },
-  { it: "The Fast and the Furious: Tokyo Drift", orig: "The Fast and the Furious: Tokyo Drift", type: "movie", year: "2006", saga: "fast_furious", rank: 3, aliases: ["fast and furious 3", "fast & furious 3", "fast 3", "tokyo drift"] },
-  { it: "Fast & Furious - Solo parti originali", orig: "Fast & Furious", type: "movie", year: "2009", saga: "fast_furious", rank: 4, aliases: ["fast and furious 4", "fast & furious 4", "fast 4", "solo parti originali"] },
-  { it: "Fast & Furious 5", orig: "Fast Five", type: "movie", year: "2011", saga: "fast_furious", rank: 5, aliases: ["fast and furious 5", "fast & furious 5", "fast 5", "fast five"] },
-  { it: "Fast & Furious 6", orig: "Fast & Furious 6", type: "movie", year: "2013", saga: "fast_furious", rank: 6, aliases: ["fast and furious 6", "fast & furious 6", "fast 6"] },
-  { it: "Fast & Furious 7", orig: "Furious 7", type: "movie", year: "2015", saga: "fast_furious", rank: 7, aliases: ["fast and furious 7", "fast & furious 7", "fast 7", "furious 7"] },
-  { it: "Fast & Furious 8", orig: "The Fate of the Furious", type: "movie", year: "2017", saga: "fast_furious", rank: 8, aliases: ["fast and furious 8", "fast & furious 8", "fast 8", "the fate of the furious", "fate of the furious"] },
-  { it: "Fast & Furious - Hobbs & Shaw", orig: "Fast & Furious Presents: Hobbs & Shaw", type: "movie", year: "2019", saga: "fast_furious", rank: 9, aliases: ["fast and furious hobbs and shaw", "hobbs and shaw", "hobbs & shaw"] },
-  { it: "Fast & Furious 9 - The Fast Saga", orig: "F9: The Fast Saga", type: "movie", year: "2021", saga: "fast_furious", rank: 10, aliases: ["fast and furious 9", "fast & furious 9", "fast 9", "f9"] },
-  { it: "Fast X", orig: "Fast X", type: "movie", year: "2023", saga: "fast_furious", rank: 11, aliases: ["fast and furious 10", "fast & furious 10", "fast 10", "fast x"] },
-  { it: "Il Signore degli Anelli - La Compagnia dell'Anello", orig: "The Lord of the Rings: The Fellowship of the Ring", type: "movie", year: "2001", saga: "lotr", rank: 1, aliases: ["signore degli anelli 1", "compagnia dell anello"] },
-  { it: "Il Signore degli Anelli - Le due torri", orig: "The Lord of the Rings: The Two Towers", type: "movie", year: "2002", saga: "lotr", rank: 2, aliases: ["signore degli anelli 2", "due torri"] },
-  { it: "Il Signore degli Anelli - Il ritorno del re", orig: "The Lord of the Rings: The Return of the King", type: "movie", year: "2003", saga: "lotr", rank: 3, aliases: ["signore degli anelli 3", "ritorno del re"] },
-  { it: "La maledizione della prima luna", orig: "Pirates of the Caribbean: The Curse of the Black Pearl", type: "movie", year: "2003", saga: "pirates", rank: 1, aliases: ["pirati dei caraibi 1", "prima luna"] },
-  { it: "Pirati dei Caraibi - La maledizione del forziere fantasma", orig: "Pirates of the Caribbean: Dead Man's Chest", type: "movie", year: "2006", saga: "pirates", rank: 2, aliases: ["pirati dei caraibi 2", "forziere fantasma"] },
-  { it: "Pirati dei Caraibi - Ai confini del mondo", orig: "Pirates of the Caribbean: At World's End", type: "movie", year: "2007", saga: "pirates", rank: 3, aliases: ["pirati dei caraibi 3", "ai confini del mondo"] },
-  { it: "Pirati dei Caraibi - Oltre i confini del mare", orig: "Pirates of the Caribbean: On Stranger Tides", type: "movie", year: "2011", saga: "pirates", rank: 4, aliases: ["pirati dei caraibi 4", "oltre i confini del mare"] },
-  { it: "Pirati dei Caraibi - La vendetta di Salazar", orig: "Pirates of the Caribbean: Dead Men Tell No Tales", type: "movie", year: "2017", saga: "pirates", rank: 5, aliases: ["pirati dei caraibi 5", "vendetta di salazar"] },
-  { it: "Ritorno al futuro", orig: "Back to the Future", type: "movie", year: "1985", saga: "back_to_future", rank: 1, aliases: ["ritorno al futuro 1", "back to the future 1"] },
-  { it: "Ritorno al futuro - Parte II", orig: "Back to the Future Part II", type: "movie", year: "1989", saga: "back_to_future", rank: 2, aliases: ["ritorno al futuro 2", "back to the future 2"] },
-  { it: "Ritorno al futuro - Parte III", orig: "Back to the Future Part III", type: "movie", year: "1990", saga: "back_to_future", rank: 3, aliases: ["ritorno al futuro 3", "back to the future 3"] },
-  { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000" },
-  { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024" },
-  { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999" },
-  { it: "Una mamma per amica", orig: "Gilmore Girls", type: "series", year: "2000" },
-  { it: "L'ispettore Barnaby", orig: "Midsomer Murders", type: "series", year: "1997" },
-  { it: "Supernatural", orig: "Supernatural", type: "series", year: "2005" },
-  { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003" },
+  { it: "Harry Potter e la pietra filosofale", orig: "Harry Potter and the Sorcerer's Stone", type: "movie", year: "2001", saga: "harry_potter", rank: 1, aliases: ["harry potter 1", "pietra filosofale"], poster: "https://m.media-amazon.com/images/M/MV5BNTU1MzgyMDMtMzBlZS00YzczLThmYWEtMjU3YmFlOWEyMjE1XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Harry Potter e la camera dei segreti", orig: "Harry Potter and the Chamber of Secrets", type: "movie", year: "2002", saga: "harry_potter", rank: 2, aliases: ["harry potter 2", "camera dei segreti"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/b/b2/Harry_Potter_e_la_camera_dei_segreti.jpg/500px-Harry_Potter_e_la_camera_dei_segreti.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Harry Potter e il prigioniero di Azkaban", orig: "Harry Potter and the Prisoner of Azkaban", type: "movie", year: "2004", saga: "harry_potter", rank: 3, aliases: ["harry potter 3", "prigioniero di azkaban"], poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Prisoner_of_Azkaban_ARC.jpg/500px-Prisoner_of_Azkaban_ARC.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Harry Potter e il calice di fuoco", orig: "Harry Potter and the Goblet of Fire", type: "movie", year: "2005", saga: "harry_potter", rank: 4, aliases: ["harry potter 4", "calice di fuoco"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/1/17/Harry_Potter_e_il_calice_di_fuoco_%28film%29.jpg/500px-Harry_Potter_e_il_calice_di_fuoco_%28film%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Harry Potter e l'Ordine della Fenice", orig: "Harry Potter and the Order of the Phoenix", type: "movie", year: "2007", saga: "harry_potter", rank: 5, aliases: ["harry potter 5", "ordine della fenice"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/72/Harry_Potter_e_l%27Ordine_della_Fenice.png/500px-Harry_Potter_e_l%27Ordine_della_Fenice.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Harry Potter e il principe mezzosangue", orig: "Harry Potter and the Half-Blood Prince", type: "movie", year: "2009", saga: "harry_potter", rank: 6, aliases: ["harry potter 6", "principe mezzosangue"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/5/51/Harry_Potter_e_il_principe_mezzosangue_%28film%29.png/500px-Harry_Potter_e_il_principe_mezzosangue_%28film%29.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Harry Potter e i Doni della Morte - Parte 1", orig: "Harry Potter and the Deathly Hallows: Part 1", type: "movie", year: "2010", saga: "harry_potter", rank: 7, aliases: ["harry potter 7", "doni della morte 1", "doni della morte parte 1"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2e/Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg/500px-Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Harry Potter e i Doni della Morte - Parte 2", orig: "Harry Potter and the Deathly Hallows: Part 2", type: "movie", year: "2011", saga: "harry_potter", rank: 8, aliases: ["harry potter 8", "doni della morte 2", "doni della morte parte 2"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2e/Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg/500px-Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Fast and Furious", orig: "The Fast and the Furious", type: "movie", year: "2001", saga: "fast_furious", rank: 1, aliases: ["fast and furious 1", "fast & furious 1", "fast 1", "the fast and the furious", "the fast and the furious 1"], poster: "https://m.media-amazon.com/images/M/MV5BZGRiMDE1NTMtMThmZS00YjE4LWI1ODQtNjRkZGZlOTg2MGE1XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "2 Fast 2 Furious", orig: "2 Fast 2 Furious", type: "movie", year: "2003", saga: "fast_furious", rank: 2, aliases: ["fast and furious 2", "fast & furious 2", "fast 2", "2fast2furious", "2 fast 2 furious"], poster: "https://m.media-amazon.com/images/M/MV5BOTQzYzEwNWMtOTAwYy00YWYwLWE1NTEtZTkxOGQxZTM0M2VhXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "The Fast and the Furious: Tokyo Drift", orig: "The Fast and the Furious: Tokyo Drift", type: "movie", year: "2006", saga: "fast_furious", rank: 3, aliases: ["fast and furious 3", "fast & furious 3", "fast 3", "tokyo drift"] , poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Tfatf-tokyodrift-logo.svg/500px-Tfatf-tokyodrift-logo.svg.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Fast & Furious - Solo parti originali", orig: "Fast & Furious", type: "movie", year: "2009", saga: "fast_furious", rank: 4, aliases: ["fast and furious 4", "fast & furious 4", "fast 4", "solo parti originali"], poster: "https://m.media-amazon.com/images/M/MV5BM2Y1YzhkNzUtMzhmZC00OTFkLWJjZDktMWYzZmQ0Y2Y5ODcwXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Fast & Furious 5", orig: "Fast Five", type: "movie", year: "2011", saga: "fast_furious", rank: 5, aliases: ["fast and furious 5", "fast & furious 5", "fast 5", "fast five"], poster: "https://m.media-amazon.com/images/M/MV5BMTUxNTk5MTE0OF5BMl5BanBnXkFtZTcwMjA2NzY3NA@@._V1_UX400_.jpg" },
+  { it: "Fast & Furious 6", orig: "Fast & Furious 6", type: "movie", year: "2013", saga: "fast_furious", rank: 6, aliases: ["fast and furious 6", "fast & furious 6", "fast 6"], poster: "https://m.media-amazon.com/images/M/MV5BMTM3NTg2NDQzOF5BMl5BanBnXkFtZTcwNjc2NzQzOQ@@._V1_UX400_.jpg" },
+  { it: "Fast & Furious 7", orig: "Furious 7", type: "movie", year: "2015", saga: "fast_furious", rank: 7, aliases: ["fast and furious 7", "fast & furious 7", "fast 7", "furious 7"], poster: "https://m.media-amazon.com/images/M/MV5BMTQxOTA2NDUzOV5BMl5BanBnXkFtZTgwNzY2MTMxMzE@._V1_UX400_.jpg" },
+  { it: "Fast & Furious 8", orig: "The Fate of the Furious", type: "movie", year: "2017", saga: "fast_furious", rank: 8, aliases: ["fast and furious 8", "fast & furious 8", "fast 8", "the fate of the furious", "fate of the furious"], poster: "https://m.media-amazon.com/images/M/MV5BMjMxODI2NDM5Nl5BMl5BanBnXkFtZTgwNjgzOTk1MTI@._V1_UX400_.jpg" },
+  { it: "Fast & Furious - Hobbs & Shaw", orig: "Fast & Furious Presents: Hobbs & Shaw", type: "movie", year: "2019", saga: "fast_furious", rank: 9, aliases: ["fast and furious hobbs and shaw", "hobbs and shaw", "hobbs & shaw"], poster: "https://m.media-amazon.com/images/M/MV5BNmU4OTA5NGYtMTFjMS00MzgxLWFjNTMtYjdlMThlYzc4M2M4XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Fast & Furious 9 - The Fast Saga", orig: "F9: The Fast Saga", type: "movie", year: "2021", saga: "fast_furious", rank: 10, aliases: ["fast and furious 9", "fast & furious 9", "fast 9", "f9"], poster: "https://m.media-amazon.com/images/M/MV5BODJkMTQ5ZmQtNzQxYy00ZWNlLWI0ZGYtYjU1NzdiMjcyNDRmXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Fast X", orig: "Fast X", type: "movie", year: "2023", saga: "fast_furious", rank: 11, aliases: ["fast and furious 10", "fast & furious 10", "fast 10", "fast x"], poster: "https://m.media-amazon.com/images/M/MV5BYzEwZjczOTktYzU1OS00YjJlLTgyY2UtNWEzODBlN2RjZDEwXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Il Signore degli Anelli - La Compagnia dell'Anello", orig: "The Lord of the Rings: The Fellowship of the Ring", type: "movie", year: "2001", saga: "lotr", rank: 1, aliases: ["signore degli anelli 1", "compagnia dell anello"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/1/1b/Il_Signore_degli_Anelli_060.JPG/500px-Il_Signore_degli_Anelli_060.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Il Signore degli Anelli - Le due torri", orig: "The Lord of the Rings: The Two Towers", type: "movie", year: "2002", saga: "lotr", rank: 2, aliases: ["signore degli anelli 2", "due torri"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/5/5a/ISDA_Battaglia_del_Fosso_di_Helm.PNG/500px-ISDA_Battaglia_del_Fosso_di_Helm.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Il Signore degli Anelli - Il ritorno del re", orig: "The Lord of the Rings: The Return of the King", type: "movie", year: "2003", saga: "lotr", rank: 3, aliases: ["signore degli anelli 3", "ritorno del re"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/22/ISDA_Ultima_Battaglia.PNG/500px-ISDA_Ultima_Battaglia.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "La maledizione della prima luna", orig: "Pirates of the Caribbean: The Curse of the Black Pearl", type: "movie", year: "2003", saga: "pirates", rank: 1, aliases: ["pirati dei caraibi 1", "prima luna"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/e/ee/Piratideicaraibi_lamaledizionedellaprimaluna.jpg/500px-Piratideicaraibi_lamaledizionedellaprimaluna.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Pirati dei Caraibi - La maledizione del forziere fantasma", orig: "Pirates of the Caribbean: Dead Man's Chest", type: "movie", year: "2006", saga: "pirates", rank: 2, aliases: ["pirati dei caraibi 2", "forziere fantasma"], poster: "https://m.media-amazon.com/images/M/MV5BMTcwODc1MTMxM15BMl5BanBnXkFtZTYwMDg1NzY3._V1_UX400_.jpg" },
+  { it: "Pirati dei Caraibi - Ai confini del mondo", orig: "Pirates of the Caribbean: At World's End", type: "movie", year: "2007", saga: "pirates", rank: 3, aliases: ["pirati dei caraibi 3", "ai confini del mondo"], poster: "https://m.media-amazon.com/images/M/MV5BMjIyNjkxNzEyMl5BMl5BanBnXkFtZTYwMjc3MDE3._V1_UX400_.jpg" },
+  { it: "Pirati dei Caraibi - Oltre i confini del mare", orig: "Pirates of the Caribbean: On Stranger Tides", type: "movie", year: "2011", saga: "pirates", rank: 4, aliases: ["pirati dei caraibi 4", "oltre i confini del mare"], poster: "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_UX400_.jpg" },
+  { it: "Pirati dei Caraibi - La vendetta di Salazar", orig: "Pirates of the Caribbean: Dead Men Tell No Tales", type: "movie", year: "2017", saga: "pirates", rank: 5, aliases: ["pirati dei caraibi 5", "vendetta di salazar"], poster: "https://m.media-amazon.com/images/M/MV5BMTYyMTcxNzc5M15BMl5BanBnXkFtZTgwOTg2ODE2MTI@._V1_UX400_.jpg" },
+  { it: "Ritorno al futuro", orig: "Back to the Future", type: "movie", year: "1985", saga: "back_to_future", rank: 1, aliases: ["ritorno al futuro 1", "back to the future 1"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2d/Marty_e_DocEmmet.png/500px-Marty_e_DocEmmet.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Ritorno al futuro - Parte II", orig: "Back to the Future Part II", type: "movie", year: "1989", saga: "back_to_future", rank: 2, aliases: ["ritorno al futuro 2", "back to the future 2"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/71/Ritorno_al_futuro_2.jpg/500px-Ritorno_al_futuro_2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Ritorno al futuro - Parte III", orig: "Back to the Future Part III", type: "movie", year: "1990", saga: "back_to_future", rank: 3, aliases: ["ritorno al futuro 3", "back to the future 3"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/6/60/Ritorno_al_futuro_3.jpg/500px-Ritorno_al_futuro_3.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000" , poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Il_gladiatore.png/500px-Il_gladiatore.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024", poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/ad/Deadpool_%26_Wolverine.png/500px-Deadpool_%26_Wolverine.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4042.jpg" },
+  { it: "Una mamma per amica", orig: "Gilmore Girls", type: "series", year: "2000", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/4/11417.jpg" },
+  { it: "L'ispettore Barnaby", orig: "Midsomer Murders", type: "series", year: "1997" , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/0/01/L%27ispettore_Barnaby.png/500px-L%27ispettore_Barnaby.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Supernatural", orig: "Supernatural", type: "series", year: "2005", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/476/1191593.jpg" },
+  { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4763.jpg" },
 ];
 
 const STOP_WORDS_CLIENT = new Set([
@@ -434,11 +434,13 @@ async function pullCloudSnapshotClient(syncCode) {
 }
 
 async function pushCloudSnapshotClient(syncCode, snap) {
-  if (!syncCode) return null;
-  try {
+  if (snap) {
     snap.updated_at = Date.now() / 1000;
     snap.source = "mobile";
     saveLocalSnapshot(snap);
+  }
+  if (!syncCode) return null;
+  try {
     const postRes = await fetch("https://bytebin.lucko.me/post", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -483,10 +485,18 @@ function updateHeaderSyncBadge() {
 // Global cached EPG events when running serverless on GitHub Pages
 let _staticEpgCache = null;
 
+function resolveAssetUrl(relPath) {
+  let base = window.location.pathname;
+  if (!base.endsWith("/")) {
+    base = base.substring(0, base.lastIndexOf("/") + 1);
+  }
+  return window.location.origin + base + relPath.replace(/^\.?\//, "");
+}
+
 async function fetchStaticEpgEvents() {
   if (_staticEpgCache && _staticEpgCache.length > 0) return _staticEpgCache;
   try {
-    const res = await fetch("./data/epg_7days.json", { cache: "no-cache" });
+    const res = await fetch(resolveAssetUrl("data/epg_7days.json"), { cache: "no-cache" });
     if (res.ok) {
       _staticEpgCache = await res.json();
       return _staticEpgCache || [];
@@ -553,10 +563,37 @@ async function handleClientCloudGet(url) {
   const path = parsed.pathname;
   let snap = getLocalSnapshot();
 
+  // If local library snapshot is empty on this device/domain, seed with default library
+  try {
+    const libRes = await fetch(resolveAssetUrl("data/library.json"), { cache: "no-cache" });
+    if (libRes.ok) {
+      const defLib = await libRes.json();
+      if (Array.isArray(defLib) && defLib.length > 0) {
+        if (!snap.library || snap.library.length === 0) {
+          snap.library = defLib;
+          saveLocalSnapshot(snap);
+        } else {
+          // If items in local library have missing posters, backfill from defLib
+          let updated = false;
+          const defMap = {};
+          defLib.forEach((x) => { defMap[normalizeTitleClient(x.title_it)] = x; });
+          snap.library.forEach((x) => {
+            const defItem = defMap[normalizeTitleClient(x.title_it)];
+            if (defItem && (!x.poster || x.poster === "") && defItem.poster) {
+              x.poster = defItem.poster;
+              updated = true;
+            }
+          });
+          if (updated) saveLocalSnapshot(snap);
+        }
+      }
+    }
+  } catch (e) { }
+
   if (path === "/api/status") {
     let statusFile = null;
     try {
-      const sRes = await fetch("./data/status.json", { cache: "no-cache" });
+      const sRes = await fetch(resolveAssetUrl("data/status.json"), { cache: "no-cache" });
       if (sRes.ok) statusFile = await sRes.json();
     } catch (e) { }
 
@@ -580,7 +617,7 @@ async function handleClientCloudGet(url) {
 
   if (path === "/api/channels") {
     try {
-      const cRes = await fetch("./data/channels.json", { cache: "no-cache" });
+      const cRes = await fetch(resolveAssetUrl("data/channels.json"), { cache: "no-cache" });
       if (cRes.ok) {
         const cData = await cRes.json();
         if (cData && cData.channels) return cData;
@@ -802,7 +839,7 @@ async function directMobileSearch4G(query, libraryItems) {
         title_it: al.it,
         title_original: al.orig,
         year: al.year,
-        poster: "",
+        poster: al.poster || "",
         genre: al.type === "series" ? "Serie TV" : "Film",
         description: `${al.type === "series" ? "Serie TV" : "Film"} (${al.year}) • Titolo orig.: ${al.orig}`,
         is_saga: true,
@@ -851,18 +888,53 @@ async function directMobileSearch4G(query, libraryItems) {
       matchedWd.push({ item, isSeries, desc });
     });
 
-    // Fast bulk query for global sitelinks count (Wikipedia articles count across all languages = worldwide fame / prominence!)
+    // Fast bulk query for global sitelinks count and posters (Wikipedia articles + Wikimedia Commons images)
     const sitelinksMap = {};
+    const wdPosterMap = {};
     if (qids.length > 0) {
       try {
-        const slUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qids.join("%7C")}&props=sitelinks&format=json&origin=*`;
+        const slUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qids.join("%7C")}&props=sitelinks|claims&format=json&origin=*`;
         const slRes = await fetch(slUrl);
         const slData = await slRes.json();
         const ents = slData.entities || {};
+        const itWikiTitles = [];
+        const qidToItWiki = {};
         for (const qid of qids) {
-          if (ents[qid] && ents[qid].sitelinks) {
-            sitelinksMap[qid] = Object.keys(ents[qid].sitelinks).length;
+          const ent = ents[qid];
+          if (!ent) continue;
+          if (ent.sitelinks) {
+            sitelinksMap[qid] = Object.keys(ent.sitelinks).length;
+            if (ent.sitelinks.itwiki && ent.sitelinks.itwiki.title) {
+              const itTitle = ent.sitelinks.itwiki.title;
+              itWikiTitles.push(itTitle);
+              qidToItWiki[qid] = itTitle;
+            }
           }
+          const p18 = ent.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+          if (p18) {
+            wdPosterMap[qid] = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(p18)}?width=400`;
+          }
+        }
+        if (itWikiTitles.length > 0) {
+          try {
+            const piUrl = `https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(itWikiTitles.join("|"))}&prop=pageimages&pithumbsize=400&format=json&origin=*`;
+            const piRes = await fetch(piUrl);
+            const piData = await piRes.json();
+            const pages = piData.query?.pages || {};
+            const titleToThumb = {};
+            for (const pid of Object.keys(pages)) {
+              const p = pages[pid];
+              if (p.title && p.thumbnail?.source) {
+                titleToThumb[p.title] = p.thumbnail.source;
+              }
+            }
+            for (const qid of qids) {
+              const itT = qidToItWiki[qid];
+              if (itT && titleToThumb[itT]) {
+                wdPosterMap[qid] = titleToThumb[itT];
+              }
+            }
+          } catch (e) { }
         }
       } catch (e) { }
     }
@@ -875,7 +947,7 @@ async function directMobileSearch4G(query, libraryItems) {
         title_it: item.label || query,
         title_original: item.label || query,
         year: yearMatch ? yearMatch[1] : "",
-        poster: "",
+        poster: wdPosterMap[item.id] || "",
         genre: isSeries ? "Serie TV" : "Film",
         description: item.description || "",
         sitelinks_count: sitelinksMap[item.id] || 0,
@@ -1182,6 +1254,10 @@ async function initApp() {
   state.publicUrl = stRes.public_url || "";
   if (stRes.sync_code && !state.syncCode) {
     state.syncCode = stRes.sync_code;
+    localStorage.setItem("nextontv_sync_code", state.syncCode);
+  }
+  if (!state.syncCode) {
+    state.syncCode = "notv_" + Math.random().toString(36).substring(2, 10);
     localStorage.setItem("nextontv_sync_code", state.syncCode);
   }
 
@@ -2959,7 +3035,11 @@ async function openRemindersModal() {
 
 function renderAndroidQrCode() {
   const qrImg = document.getElementById("android-qr-img");
-  const targetUrl = state.mobileUrl || window.location.origin;
+  let targetUrl = state.mobileUrl || window.location.href;
+  if (state.syncCode && !targetUrl.includes("sync=")) {
+    const sep = targetUrl.includes("?") ? "&" : "?";
+    targetUrl = `${targetUrl}${sep}sync=${encodeURIComponent(state.syncCode)}`;
+  }
   if (qrImg && targetUrl) {
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(targetUrl)}`;
   }
