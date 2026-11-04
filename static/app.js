@@ -955,7 +955,7 @@ function getCurrentItalianDateIso() {
 
 async function initApp() {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js").catch(() => { });
+    navigator.serviceWorker.register("./sw.js").catch(() => { });
   }
 
   // Security & Device Audit Log (Discreet 🛡️ tracking with 7-day auto-purge)
@@ -2663,7 +2663,7 @@ function requestNotificationPermissionAndSchedule(rem) {
     try {
       new Notification(`🔔 Promemoria TV salvato: ${rem.title}`, {
         body: `Andrà in onda ${formatItalianDate(rem.date)} alle ${rem.start_time} su Canale ${rem.lcn} (${rem.channel_name})`,
-        icon: "/icon.svg",
+        icon: "./icon.svg",
       });
     } catch (e) { }
   }

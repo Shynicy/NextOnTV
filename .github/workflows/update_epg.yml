@@ -36,3 +36,4 @@ jobs:
           git config user.email "bot@nextontv.local"
           git add data/ .nojekyll
           git diff --staged --quiet || (git commit -m "Aggiornamento automatico palinsesti TV 7 giorni ($(date +'%Y-%m-%d %H:%M'))" && git push)
+
