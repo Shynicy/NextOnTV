@@ -24,17 +24,17 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
     {"it": "Harry Potter e i Doni della Morte - Parte 1", "orig": "Harry Potter and the Deathly Hallows: Part 1", "type": "movie", "year": "2010"},
     {"it": "Harry Potter e i Doni della Morte - Parte 2", "orig": "Harry Potter and the Deathly Hallows: Part 2", "type": "movie", "year": "2011"},
     # Fast & Furious Complete 11-Movie Saga
-    {"it": "Fast and Furious", "orig": "The Fast and the Furious", "type": "movie", "year": "2001", "keywords": "fast & furious 1"},
-    {"it": "2 Fast 2 Furious", "orig": "2 Fast 2 Furious", "type": "movie", "year": "2003", "keywords": "fast & furious 2"},
-    {"it": "The Fast and the Furious: Tokyo Drift", "orig": "The Fast and the Furious: Tokyo Drift", "type": "movie", "year": "2006", "keywords": "fast & furious 3 tokyo drift"},
-    {"it": "Fast & Furious - Solo parti originali", "orig": "Fast & Furious", "type": "movie", "year": "2009", "keywords": "fast and furious 4"},
-    {"it": "Fast & Furious 5", "orig": "Fast Five", "type": "movie", "year": "2011", "keywords": "fast and furious 5"},
-    {"it": "Fast & Furious 6", "orig": "Fast & Furious 6", "type": "movie", "year": "2013", "keywords": "fast and furious 6"},
-    {"it": "Fast & Furious 7", "orig": "Furious 7", "type": "movie", "year": "2015", "keywords": "fast and furious 7"},
-    {"it": "Fast & Furious 8", "orig": "The Fate of the Furious", "type": "movie", "year": "2017", "keywords": "fast and furious 8"},
-    {"it": "Fast & Furious - Hobbs & Shaw", "orig": "Fast & Furious Presents: Hobbs & Shaw", "type": "movie", "year": "2019", "keywords": "fast and furious hobbs and shaw"},
-    {"it": "Fast & Furious 9 - The Fast Saga", "orig": "F9: The Fast Saga", "type": "movie", "year": "2021", "keywords": "fast and furious 9"},
-    {"it": "Fast X", "orig": "Fast X", "type": "movie", "year": "2023", "keywords": "fast & furious 10 fast and furious 10"},
+    {"it": "Fast and Furious", "orig": "The Fast and the Furious", "type": "movie", "year": "2001", "aliases": ["fast & furious 1", "fast and furious 1", "fast 1", "the fast and the furious", "the fast and the furious 1"], "saga_group": "fast_furious", "saga_rank": 1},
+    {"it": "2 Fast 2 Furious", "orig": "2 Fast 2 Furious", "type": "movie", "year": "2003", "aliases": ["fast & furious 2", "fast and furious 2", "fast 2", "2fast2furious", "2 fast 2 furious"], "saga_group": "fast_furious", "saga_rank": 2},
+    {"it": "The Fast and the Furious: Tokyo Drift", "orig": "The Fast and the Furious: Tokyo Drift", "type": "movie", "year": "2006", "aliases": ["fast & furious 3", "fast and furious 3", "fast 3", "tokyo drift"], "saga_group": "fast_furious", "saga_rank": 3},
+    {"it": "Fast & Furious - Solo parti originali", "orig": "Fast & Furious", "type": "movie", "year": "2009", "aliases": ["fast and furious 4", "fast & furious 4", "fast 4", "solo parti originali"], "saga_group": "fast_furious", "saga_rank": 4},
+    {"it": "Fast & Furious 5", "orig": "Fast Five", "type": "movie", "year": "2011", "aliases": ["fast and furious 5", "fast & furious 5", "fast 5", "fast five"], "saga_group": "fast_furious", "saga_rank": 5},
+    {"it": "Fast & Furious 6", "orig": "Fast & Furious 6", "type": "movie", "year": "2013", "aliases": ["fast and furious 6", "fast & furious 6", "fast 6"], "saga_group": "fast_furious", "saga_rank": 6},
+    {"it": "Fast & Furious 7", "orig": "Furious 7", "type": "movie", "year": "2015", "aliases": ["fast and furious 7", "fast & furious 7", "furious 7", "fast 7"], "saga_group": "fast_furious", "saga_rank": 7},
+    {"it": "Fast & Furious 8", "orig": "The Fate of the Furious", "type": "movie", "year": "2017", "aliases": ["fast and furious 8", "fast & furious 8", "fate of the furious", "fast 8"], "saga_group": "fast_furious", "saga_rank": 8},
+    {"it": "Fast & Furious - Hobbs & Shaw", "orig": "Fast & Furious Presents: Hobbs & Shaw", "type": "movie", "year": "2019", "aliases": ["fast and furious hobbs and shaw", "hobbs and shaw", "hobbs & shaw"], "saga_group": "fast_furious", "saga_rank": 9},
+    {"it": "Fast & Furious 9 - The Fast Saga", "orig": "F9: The Fast Saga", "type": "movie", "year": "2021", "aliases": ["fast and furious 9", "fast & furious 9", "fast 9", "f9"], "saga_group": "fast_furious", "saga_rank": 10},
+    {"it": "Fast X", "orig": "Fast X", "type": "movie", "year": "2023", "aliases": ["fast and furious 10", "fast & furious 10", "fast 10", "fast x"], "saga_group": "fast_furious", "saga_rank": 11},
     # Animali Fantastici
     {"it": "Animali fantastici e dove trovarli", "orig": "Fantastic Beasts and Where to Find Them", "type": "movie", "year": "2016"},
     {"it": "Animali fantastici - I crimini di Grindelwald", "orig": "Fantastic Beasts: The Crimes of Grindelwald", "type": "movie", "year": "2018"},
@@ -624,15 +624,100 @@ def _search_tvmaze(query: str, extra_queries: Optional[List[str]] = None) -> Lis
     return results
 
 
+STOP_WORDS_SCORING = {
+    "the", "il", "lo", "la", "l", "i", "gli", "le", "a", "an", "and", "e", "ed", "n",
+    "di", "dei", "del", "della", "delle", "of", "in", "on", "per", "con", "su"
+}
+
+def _clean_tokens_scoring(text: str) -> Tuple[List[str], List[str]]:
+    cleaned = re.sub(r"[^a-zA-Z0-9\s]", " ", (text or "").lower())
+    tokens = [t for t in cleaned.split() if t]
+    core = [t for t in tokens if t not in STOP_WORDS_SCORING]
+    return tokens, core
+
+def _word_match_scoring(qw: str, cw: str) -> bool:
+    if qw == cw:
+        return True
+    if len(qw) >= 4 and len(cw) >= 4:
+        if qw in cw or cw in qw:
+            return True
+        if damerau_levenshtein(qw, cw, max_dist=1) <= 1:
+            return True
+    return False
+
+def compute_relevance_score(query: str, item: Dict) -> int:
+    q_tokens, q_core = _clean_tokens_scoring(query)
+    q_str = " ".join(q_tokens)
+    q_core_str = " ".join(q_core)
+
+    candidates = [item.get("title_it", ""), item.get("title_original", "")]
+    if item.get("keywords"):
+        candidates.extend(str(item["keywords"]).split())
+    if item.get("aliases"):
+        candidates.extend(item["aliases"])
+
+    best_score = 0
+    for cand in candidates:
+        if not cand:
+            continue
+        c_tokens, c_core = _clean_tokens_scoring(cand)
+        if not c_tokens:
+            continue
+        c_str = " ".join(c_tokens)
+        c_core_str = " ".join(c_core)
+
+        # 1. Exact match on full string
+        if q_str and q_str == c_str:
+            best_score = max(best_score, 1000)
+            continue
+
+        # 2. Exact match on core words (ignoring articles/stopwords)
+        if q_core_str and q_core_str == c_core_str:
+            best_score = max(best_score, 980)
+            continue
+
+        # 3. Check core word presence
+        if q_core:
+            matched_words = sum(1 for qw in q_core if any(_word_match_scoring(qw, cw) for cw in c_tokens))
+            coverage = matched_words / len(q_core)
+            if coverage < 0.75:
+                continue
+        else:
+            coverage = 1.0
+
+        # 4. Starting vs containing
+        starts = c_str.startswith(q_str) or (q_core_str and c_core_str.startswith(q_core_str))
+        base = 800 if starts else 500
+
+        # 5. Length penalty (extra words)
+        extra_words = abs(len(c_core) - len(q_core))
+        penalty = extra_words * 40
+        score = max(50, base - penalty)
+
+        best_score = max(best_score, score)
+
+    if item.get("is_saga"):
+        rank = item.get("saga_rank", 1)
+        if best_score >= 950:
+            pass  # Keep 1000 or 980
+        elif best_score > 0:
+            best_score = max(best_score, 920 - rank * 8)
+        else:
+            best_score = max(best_score, 880 - rank * 8)
+
+    return best_score
+
+
 def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[Dict]:
     """
     Search Movies & TV Series with 2-letter typo tolerance, space insensitivity,
     and '&' / 'and' / 'end' / 'e' equivalence across:
-      1. Live 7-day Italian DTT EPG (exact & fuzzy titles airing on TV)
-      2. IMDb + Wikidata Italian Title Resolver (all movies & series in Italian)
-      3. TVMaze (TV series with full episode lists)
-      4. Built-in Italian Sagas & Aliases (Harry Potter, Fast & Furious, LOTR, Pirates, etc.)
+      1. Built-in Italian Sagas & Aliases (Harry Potter, Fast & Furious, LOTR, Pirates, etc.)
+      2. Live 7-day Italian DTT EPG (exact & fuzzy titles airing on TV)
+      3. IMDb + Wikidata Italian Title Resolver (all movies & series in Italian)
+      4. TVMaze (TV series with full episode lists)
       5. Wikipedia/MediaWiki fuzzy spellchecker fallback for arbitrary titles with typos
+    Ranked with smart relevance scoring prioritizing exact & near-exact matches.
     """
     q_norm = normalize_title(query)
     if not q_norm:
@@ -649,7 +734,17 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
     for al in ITALIAN_ORIGINAL_ALIASES:
         ok_it, d_it = fuzzy_match_title(query, al["it"])
         ok_or, d_or = fuzzy_match_title(query, al["orig"])
-        ok_kw, d_kw = (fuzzy_match_title(query, al["keywords"]) if al.get("keywords") else (False, 99))
+        ok_kw = False
+        d_kw = 99
+        if al.get("aliases"):
+            for a in al["aliases"]:
+                ok_a, d_a = fuzzy_match_title(query, a)
+                if ok_a and d_a < d_kw:
+                    ok_kw = True
+                    d_kw = d_a
+        elif al.get("keywords"):
+            ok_kw, d_kw = fuzzy_match_title(query, al["keywords"])
+
         if ok_it or ok_or or ok_kw:
             best_d = min(d_it if ok_it else 99, d_or if ok_or else 99, d_kw if ok_kw else 99)
             matched_sagas.append((best_d, {
@@ -664,7 +759,14 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
                 "genre": "Serie TV" if al["type"] == "series" else "Film",
                 "description": f"{'Serie TV' if al['type'] == 'series' else 'Film'}{' (' + al['year'] + ')' if al.get('year') else ''} • Titolo orig.: {al['orig']}",
                 "source": "catalog_it",
+                "is_saga": True,
+                "saga_rank": al.get("saga_rank", 1),
+                "aliases": al.get("aliases") or [],
             }))
+
+    # Add matched sagas at the TOP so they are preserved and prioritized during deduplication
+    matched_sagas.sort(key=lambda x: x[0])
+    combined.extend(item for _, item in matched_sagas)
 
     # 2. Query IMDb+Wikidata and TVMaze in parallel (using expanded & typo-corrected queries)
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
@@ -695,10 +797,6 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
                     combined.extend(f_maze2.result())
                 except Exception:
                     pass
-
-    # Append matched sagas (if sagas matched closely, place them right with IMDb results so all saga chapters appear)
-    matched_sagas.sort(key=lambda x: x[0])
-    combined.extend(item for _, item in matched_sagas)
 
     # 3. Search live 7-day Italian DTT EPG for titles currently airing on TV (exact + fuzzy <= 2 letters)
     if epg_events:
@@ -732,14 +830,27 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
     for item in combined:
         norm_it = strip_conjunctions(normalize_title(item["title_it"])) or normalize_title(item["title_it"])
         norm_or = strip_conjunctions(normalize_title(item["title_original"])) or normalize_title(item["title_original"])
-        k_it = f"{item['media_type']}_{norm_it}"
-        k_or = f"{item['media_type']}_{norm_or}"
-        primary_key = key_aliases.get(k_it) or key_aliases.get(k_or)
-        if not primary_key:
-            primary_key = k_it
+        
+        # Sagas are uniquely identified by their distinct chapter title and release year
+        if item.get("is_saga"):
+            primary_key = f"saga_{item['media_type']}_{norm_it}_{item.get('year', '')}"
+        else:
+            k_it = f"{item['media_type']}_{norm_it}"
+            k_or = f"{item['media_type']}_{norm_or}"
+            primary_key = key_aliases.get(k_it) or key_aliases.get(k_or)
+
+            # Do not merge completely different movies with the same name if released in different decades (e.g. 1954 vs 2001)
+            if primary_key and primary_key in merged:
+                ex_year = str(merged[primary_key].get("year") or "").strip()
+                item_year = str(item.get("year") or "").strip()
+                if ex_year.isdigit() and item_year.isdigit() and abs(int(ex_year) - int(item_year)) > 10:
+                    primary_key = f"{primary_key}_{item_year}"
+
+        if not primary_key or primary_key not in merged:
+            primary_key = primary_key or f"{item['media_type']}_{norm_it}"
             merged[primary_key] = item
-            key_aliases[k_it] = primary_key
-            key_aliases[k_or] = primary_key
+            key_aliases[f"{item['media_type']}_{norm_it}"] = primary_key
+            key_aliases[f"{item['media_type']}_{norm_or}"] = primary_key
         else:
             existing = merged[primary_key]
             # Prefer Italian title over English title
@@ -755,8 +866,22 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
                 existing["year"] = item["year"]
             if len(item.get("description") or "") > len(existing.get("description") or ""):
                 existing["description"] = item["description"]
+            if item.get("is_saga"):
+                existing["is_saga"] = True
+                existing["saga_rank"] = item.get("saga_rank", 1)
 
-    return list(merged.values())[:25]
+    # 4. Score every merged result by relevance against user query
+    scored_results: List[Tuple[int, Dict]] = []
+    for item in merged.values():
+        score = compute_relevance_score(query, item)
+        # Keep items with score >= 150 (filters out irrelevant fuzzy false positives)
+        if score >= 150:
+            scored_results.append((score, item))
+
+    # Sort descending by relevance score (exact/near-exact matches first!)
+    scored_results.sort(key=lambda x: -x[0])
+
+    return [item for _, item in scored_results][:25]
 
 
 def fetch_series_episodes(tvmaze_id: Optional[int] = None, title_original: str = "", title_it: str = "", epg_events: Optional[List[Dict]] = None) -> List[Dict]:

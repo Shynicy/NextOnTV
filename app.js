@@ -40,37 +40,60 @@ const WEEKDAYS_IT = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 const MONTHS_IT = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
 
 // Built-in client-side sagas for 4G/5G direct search fallback
+const SAGA_DEFINITIONS = [
+  {
+    id: "fast_furious",
+    names: ["fast and furious", "fast & furious", "the fast and the furious", "fast furious", "f&f"],
+  },
+  {
+    id: "harry_potter",
+    names: ["harry potter", "harry poter", "potter"],
+  },
+  {
+    id: "lotr",
+    names: ["il signore degli anelli", "signore degli anelli", "lord of the rings", "lotr"],
+  },
+  {
+    id: "pirates",
+    names: ["pirati dei caraibi", "pirates of the caribbean", "la maledizione della prima luna"],
+  },
+  {
+    id: "back_to_future",
+    names: ["ritorno al futuro", "back to the future"],
+  },
+];
+
 const CLIENT_SAGAS = [
-  { it: "Harry Potter e la pietra filosofale", orig: "Harry Potter and the Sorcerer's Stone", type: "movie", year: "2001" },
-  { it: "Harry Potter e la camera dei segreti", orig: "Harry Potter and the Chamber of Secrets", type: "movie", year: "2002" },
-  { it: "Harry Potter e il prigioniero di Azkaban", orig: "Harry Potter and the Prisoner of Azkaban", type: "movie", year: "2004" },
-  { it: "Harry Potter e il calice di fuoco", orig: "Harry Potter and the Goblet of Fire", type: "movie", year: "2005" },
-  { it: "Harry Potter e l'Ordine della Fenice", orig: "Harry Potter and the Order of the Phoenix", type: "movie", year: "2007" },
-  { it: "Harry Potter e il principe mezzosangue", orig: "Harry Potter and the Half-Blood Prince", type: "movie", year: "2009" },
-  { it: "Harry Potter e i Doni della Morte - Parte 1", orig: "Harry Potter and the Deathly Hallows: Part 1", type: "movie", year: "2010" },
-  { it: "Harry Potter e i Doni della Morte - Parte 2", orig: "Harry Potter and the Deathly Hallows: Part 2", type: "movie", year: "2011" },
-  { it: "Fast and Furious", orig: "The Fast and the Furious", type: "movie", year: "2001" },
-  { it: "2 Fast 2 Furious", orig: "2 Fast 2 Furious", type: "movie", year: "2003" },
-  { it: "The Fast and the Furious: Tokyo Drift", orig: "The Fast and the Furious: Tokyo Drift", type: "movie", year: "2006" },
-  { it: "Fast & Furious - Solo parti originali", orig: "Fast & Furious", type: "movie", year: "2009" },
-  { it: "Fast & Furious 5", orig: "Fast Five", type: "movie", year: "2011" },
-  { it: "Fast & Furious 6", orig: "Fast & Furious 6", type: "movie", year: "2013" },
-  { it: "Fast & Furious 7", orig: "Furious 7", type: "movie", year: "2015" },
-  { it: "Fast & Furious 8", orig: "The Fate of the Furious", type: "movie", year: "2017" },
-  { it: "Fast & Furious - Hobbs & Shaw", orig: "Fast & Furious Presents: Hobbs & Shaw", type: "movie", year: "2019" },
-  { it: "Fast & Furious 9 - The Fast Saga", orig: "F9: The Fast Saga", type: "movie", year: "2021" },
-  { it: "Fast X", orig: "Fast X", type: "movie", year: "2023" },
-  { it: "Il Signore degli Anelli - La Compagnia dell'Anello", orig: "The Lord of the Rings: The Fellowship of the Ring", type: "movie", year: "2001" },
-  { it: "Il Signore degli Anelli - Le due torri", orig: "The Lord of the Rings: The Two Towers", type: "movie", year: "2002" },
-  { it: "Il Signore degli Anelli - Il ritorno del re", orig: "The Lord of the Rings: The Return of the King", type: "movie", year: "2003" },
-  { it: "La maledizione della prima luna", orig: "Pirates of the Caribbean: The Curse of the Black Pearl", type: "movie", year: "2003" },
-  { it: "Pirati dei Caraibi - La maledizione del forziere fantasma", orig: "Pirates of the Caribbean: Dead Man's Chest", type: "movie", year: "2006" },
-  { it: "Pirati dei Caraibi - Ai confini del mondo", orig: "Pirates of the Caribbean: At World's End", type: "movie", year: "2007" },
-  { it: "Pirati dei Caraibi - Oltre i confini del mare", orig: "Pirates of the Caribbean: On Stranger Tides", type: "movie", year: "2011" },
-  { it: "Pirati dei Caraibi - La vendetta di Salazar", orig: "Pirates of the Caribbean: Dead Men Tell No Tales", type: "movie", year: "2017" },
-  { it: "Ritorno al futuro", orig: "Back to the Future", type: "movie", year: "1985" },
-  { it: "Ritorno al futuro - Parte II", orig: "Back to the Future Part II", type: "movie", year: "1989" },
-  { it: "Ritorno al futuro - Parte III", orig: "Back to the Future Part III", type: "movie", year: "1990" },
+  { it: "Harry Potter e la pietra filosofale", orig: "Harry Potter and the Sorcerer's Stone", type: "movie", year: "2001", saga: "harry_potter", rank: 1, aliases: ["harry potter 1", "pietra filosofale"] },
+  { it: "Harry Potter e la camera dei segreti", orig: "Harry Potter and the Chamber of Secrets", type: "movie", year: "2002", saga: "harry_potter", rank: 2, aliases: ["harry potter 2", "camera dei segreti"] },
+  { it: "Harry Potter e il prigioniero di Azkaban", orig: "Harry Potter and the Prisoner of Azkaban", type: "movie", year: "2004", saga: "harry_potter", rank: 3, aliases: ["harry potter 3", "prigioniero di azkaban"] },
+  { it: "Harry Potter e il calice di fuoco", orig: "Harry Potter and the Goblet of Fire", type: "movie", year: "2005", saga: "harry_potter", rank: 4, aliases: ["harry potter 4", "calice di fuoco"] },
+  { it: "Harry Potter e l'Ordine della Fenice", orig: "Harry Potter and the Order of the Phoenix", type: "movie", year: "2007", saga: "harry_potter", rank: 5, aliases: ["harry potter 5", "ordine della fenice"] },
+  { it: "Harry Potter e il principe mezzosangue", orig: "Harry Potter and the Half-Blood Prince", type: "movie", year: "2009", saga: "harry_potter", rank: 6, aliases: ["harry potter 6", "principe mezzosangue"] },
+  { it: "Harry Potter e i Doni della Morte - Parte 1", orig: "Harry Potter and the Deathly Hallows: Part 1", type: "movie", year: "2010", saga: "harry_potter", rank: 7, aliases: ["harry potter 7", "doni della morte 1", "doni della morte parte 1"] },
+  { it: "Harry Potter e i Doni della Morte - Parte 2", orig: "Harry Potter and the Deathly Hallows: Part 2", type: "movie", year: "2011", saga: "harry_potter", rank: 8, aliases: ["harry potter 8", "doni della morte 2", "doni della morte parte 2"] },
+  { it: "Fast and Furious", orig: "The Fast and the Furious", type: "movie", year: "2001", saga: "fast_furious", rank: 1, aliases: ["fast and furious 1", "fast & furious 1", "fast 1", "the fast and the furious", "the fast and the furious 1"] },
+  { it: "2 Fast 2 Furious", orig: "2 Fast 2 Furious", type: "movie", year: "2003", saga: "fast_furious", rank: 2, aliases: ["fast and furious 2", "fast & furious 2", "fast 2", "2fast2furious", "2 fast 2 furious"] },
+  { it: "The Fast and the Furious: Tokyo Drift", orig: "The Fast and the Furious: Tokyo Drift", type: "movie", year: "2006", saga: "fast_furious", rank: 3, aliases: ["fast and furious 3", "fast & furious 3", "fast 3", "tokyo drift"] },
+  { it: "Fast & Furious - Solo parti originali", orig: "Fast & Furious", type: "movie", year: "2009", saga: "fast_furious", rank: 4, aliases: ["fast and furious 4", "fast & furious 4", "fast 4", "solo parti originali"] },
+  { it: "Fast & Furious 5", orig: "Fast Five", type: "movie", year: "2011", saga: "fast_furious", rank: 5, aliases: ["fast and furious 5", "fast & furious 5", "fast 5", "fast five"] },
+  { it: "Fast & Furious 6", orig: "Fast & Furious 6", type: "movie", year: "2013", saga: "fast_furious", rank: 6, aliases: ["fast and furious 6", "fast & furious 6", "fast 6"] },
+  { it: "Fast & Furious 7", orig: "Furious 7", type: "movie", year: "2015", saga: "fast_furious", rank: 7, aliases: ["fast and furious 7", "fast & furious 7", "fast 7", "furious 7"] },
+  { it: "Fast & Furious 8", orig: "The Fate of the Furious", type: "movie", year: "2017", saga: "fast_furious", rank: 8, aliases: ["fast and furious 8", "fast & furious 8", "fast 8", "the fate of the furious", "fate of the furious"] },
+  { it: "Fast & Furious - Hobbs & Shaw", orig: "Fast & Furious Presents: Hobbs & Shaw", type: "movie", year: "2019", saga: "fast_furious", rank: 9, aliases: ["fast and furious hobbs and shaw", "hobbs and shaw", "hobbs & shaw"] },
+  { it: "Fast & Furious 9 - The Fast Saga", orig: "F9: The Fast Saga", type: "movie", year: "2021", saga: "fast_furious", rank: 10, aliases: ["fast and furious 9", "fast & furious 9", "fast 9", "f9"] },
+  { it: "Fast X", orig: "Fast X", type: "movie", year: "2023", saga: "fast_furious", rank: 11, aliases: ["fast and furious 10", "fast & furious 10", "fast 10", "fast x"] },
+  { it: "Il Signore degli Anelli - La Compagnia dell'Anello", orig: "The Lord of the Rings: The Fellowship of the Ring", type: "movie", year: "2001", saga: "lotr", rank: 1, aliases: ["signore degli anelli 1", "compagnia dell anello"] },
+  { it: "Il Signore degli Anelli - Le due torri", orig: "The Lord of the Rings: The Two Towers", type: "movie", year: "2002", saga: "lotr", rank: 2, aliases: ["signore degli anelli 2", "due torri"] },
+  { it: "Il Signore degli Anelli - Il ritorno del re", orig: "The Lord of the Rings: The Return of the King", type: "movie", year: "2003", saga: "lotr", rank: 3, aliases: ["signore degli anelli 3", "ritorno del re"] },
+  { it: "La maledizione della prima luna", orig: "Pirates of the Caribbean: The Curse of the Black Pearl", type: "movie", year: "2003", saga: "pirates", rank: 1, aliases: ["pirati dei caraibi 1", "prima luna"] },
+  { it: "Pirati dei Caraibi - La maledizione del forziere fantasma", orig: "Pirates of the Caribbean: Dead Man's Chest", type: "movie", year: "2006", saga: "pirates", rank: 2, aliases: ["pirati dei caraibi 2", "forziere fantasma"] },
+  { it: "Pirati dei Caraibi - Ai confini del mondo", orig: "Pirates of the Caribbean: At World's End", type: "movie", year: "2007", saga: "pirates", rank: 3, aliases: ["pirati dei caraibi 3", "ai confini del mondo"] },
+  { it: "Pirati dei Caraibi - Oltre i confini del mare", orig: "Pirates of the Caribbean: On Stranger Tides", type: "movie", year: "2011", saga: "pirates", rank: 4, aliases: ["pirati dei caraibi 4", "oltre i confini del mare"] },
+  { it: "Pirati dei Caraibi - La vendetta di Salazar", orig: "Pirates of the Caribbean: Dead Men Tell No Tales", type: "movie", year: "2017", saga: "pirates", rank: 5, aliases: ["pirati dei caraibi 5", "vendetta di salazar"] },
+  { it: "Ritorno al futuro", orig: "Back to the Future", type: "movie", year: "1985", saga: "back_to_future", rank: 1, aliases: ["ritorno al futuro 1", "back to the future 1"] },
+  { it: "Ritorno al futuro - Parte II", orig: "Back to the Future Part II", type: "movie", year: "1989", saga: "back_to_future", rank: 2, aliases: ["ritorno al futuro 2", "back to the future 2"] },
+  { it: "Ritorno al futuro - Parte III", orig: "Back to the Future Part III", type: "movie", year: "1990", saga: "back_to_future", rank: 3, aliases: ["ritorno al futuro 3", "back to the future 3"] },
   { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000" },
   { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024" },
   { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999" },
@@ -79,6 +102,97 @@ const CLIENT_SAGAS = [
   { it: "Supernatural", orig: "Supernatural", type: "series", year: "2005" },
   { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003" },
 ];
+
+const STOP_WORDS_CLIENT = new Set([
+  "the", "il", "lo", "la", "l", "i", "gli", "le", "a", "an", "and", "e", "ed", "n",
+  "di", "dei", "del", "della", "delle", "of", "in", "on", "per", "con", "su"
+]);
+
+function cleanTokensClient(text) {
+  const norm = normalizeTitleClient(text);
+  const tokens = norm.split(" ").filter(Boolean);
+  const core = tokens.filter((t) => !STOP_WORDS_CLIENT.has(t));
+  return { tokens, core };
+}
+
+function wordMatchClient(qw, cw) {
+  if (qw === cw) return true;
+  if (qw.length >= 4 && cw.length >= 4) {
+    if (qw.includes(cw) || cw.includes(qw)) return true;
+    if (damerauLevenshteinClient(qw, cw, 1) <= 1) return true;
+  }
+  return false;
+}
+
+function computeRelevanceScoreClient(query, item) {
+  const { tokens: qTokens, core: qCore } = cleanTokensClient(query);
+  const qStr = qTokens.join(" ");
+  const qCoreStr = qCore.join(" ");
+
+  const candidates = [item.title_it, item.title_original];
+  if (item.aliases && Array.isArray(item.aliases)) {
+    candidates.push(...item.aliases);
+  }
+
+  let bestScore = 0;
+  for (const cand of candidates) {
+    if (!cand) continue;
+    const { tokens: cTokens, core: cCore } = cleanTokensClient(cand);
+    if (cTokens.length === 0) continue;
+    const cStr = cTokens.join(" ");
+    const cCoreStr = cCore.join(" ");
+
+    // 1. Exact match on full normalized text
+    if (qStr && qStr === cStr) {
+      bestScore = Math.max(bestScore, 1000);
+      continue;
+    }
+
+    // 2. Exact match on core words (ignoring articles/stopwords)
+    if (qCoreStr && qCoreStr === cCoreStr) {
+      bestScore = Math.max(bestScore, 980);
+      continue;
+    }
+
+    // 3. Check core word presence
+    if (qCore.length > 0) {
+      let matchedCount = 0;
+      for (const qw of qCore) {
+        if (cTokens.some((cw) => wordMatchClient(qw, cw))) {
+          matchedCount++;
+        }
+      }
+      const coverage = matchedCount / qCore.length;
+      if (coverage < 0.75) {
+        continue;
+      }
+    }
+
+    // 4. Starting vs containing
+    const starts = cStr.startsWith(qStr) || (qCoreStr && cCoreStr.startsWith(qCoreStr));
+    const base = starts ? 800 : 500;
+
+    // 5. Length penalty (extra words)
+    const extraWords = Math.abs(cCore.length - qCore.length);
+    const penalty = extraWords * 40;
+    const score = Math.max(50, base - penalty);
+
+    bestScore = Math.max(bestScore, score);
+  }
+
+  if (item.is_saga) {
+    const rank = Number(item.saga_rank || 1);
+    if (bestScore >= 950) {
+      // Keep exact match 1000 or 980
+    } else if (bestScore > 0) {
+      bestScore = Math.max(bestScore, 920 - rank * 8);
+    } else {
+      bestScore = Math.max(bestScore, 880 - rank * 8);
+    }
+  }
+
+  return bestScore;
+}
 
 function normalizeTitleClient(str) {
   if (!str) return "";
@@ -639,9 +753,28 @@ async function directMobileSearch4G(query, libraryItems) {
   if (!qNorm) return { results: [] };
   const results = [];
 
-  // 1. Check built-in sagas (with 2-letter typo tolerance, no spaces, and &/and/end/e equivalence)
+  // 1. Check sagas (franchises like Fast & Furious, Harry Potter, etc.)
+  const { tokens: qTokens, core: qCore } = cleanTokensClient(query);
+  const qStr = qTokens.join(" ");
+  const qCoreStr = qCore.join(" ");
+
+  const matchedSagaIds = new Set();
+  SAGA_DEFINITIONS.forEach((sagaDef) => {
+    const isMatch = sagaDef.names.some((sname) => {
+      const { tokens: sTokens, core: sCore } = cleanTokensClient(sname);
+      return sTokens.join(" ") === qStr || (sCore.length > 0 && sCore.join(" ") === qCoreStr);
+    });
+    if (isMatch) matchedSagaIds.add(sagaDef.id);
+  });
+
   CLIENT_SAGAS.forEach((al) => {
-    if (fuzzyMatchTitleClient(query, al.it) || fuzzyMatchTitleClient(query, al.orig)) {
+    const isSagaMatch = al.saga && matchedSagaIds.has(al.saga);
+    const isDirectMatch =
+      fuzzyMatchTitleClient(query, al.it) ||
+      fuzzyMatchTitleClient(query, al.orig) ||
+      (al.aliases && al.aliases.some((a) => fuzzyMatchTitleClient(query, a)));
+
+    if (isSagaMatch || isDirectMatch) {
       results.push({
         external_id: "saga_" + normalizeTitleClient(al.orig).replace(/\s+/g, "_"),
         media_type: al.type,
@@ -651,6 +784,9 @@ async function directMobileSearch4G(query, libraryItems) {
         poster: "",
         genre: al.type === "series" ? "Serie TV" : "Film",
         description: `${al.type === "series" ? "Serie TV" : "Film"} (${al.year}) • Titolo orig.: ${al.orig}`,
+        is_saga: true,
+        saga_rank: al.rank || 1,
+        aliases: al.aliases || [],
       });
     }
   });
@@ -660,7 +796,7 @@ async function directMobileSearch4G(query, libraryItems) {
     const mazeRes = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`);
     const mazeData = await mazeRes.json();
     if (Array.isArray(mazeData)) {
-      mazeData.slice(0, 8).forEach((row) => {
+      mazeData.slice(0, 10).forEach((row) => {
         const show = row.show || {};
         results.push({
           external_id: `tvmaze_${show.id}`,
@@ -679,12 +815,12 @@ async function directMobileSearch4G(query, libraryItems) {
 
   // 3. Query Wikidata Italian entities directly over HTTPS (CORS-enabled on 4G/5G!)
   try {
-    const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=it&uselang=it&format=json&origin=*&limit=10`;
+    const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=it&uselang=it&format=json&origin=*&limit=12`;
     const wdRes = await fetch(wdUrl);
     const wdData = await wdRes.json();
     (wdData.search || []).forEach((item) => {
       const desc = (item.description || "").toLowerCase();
-      const isMovie = desc.includes("film") || desc.includes("pellicola") || desc.includes("lungometraggio");
+      const isMovie = desc.includes("film") || desc.includes("pellicola") || desc.includes("lungometraggio") || desc.includes("cinematograf");
       const isSeries = desc.includes("serie") || desc.includes("telefilm") || desc.includes("fiction") || desc.includes("miniserie");
       if (!isMovie && !isSeries) return;
       const yearMatch = desc.match(/\b(19\d\d|20\d\d)\b/);
@@ -701,6 +837,17 @@ async function directMobileSearch4G(query, libraryItems) {
     });
   } catch (e) { }
 
+  // 4. Score every result using smart relevance scoring
+  results.forEach((r) => {
+    r.relevance_score = computeRelevanceScoreClient(query, r);
+  });
+
+  // Filter items with score >= 150 (eliminates false positives like 'Amber' when searching 'the gambler')
+  const relevantResults = results.filter((r) => (r.relevance_score || 0) >= 150);
+
+  // Sort descending by relevance score (exact/near-exact matches first!)
+  relevantResults.sort((a, b) => b.relevance_score - a.relevance_score);
+
   const libMap = {};
   libraryItems.forEach((it) => {
     libMap[normalizeTitleClient(it.title_it)] = it;
@@ -708,11 +855,12 @@ async function directMobileSearch4G(query, libraryItems) {
 
   const dedup = [];
   const seen = new Set();
-  results.forEach((r) => {
-    const k = `${r.media_type}_${normalizeTitleClient(r.title_it)}`;
+  relevantResults.forEach((r) => {
+    const norm = normalizeTitleClient(r.title_it);
+    const k = `${r.media_type}_${norm}`;
     if (seen.has(k)) return;
     seen.add(k);
-    const ex = libMap[normalizeTitleClient(r.title_it)];
+    const ex = libMap[norm];
     r.in_library_status = ex ? ex.status : null;
     r.in_library_id = ex ? ex.id : null;
     r.watched_episodes_count = ex ? (ex.watched_episodes_count || (ex.watched_episodes ? ex.watched_episodes.length : 0)) : 0;
