@@ -1,0 +1,385 @@
+{
+  "channels": [
+    {
+      "lcn": 1,
+      "name": "Rai 1",
+      "sky_id": 899,
+      "rai_slug": "rai-1",
+      "group": "Rai",
+      "color": "#0046ad"
+    },
+    {
+      "lcn": 2,
+      "name": "Rai 2",
+      "sky_id": 898,
+      "rai_slug": "rai-2",
+      "group": "Rai",
+      "color": "#c8102e"
+    },
+    {
+      "lcn": 3,
+      "name": "Rai 3",
+      "sky_id": 897,
+      "rai_slug": "rai-3",
+      "group": "Rai",
+      "color": "#00843d"
+    },
+    {
+      "lcn": 4,
+      "name": "Rete 4",
+      "sky_id": 10464,
+      "group": "Mediaset",
+      "color": "#f39200"
+    },
+    {
+      "lcn": 5,
+      "name": "Canale 5",
+      "sky_id": 10354,
+      "group": "Mediaset",
+      "color": "#0055a5"
+    },
+    {
+      "lcn": 6,
+      "name": "Italia 1",
+      "sky_id": 10454,
+      "group": "Mediaset",
+      "color": "#009fe3"
+    },
+    {
+      "lcn": 7,
+      "name": "LA7",
+      "sky_id": 319,
+      "group": "Cairo",
+      "color": "#e30613"
+    },
+    {
+      "lcn": 8,
+      "name": "TV8",
+      "sky_id": 8195,
+      "group": "Sky",
+      "color": "#0033a0"
+    },
+    {
+      "lcn": 9,
+      "name": "NOVE",
+      "sky_id": 12116,
+      "group": "Discovery",
+      "color": "#ff004c"
+    },
+    {
+      "lcn": 20,
+      "name": "20 Mediaset",
+      "sky_id": 10458,
+      "group": "Mediaset",
+      "color": "#e50051"
+    },
+    {
+      "lcn": 21,
+      "name": "Rai 4",
+      "sky_id": 6622,
+      "rai_slug": "rai-4",
+      "group": "Rai",
+      "color": "#7b2cbf"
+    },
+    {
+      "lcn": 22,
+      "name": "Iris",
+      "sky_id": 10467,
+      "group": "Mediaset",
+      "color": "#8b1e41"
+    },
+    {
+      "lcn": 23,
+      "name": "Rai 5",
+      "sky_id": 6607,
+      "rai_slug": "rai-5",
+      "group": "Rai",
+      "color": "#e07a16"
+    },
+    {
+      "lcn": 24,
+      "name": "Rai Movie",
+      "sky_id": 6608,
+      "rai_slug": "rai-movie",
+      "group": "Rai",
+      "color": "#9b0047"
+    },
+    {
+      "lcn": 25,
+      "name": "Rai Premium",
+      "sky_id": 6623,
+      "rai_slug": "rai-premium",
+      "group": "Rai",
+      "color": "#b58500"
+    },
+    {
+      "lcn": 26,
+      "name": "Cielo",
+      "sky_id": 8133,
+      "group": "Sky",
+      "color": "#00a3e0"
+    },
+    {
+      "lcn": 27,
+      "name": "27 Twentyseven",
+      "sky_id": 11342,
+      "group": "Mediaset",
+      "color": "#ff6b00"
+    },
+    {
+      "lcn": 28,
+      "name": "TV2000",
+      "sky_id": 7588,
+      "group": "Altro",
+      "color": "#0066cc"
+    },
+    {
+      "lcn": 29,
+      "name": "LA7 Cinema / LA7d",
+      "sky_id": 11430,
+      "group": "Cairo",
+      "color": "#b71c1c"
+    },
+    {
+      "lcn": 30,
+      "name": "La 5",
+      "sky_id": 10466,
+      "group": "Mediaset",
+      "color": "#d81b60"
+    },
+    {
+      "lcn": 31,
+      "name": "Real Time",
+      "sky_id": 12117,
+      "group": "Discovery",
+      "color": "#00acc1"
+    },
+    {
+      "lcn": 33,
+      "name": "Food Network",
+      "sky_id": 12123,
+      "group": "Discovery",
+      "color": "#d32f2f"
+    },
+    {
+      "lcn": 34,
+      "name": "Cine34",
+      "sky_id": 10893,
+      "group": "Mediaset",
+      "color": "#c62828"
+    },
+    {
+      "lcn": 35,
+      "name": "Focus",
+      "sky_id": 10470,
+      "group": "Mediaset",
+      "color": "#ad1457"
+    },
+    {
+      "lcn": 36,
+      "name": "RTL 102.5 TV",
+      "sky_id": 6885,
+      "group": "Musica",
+      "color": "#d50000"
+    },
+    {
+      "lcn": 37,
+      "name": "Warner TV",
+      "sitv_slug": "warner_tv",
+      "group": "Discovery",
+      "color": "#003399"
+    },
+    {
+      "lcn": 38,
+      "name": "Giallo",
+      "sky_id": 12126,
+      "group": "Discovery",
+      "color": "#fbc02d"
+    },
+    {
+      "lcn": 39,
+      "name": "TOP Crime",
+      "sky_id": 10468,
+      "group": "Mediaset",
+      "color": "#1565c0"
+    },
+    {
+      "lcn": 40,
+      "name": "Boing",
+      "sitv_slug": "boing",
+      "group": "Kids",
+      "color": "#0288d1"
+    },
+    {
+      "lcn": 41,
+      "name": "K2",
+      "sitv_slug": "k2",
+      "group": "Kids",
+      "color": "#ff5722"
+    },
+    {
+      "lcn": 42,
+      "name": "Rai Gulp",
+      "rai_slug": "rai-gulp",
+      "group": "Kids",
+      "color": "#e91e63"
+    },
+    {
+      "lcn": 43,
+      "name": "Rai Yoyo",
+      "rai_slug": "rai-yoyo",
+      "group": "Kids",
+      "color": "#8bc34a"
+    },
+    {
+      "lcn": 44,
+      "name": "Frisbee",
+      "sitv_slug": "frisbee",
+      "group": "Kids",
+      "color": "#e91e63"
+    },
+    {
+      "lcn": 46,
+      "name": "Cartoonito",
+      "sitv_slug": "cartoonito",
+      "group": "Kids",
+      "color": "#fdd835"
+    },
+    {
+      "lcn": 47,
+      "name": "Super!",
+      "sky_id": 6460,
+      "group": "Kids",
+      "color": "#ab47bc"
+    },
+    {
+      "lcn": 48,
+      "name": "Rai News 24",
+      "sky_id": 895,
+      "group": "Rai",
+      "color": "#1b5e20"
+    },
+    {
+      "lcn": 49,
+      "name": "Italia 2",
+      "sky_id": 10469,
+      "group": "Mediaset",
+      "color": "#d32f2f"
+    },
+    {
+      "lcn": 50,
+      "name": "Sky TG24",
+      "sky_id": 9117,
+      "group": "Sky",
+      "color": "#b71c1c"
+    },
+    {
+      "lcn": 51,
+      "name": "TGCOM24",
+      "sky_id": 10473,
+      "group": "Mediaset",
+      "color": "#0d47a1"
+    },
+    {
+      "lcn": 52,
+      "name": "DMAX",
+      "sky_id": 12120,
+      "group": "Discovery",
+      "color": "#ff6f00"
+    },
+    {
+      "lcn": 54,
+      "name": "Rai Storia",
+      "sky_id": 6630,
+      "rai_slug": "rai-storia",
+      "group": "Rai",
+      "color": "#33691e"
+    },
+    {
+      "lcn": 55,
+      "name": "Mediaset Extra",
+      "sky_id": 10465,
+      "group": "Mediaset",
+      "color": "#6a1b9a"
+    },
+    {
+      "lcn": 56,
+      "name": "HGTV",
+      "sky_id": 12127,
+      "group": "Discovery",
+      "color": "#00897b"
+    },
+    {
+      "lcn": 58,
+      "name": "Rai Sport",
+      "sky_id": 807,
+      "rai_slug": "rai-sport",
+      "group": "Rai",
+      "color": "#0277bd"
+    },
+    {
+      "lcn": 59,
+      "name": "Motor Trend",
+      "sky_id": 12131,
+      "sitv_slug": "motor_trend",
+      "group": "Discovery",
+      "color": "#c62828"
+    },
+    {
+      "lcn": 60,
+      "name": "Sportitalia",
+      "sitv_slug": "sportitalia",
+      "group": "Altro",
+      "color": "#1565c0"
+    },
+    {
+      "lcn": 62,
+      "name": "Donna TV",
+      "sitv_slug": "donnatv",
+      "group": "Altro",
+      "color": "#ec407a"
+    },
+    {
+      "lcn": 64,
+      "name": "SuperTennis",
+      "sky_id": 6000,
+      "group": "Altro",
+      "color": "#2e7d32"
+    },
+    {
+      "lcn": 65,
+      "name": "Alma TV",
+      "sitv_slug": "almatv",
+      "group": "Altro",
+      "color": "#ef6c00"
+    },
+    {
+      "lcn": 67,
+      "name": "MTV Music / R101",
+      "sky_id": 11054,
+      "group": "Musica",
+      "color": "#4527a0"
+    },
+    {
+      "lcn": 68,
+      "name": "Travel TV",
+      "sitv_slug": "travel_tv",
+      "group": "Altro",
+      "color": "#00838f"
+    },
+    {
+      "lcn": 69,
+      "name": "Deejay TV",
+      "sky_id": 462,
+      "group": "Musica",
+      "color": "#d32f2f"
+    },
+    {
+      "lcn": 70,
+      "name": "RadioItaliaTV",
+      "sky_id": 9833,
+      "group": "Musica",
+      "color": "#283593"
+    }
+  ]
+}
