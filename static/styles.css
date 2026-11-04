@@ -760,6 +760,19 @@ body {
   border-color: var(--accent-amber);
 }
 
+.search-type-filters {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .search-type-filters {
+    width: auto;
+  }
+}
+
 /* Multi-Selection Bar & Checkboxes in Search */
 .multi-select-bar {
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.98));

@@ -26,6 +26,9 @@ const state = {
   exploreTimeSlot: "primetime",
   exploreChannel: "",
   exploreQuery: "",
+  searchMediaType: "all", // 'all' | 'movie' | 'series'
+  searchRawResults: [],
+  searchLastQuery: "",
   reminders: [],
   mobileUrl: window.location.origin,
   publicUrl: "",
@@ -2120,11 +2123,59 @@ function renderSearchResultCards(results, targetContainer, isCompactModal = fals
 // ============================================================================
 async function executeCatalogSearch(query) {
   const container = document.getElementById("search-results-container");
-  container.innerHTML = `<div class="loading-state">🔍 Ricerca di "${escapeHtml(query)}" tra tutti i Film e le Serie TV...</div>`;
+  const cleanQ = (query || "").trim();
+  if (!cleanQ) return;
 
-  const data = await apiGet(`/api/search?q=${encodeURIComponent(query)}`);
-  state.searchResults = data.results || [];
+  const typeLabel =
+    state.searchMediaType === "movie"
+      ? "tra i Film"
+      : state.searchMediaType === "series"
+        ? "tra le Serie TV"
+        : "tra tutti i Film e le Serie TV";
+
+  // Se la ricerca per questo termine è già in memoria, rifiltra istantaneamente!
+  if (
+    cleanQ.toLowerCase() === (state.searchLastQuery || "").toLowerCase() &&
+    state.searchRawResults &&
+    state.searchRawResults.length > 0
+  ) {
+    applySearchFilterAndRender(container);
+    return;
+  }
+
+  container.innerHTML = `<div class="loading-state">🔍 Ricerca di "${escapeHtml(cleanQ)}" ${typeLabel}...</div>`;
+
+  const data = await apiGet(`/api/search?q=${encodeURIComponent(cleanQ)}`);
+  state.searchLastQuery = cleanQ;
+  state.searchRawResults = data.results || [];
+  applySearchFilterAndRender(container);
+}
+
+function applySearchFilterAndRender(container) {
+  const raw = state.searchRawResults || [];
+  if (state.searchMediaType === "movie") {
+    state.searchResults = raw.filter((it) => it.media_type === "movie");
+  } else if (state.searchMediaType === "series") {
+    state.searchResults = raw.filter((it) => it.media_type === "series");
+  } else {
+    state.searchResults = [...raw];
+  }
+
   state.selectedSearchIndices.clear();
+
+  if (state.searchResults.length === 0 && raw.length > 0) {
+    const filterDesc = state.searchMediaType === "movie" ? "Film" : "Serie TV";
+    container.innerHTML = `
+      <div class="empty-box" style="padding:18px;">
+        <p>Nessun <strong>${filterDesc}</strong> trovato per "${escapeHtml(state.searchLastQuery)}".</p>
+        <p style="margin-top:6px;font-size:0.8rem;color:var(--text-muted);">
+          💡 Prova a deselezionare il filtro per cercare tra tutti i titoli.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
   renderSearchResultCards(state.searchResults, container, false);
 }
 
@@ -2836,6 +2887,44 @@ function setupNavigationAndEvents() {
     const q = mainSearchInput.value.trim();
     if (q) executeCatalogSearch(q);
   });
+
+  // Tab 3: Search Type Filters Toggle (🎬 Solo Film / 📺 Solo Serie TV)
+  const btnSearchMovie = document.getElementById("filter-search-movies");
+  const btnSearchSeries = document.getElementById("filter-search-series");
+
+  if (btnSearchMovie && btnSearchSeries) {
+    btnSearchMovie.addEventListener("click", () => {
+      if (state.searchMediaType === "movie") {
+        state.searchMediaType = "all";
+        btnSearchMovie.classList.remove("active");
+      } else {
+        state.searchMediaType = "movie";
+        btnSearchMovie.classList.add("active");
+        btnSearchSeries.classList.remove("active");
+      }
+      // Se c'è già una ricerca visualizzata a schermo, aggiorna subito il filtro!
+      const container = document.getElementById("search-results-container");
+      if (state.searchRawResults && state.searchRawResults.length > 0 && container) {
+        applySearchFilterAndRender(container);
+      }
+    });
+
+    btnSearchSeries.addEventListener("click", () => {
+      if (state.searchMediaType === "series") {
+        state.searchMediaType = "all";
+        btnSearchSeries.classList.remove("active");
+      } else {
+        state.searchMediaType = "series";
+        btnSearchSeries.classList.add("active");
+        btnSearchMovie.classList.remove("active");
+      }
+      // Se c'è già una ricerca visualizzata a schermo, aggiorna subito il filtro!
+      const container = document.getElementById("search-results-container");
+      if (state.searchRawResults && state.searchRawResults.length > 0 && container) {
+        applySearchFilterAndRender(container);
+      }
+    });
+  }
 
   document.querySelectorAll(".chip-suggest").forEach((chip) => {
     chip.addEventListener("click", () => {
