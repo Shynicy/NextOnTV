@@ -555,6 +555,7 @@ def _search_imdb_with_italian_labels(query: str, extra_queries: Optional[List[st
             "genre": "Serie TV" if media_type == "series" else "Film",
             "description": " • ".join(desc_parts),
             "source": "imdb",
+            "popularity_rank": item.get("rank"),
         })
     return results
 
@@ -620,6 +621,7 @@ def _search_tvmaze(query: str, extra_queries: Optional[List[str]] = None) -> Lis
                 "genre": genres,
                 "description": summary[:320] + ("..." if len(summary) > 320 else ""),
                 "source": "tvmaze",
+                "popularity_weight": show.get("weight") or 0,
             })
     return results
 
@@ -704,6 +706,34 @@ def compute_relevance_score(query: str, item: Dict) -> int:
             best_score = max(best_score, 920 - rank * 8)
         else:
             best_score = max(best_score, 880 - rank * 8)
+
+    # Popularity & Prominence Bonus (Prioritize world-famous titles and mainstream hits)
+    if best_score > 0:
+        pop_bonus = 0
+        imdb_rank = item.get("popularity_rank")
+        if imdb_rank is not None and isinstance(imdb_rank, (int, float)) and imdb_rank > 0:
+            if imdb_rank <= 2500:
+                pop_bonus = max(pop_bonus, 320)
+            elif imdb_rank <= 15000:
+                pop_bonus = max(pop_bonus, 240)
+            elif imdb_rank <= 60000:
+                pop_bonus = max(pop_bonus, 160)
+            elif imdb_rank <= 150000:
+                pop_bonus = max(pop_bonus, 80)
+
+        tv_weight = item.get("popularity_weight")
+        if tv_weight is not None and isinstance(tv_weight, (int, float)):
+            if tv_weight >= 85:
+                pop_bonus = max(pop_bonus, 280)
+            elif tv_weight >= 70:
+                pop_bonus = max(pop_bonus, 200)
+            elif tv_weight >= 50:
+                pop_bonus = max(pop_bonus, 100)
+
+        if item.get("is_saga"):
+            pop_bonus = max(pop_bonus, 260)
+
+        best_score += pop_bonus
 
     return best_score
 
@@ -869,6 +899,10 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
             if item.get("is_saga"):
                 existing["is_saga"] = True
                 existing["saga_rank"] = item.get("saga_rank", 1)
+            if not existing.get("popularity_rank") and item.get("popularity_rank"):
+                existing["popularity_rank"] = item["popularity_rank"]
+            if not existing.get("popularity_weight") and item.get("popularity_weight"):
+                existing["popularity_weight"] = item["popularity_weight"]
 
     # 4. Score every merged result by relevance against user query
     scored_results: List[Tuple[int, Dict]] = []

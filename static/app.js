@@ -191,6 +191,27 @@ function computeRelevanceScoreClient(query, item) {
     }
   }
 
+  // Popularity & Prominence Bonus (Prioritize famous movies & hit TV shows)
+  if (bestScore > 0) {
+    let popBonus = 0;
+    const sl = Number(item.sitelinks_count || 0);
+    if (sl >= 50) popBonus = Math.max(popBonus, 320);
+    else if (sl >= 25) popBonus = Math.max(popBonus, 220);
+    else if (sl >= 10) popBonus = Math.max(popBonus, 140);
+    else if (sl >= 4) popBonus = Math.max(popBonus, 60);
+
+    const w = Number(item.tvmaze_weight || 0);
+    if (w >= 85) popBonus = Math.max(popBonus, 280);
+    else if (w >= 70) popBonus = Math.max(popBonus, 190);
+    else if (w >= 50) popBonus = Math.max(popBonus, 100);
+
+    if (item.is_saga) {
+      popBonus = Math.max(popBonus, 260);
+    }
+
+    bestScore += popBonus;
+  }
+
   return bestScore;
 }
 
@@ -808,6 +829,7 @@ async function directMobileSearch4G(query, libraryItems) {
           poster: ((show.image || {}).medium || "").replace("http://", "https://"),
           genre: (show.genres || []).join(", ") || "Serie TV",
           description: (show.summary || "").replace(/<[^>]+>/g, "").slice(0, 240),
+          tvmaze_weight: show.weight || 0,
         });
       });
     }
@@ -818,11 +840,34 @@ async function directMobileSearch4G(query, libraryItems) {
     const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=it&uselang=it&format=json&origin=*&limit=12`;
     const wdRes = await fetch(wdUrl);
     const wdData = await wdRes.json();
+    const qids = [];
+    const matchedWd = [];
     (wdData.search || []).forEach((item) => {
       const desc = (item.description || "").toLowerCase();
       const isMovie = desc.includes("film") || desc.includes("pellicola") || desc.includes("lungometraggio") || desc.includes("cinematograf");
       const isSeries = desc.includes("serie") || desc.includes("telefilm") || desc.includes("fiction") || desc.includes("miniserie");
       if (!isMovie && !isSeries) return;
+      qids.push(item.id);
+      matchedWd.push({ item, isSeries, desc });
+    });
+
+    // Fast bulk query for global sitelinks count (Wikipedia articles count across all languages = worldwide fame / prominence!)
+    const sitelinksMap = {};
+    if (qids.length > 0) {
+      try {
+        const slUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qids.join("%7C")}&props=sitelinks&format=json&origin=*`;
+        const slRes = await fetch(slUrl);
+        const slData = await slRes.json();
+        const ents = slData.entities || {};
+        for (const qid of qids) {
+          if (ents[qid] && ents[qid].sitelinks) {
+            sitelinksMap[qid] = Object.keys(ents[qid].sitelinks).length;
+          }
+        }
+      } catch (e) { }
+    }
+
+    matchedWd.forEach(({ item, isSeries, desc }) => {
       const yearMatch = desc.match(/\b(19\d\d|20\d\d)\b/);
       results.push({
         external_id: `wd_${item.id}`,
@@ -833,19 +878,20 @@ async function directMobileSearch4G(query, libraryItems) {
         poster: "",
         genre: isSeries ? "Serie TV" : "Film",
         description: item.description || "",
+        sitelinks_count: sitelinksMap[item.id] || 0,
       });
     });
   } catch (e) { }
 
-  // 4. Score every result using smart relevance scoring
+  // 4. Score every result using smart relevance & popularity scoring
   results.forEach((r) => {
     r.relevance_score = computeRelevanceScoreClient(query, r);
   });
 
-  // Filter items with score >= 150 (eliminates false positives like 'Amber' when searching 'the gambler')
-  const relevantResults = results.filter((r) => (r.relevance_score || 0) >= 150);
+  // Filter items with score >= 180 (eliminates false positives and obscure noise)
+  const relevantResults = results.filter((r) => (r.relevance_score || 0) >= 180);
 
-  // Sort descending by relevance score (exact/near-exact matches first!)
+  // Sort descending by relevance score (exact matches and famous titles first!)
   relevantResults.sort((a, b) => b.relevance_score - a.relevance_score);
 
   const libMap = {};
@@ -3218,31 +3264,35 @@ function setupNavigationAndEvents() {
     });
   }
 
-  document.getElementById("btn-sync-now").addEventListener("click", async () => {
-    const newCode = document.getElementById("input-sync-code").value.trim().toLowerCase();
-    if (newCode) {
-      state.syncCode = newCode;
-      localStorage.setItem("nextontv_sync_code", state.syncCode);
-    }
-    const msgEl = document.getElementById("sync-status-msg");
-    msgEl.textContent = "⏳ Sincronizzazione Cloud PC ↔ Telefono in corso...";
-
-    if (!state.isCloudMode) {
-      const res = await apiPost("/api/sync", { sync_code: state.syncCode });
-      msgEl.textContent = `✅ Sincronizzato col Cloud! (${res.library_count || 0} titoli in lista • Codice: ${res.sync_code})`;
-    } else {
-      const snap = await pullCloudSnapshotClient(state.syncCode);
-      if (snap) {
-        msgEl.textContent = `✅ Dati scaricati dal Cloud in 4G/5G! (${(snap.library || []).length} titoli in lista)`;
-      } else {
-        await pushCloudSnapshotClient(state.syncCode, getLocalSnapshot());
-        msgEl.textContent = `✅ Dati inviati al Cloud in 4G/5G! (Codice: ${state.syncCode})`;
+  const btnSyncNow = document.getElementById("btn-sync-now");
+  if (btnSyncNow) {
+    btnSyncNow.addEventListener("click", async () => {
+      const inputEl = document.getElementById("input-sync-code");
+      const newCode = inputEl ? inputEl.value.trim().toLowerCase() : "";
+      if (newCode) {
+        state.syncCode = newCode;
+        localStorage.setItem("nextontv_sync_code", state.syncCode);
       }
-    }
-    await loadLibrary();
-    await loadMatches(false);
-    showToast("☁️ Sincronizzazione PC ↔ Telefono completata!");
-  });
+      const msgEl = document.getElementById("sync-status-msg");
+      if (msgEl) msgEl.textContent = "⏳ Sincronizzazione Cloud PC ↔ Telefono in corso...";
+
+      if (!state.isCloudMode) {
+        const res = await apiPost("/api/sync", { sync_code: state.syncCode });
+        if (msgEl) msgEl.textContent = `✅ Sincronizzato col Cloud! (${res.library_count || 0} titoli in lista • Codice: ${res.sync_code})`;
+      } else {
+        const snap = await pullCloudSnapshotClient(state.syncCode);
+        if (snap) {
+          if (msgEl) msgEl.textContent = `✅ Dati scaricati dal Cloud in 4G/5G! (${(snap.library || []).length} titoli in lista)`;
+        } else {
+          await pushCloudSnapshotClient(state.syncCode, getLocalSnapshot());
+          if (msgEl) msgEl.textContent = `✅ Dati inviati al Cloud in 4G/5G! (Codice: ${state.syncCode})`;
+        }
+      }
+      await loadLibrary();
+      await loadMatches(false);
+      showToast("☁️ Sincronizzazione PC ↔ Telefono completata!");
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
