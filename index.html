@@ -172,25 +172,6 @@
             <input type="search" id="lib-filter-input" class="search-inline"
               placeholder="Filtra tra i titoli già salvati..." />
           </div>
-
-          <!-- Backup & Restore Actions Bar -->
-          <div class="backup-actions-bar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-subtle);">
-            <div style="font-size:0.82rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
-              <span>🛡️ Sicurezza & Backup Liste:</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              <button type="button" class="btn-secondary btn-sm" id="btn-export-backup" title="Scarica una copia di sicurezza di tutti i tuoi programmi in formato JSON">
-                💾 Scarica Backup
-              </button>
-              <button type="button" class="btn-secondary btn-sm" id="btn-import-backup-trigger" title="Carica e ripristina un file di backup precedente salvato sul tuo dispositivo">
-                📂 Ripristina da File
-              </button>
-              <button type="button" class="btn-secondary btn-sm" id="btn-restore-github" title="Ricarica all'istante la copia ufficiale dei tuoi programmi salvata su GitHub">
-                🔄 Ricarica da GitHub
-              </button>
-              <input type="file" id="input-import-backup" accept=".json" style="display:none;" />
-            </div>
-          </div>
         </div>
 
         <div id="library-list-container" class="library-grid"></div>
@@ -387,10 +368,31 @@
   <div class="modal-backdrop hidden" id="modal-access-log">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3>🛡️ Registro Accessi & Dispositivi</h3>
+        <h3>🛡️ Sicurezza, Accessi & Backup</h3>
         <button class="close-btn" id="close-modal-access-log">✕</button>
       </div>
       <div class="modal-body">
+        <!-- Discreet Backup & Restore Section -->
+        <div
+          style="background:var(--bg-main);border:1px solid var(--border-subtle);border-radius:10px;padding:12px;margin-bottom:12px;">
+          <strong style="font-size:0.86rem;color:#60a5fa;">💾 Backup Liste (Automatico ogni notte alle 00:01)</strong>
+          <p style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;margin-bottom:10px;">
+            I programmi salvati da telefono vengono sincronizzati automaticamente su GitHub ogni notte. Da qui puoi anche salvare o ripristinare una copia a mano in qualsiasi momento.
+          </p>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="btn-secondary btn-sm" id="btn-export-backup" title="Scarica una copia di sicurezza di tutti i tuoi programmi in formato JSON">
+              💾 Scarica Backup JSON
+            </button>
+            <button type="button" class="btn-secondary btn-sm" id="btn-import-backup-trigger" title="Carica e ripristina un file di backup salvato in precedenza">
+              📂 Ripristina da File
+            </button>
+            <button type="button" class="btn-secondary btn-sm" id="btn-restore-github" title="Ricarica all'istante la copia ufficiale dei tuoi programmi salvata su GitHub">
+              🔄 Ricarica da GitHub
+            </button>
+            <input type="file" id="input-import-backup" accept=".json" style="display:none;" />
+          </div>
+        </div>
+
         <div
           style="background:var(--bg-main);border:1px solid var(--border-subtle);border-radius:10px;padding:12px;margin-bottom:12px;">
           <div class="row-between" style="align-items:center;">

@@ -32,7 +32,7 @@ const state = {
   reminders: [],
   mobileUrl: window.location.origin,
   publicUrl: "",
-  syncCode: localStorage.getItem("nextontv_sync_code") || "",
+  syncCode: localStorage.getItem("nextontv_sync_code") || "shynicy_nextontv",
   isCloudMode: false,
 };
 
@@ -642,30 +642,51 @@ async function handleClientCloudGet(url) {
     const onlyUnwatched = parsed.searchParams.get("only_unwatched") === "1";
 
     const allEvents = await fetchStaticEpgEvents();
-    const libItems = snap.library || [];
+    const libItems = (snap.library && snap.library.length > 0) ? snap.library : state.libraryItems || [];
 
-    // Map library items by normalized titles
+    // Pre-build lightning-fast normalized search index for library items & aliases (O(1) hash lookups)
     const libByKey = {};
+    const prefixEntries = [];
     libItems.forEach((it) => {
       const normIt = normalizeTitleClient(it.title_it);
       const normOrig = normalizeTitleClient(it.title_original || "");
-      if (normIt) libByKey[`${it.media_type}_${normIt}`] = it;
-      if (normOrig) libByKey[`${it.media_type}_${normOrig}`] = it;
+      if (normIt) {
+        libByKey[`${it.media_type}_${normIt}`] = it;
+        libByKey[normIt] = it;
+        if (normIt.length >= 4) prefixEntries.push({ key: normIt, item: it });
+      }
+      if (normOrig) {
+        libByKey[`${it.media_type}_${normOrig}`] = it;
+        libByKey[normOrig] = it;
+        if (normOrig.length >= 4) prefixEntries.push({ key: normOrig, item: it });
+      }
+      if (it.aliases && Array.isArray(it.aliases)) {
+        it.aliases.forEach((al) => {
+          const normAl = normalizeTitleClient(al);
+          if (normAl) {
+            libByKey[normAl] = it;
+            if (normAl.length >= 4) prefixEntries.push({ key: normAl, item: it });
+          }
+        });
+      }
     });
 
     const isMatch = (ev) => {
-      const kMovie = `movie_${ev.norm_title}`;
-      const kSeries = `series_${ev.norm_title}`;
-      let matchedItem = libByKey[kMovie] || libByKey[kSeries];
-      if (!matchedItem) {
-        for (const it of libItems) {
-          if (fuzzyMatchTitleClient(it.title_it, ev.title) || fuzzyMatchTitleClient(it.title_original, ev.title)) {
-            matchedItem = it;
+      const evNorm = ev.norm_title || normalizeTitleClient(ev.title || "");
+      if (!evNorm) return null;
+      const kMovie = `movie_${evNorm}`;
+      const kSeries = `series_${evNorm}`;
+      let matched = libByKey[kMovie] || libByKey[kSeries] || libByKey[evNorm];
+      if (!matched) {
+        for (let i = 0; i < prefixEntries.length; i++) {
+          const p = prefixEntries[i];
+          if (evNorm.startsWith(p.key) || p.key.startsWith(evNorm)) {
+            matched = p.item;
             break;
           }
         }
       }
-      return matchedItem || null;
+      return matched || null;
     };
 
     let counts = { all: 0, wishlist: 0, watched_movies: 0, watched_series: 0 };
@@ -676,7 +697,7 @@ async function handleClientCloudGet(url) {
       if (!lib) return;
 
       const st = lib.status || "wishlist";
-      const mtype = lib.media_type || ev.media_type;
+      const mtype = lib.media_type || ev.media_type || "movie";
       const isMovie = mtype === "movie";
 
       // Calculate watched episode status
@@ -728,12 +749,18 @@ async function handleClientCloudGet(url) {
       });
     });
 
+    let statusFile = null;
+    try {
+      const sRes = await fetch(resolveAssetUrl("data/status.json"), { cache: "no-cache" });
+      if (sRes.ok) statusFile = await sRes.json();
+    } catch (e) { }
+
     return {
-      start_date: (statusDataCached && statusDataCached.start_date) || getCurrentItalianDateIso(),
-      fetched_at: "GitHub Pages (H24)",
-      days: state.days || [],
+      start_date: (statusFile && statusFile.start_date) || state.startDate || getCurrentItalianDateIso(),
+      fetched_at: (statusFile && statusFile.fetched_at) ? `${statusFile.fetched_at} (GitHub Actions 00:01)` : "GitHub Pages (H24)",
+      days: (statusFile && statusFile.days) || state.days || [],
       total_epg_events: allEvents.length || 10003,
-      channels_polled: 53,
+      channels_polled: (statusFile && statusFile.channels_count) || 53,
       matches: matchedEvents,
       counts,
     };
@@ -1256,12 +1283,8 @@ async function initApp() {
   state.reminders = remRes.reminders || [];
   state.mobileUrl = stRes.mobile_url || window.location.origin;
   state.publicUrl = stRes.public_url || "";
-  if (stRes.sync_code && !state.syncCode) {
-    state.syncCode = stRes.sync_code;
-    localStorage.setItem("nextontv_sync_code", state.syncCode);
-  }
-  if (!state.syncCode) {
-    state.syncCode = "notv_" + Math.random().toString(36).substring(2, 10);
+  if (!state.syncCode || state.syncCode.startsWith("notv_") || state.syncCode.startsWith("user_")) {
+    state.syncCode = (stRes && stRes.sync_code) || "shynicy_nextontv";
     localStorage.setItem("nextontv_sync_code", state.syncCode);
   }
 
@@ -1664,7 +1687,7 @@ function attachQuickMultiSelectEvents(containerEl, cardSelector, keyAttr, select
         startY = touch.clientY;
         clearTimeout(pressTimer);
         pressTimer = setTimeout(() => {
-          state.ignoreNextClickUntil = Date.now() + 800;
+          state.ignoreNextClickUntil = Date.now() + 250;
           if (navigator.vibrate) {
             try {
               navigator.vibrate(35);
@@ -2856,15 +2879,15 @@ function detectDeviceName() {
   return { label: `${os} (${browser})`, icon };
 }
 
-function logCurrentAccess() {
+async function logCurrentAccess() {
   try {
     const now = Date.now();
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-    const raw = localStorage.getItem("nextontv_access_logs");
-    let logs = raw ? JSON.parse(raw) : [];
+    const snap = getLocalSnapshot();
+    snap.access_logs = snap.access_logs || [];
 
     // Auto-purge logs older than 7 days
-    logs = logs.filter((entry) => now - (entry.timestamp || 0) < SEVEN_DAYS_MS);
+    snap.access_logs = snap.access_logs.filter((entry) => now - (entry.timestamp || 0) < SEVEN_DAYS_MS);
 
     const devInfo = detectDeviceName();
     const currentHost = window.location.hostname || "locale";
@@ -2875,11 +2898,11 @@ function logCurrentAccess() {
         : "Connessione Dati 4G/5G";
 
     // Deduplicate rapid reloads from the same device within 10 minutes
-    const last = logs[0];
-    if (last && last.device === devInfo.label && now - last.timestamp < 10 * 60 * 1000) {
+    const last = snap.access_logs[0];
+    if (last && last.device === devInfo.label && now - (last.timestamp || 0) < 10 * 60 * 1000) {
       last.last_seen = now;
     } else {
-      logs.unshift({
+      snap.access_logs.unshift({
         id: `${now}_${Math.random().toString(36).slice(2, 6)}`,
         timestamp: now,
         last_seen: now,
@@ -2890,17 +2913,49 @@ function logCurrentAccess() {
       });
     }
 
-    // Keep max 50 entries
-    if (logs.length > 50) logs = logs.slice(0, 50);
-    localStorage.setItem("nextontv_access_logs", JSON.stringify(logs));
+    if (snap.access_logs.length > 50) snap.access_logs = snap.access_logs.slice(0, 50);
+
+    saveLocalSnapshot(snap);
+    localStorage.setItem("nextontv_access_logs", JSON.stringify(snap.access_logs));
+
+    // Share access logs in background with Cloud so both PC and phone see each other
+    if (state.syncCode) {
+      pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+    }
   } catch (e) { }
 }
 
-function openAccessLogModal() {
+async function openAccessLogModal() {
   const modal = document.getElementById("modal-access-log");
   if (!modal) return;
   modal.classList.remove("hidden");
   renderAccessLogs();
+
+  // Pull latest cloud snapshot to fetch other devices' accesses!
+  if (state.syncCode) {
+    try {
+      const cloudSnap = await pullCloudSnapshotClient(state.syncCode);
+      if (cloudSnap && Array.isArray(cloudSnap.access_logs) && cloudSnap.access_logs.length > 0) {
+        const snap = getLocalSnapshot();
+        const existing = new Set((snap.access_logs || []).map((x) => x.id));
+        let changed = false;
+        cloudSnap.access_logs.forEach((entry) => {
+          if (!existing.has(entry.id)) {
+            snap.access_logs = snap.access_logs || [];
+            snap.access_logs.push(entry);
+            existing.add(entry.id);
+            changed = true;
+          }
+        });
+        if (changed) {
+          snap.access_logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+          saveLocalSnapshot(snap);
+          localStorage.setItem("nextontv_access_logs", JSON.stringify(snap.access_logs));
+          renderAccessLogs();
+        }
+      }
+    } catch (e) { }
+  }
 }
 
 function renderAccessLogs() {
@@ -2909,11 +2964,17 @@ function renderAccessLogs() {
 
   const now = Date.now();
   const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-  const raw = localStorage.getItem("nextontv_access_logs");
-  let logs = raw ? JSON.parse(raw) : [];
+  const snap = getLocalSnapshot();
+  let logs = snap.access_logs || [];
+  if (logs.length === 0) {
+    const raw = localStorage.getItem("nextontv_access_logs");
+    if (raw) logs = JSON.parse(raw);
+  }
 
   // Filter out expired (> 7 days)
   logs = logs.filter((entry) => now - (entry.timestamp || 0) < SEVEN_DAYS_MS);
+  snap.access_logs = logs;
+  saveLocalSnapshot(snap);
   localStorage.setItem("nextontv_access_logs", JSON.stringify(logs));
 
   if (logs.length === 0) {
@@ -2962,7 +3023,7 @@ function renderAccessLogs() {
             </div>
             <h4 class="tv-title" style="font-size:0.88rem;margin:2px 0;">${escapeHtml(l.device || "Dispositivo")}</h4>
             <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--text-muted);margin-top:4px;">
-              <span>Registro locale protetto</span>
+              <span>Dispositivo sincronizzato (Cloud PC + Telefono)</span>
               <span style="color:#fcd34d;">⏳ ${getDaysLeft(l.timestamp)}</span>
             </div>
           </div>
@@ -2972,11 +3033,17 @@ function renderAccessLogs() {
     .join("");
 }
 
-function clearAllAccessLogs() {
-  if (confirm("Vuoi cancellare tutti gli accessi registrati finora?")) {
+async function clearAllAccessLogs() {
+  if (confirm("Vuoi cancellare tutto lo storico degli accessi da tutti i dispositivi?")) {
+    const snap = getLocalSnapshot();
+    snap.access_logs = [];
+    saveLocalSnapshot(snap);
     localStorage.removeItem("nextontv_access_logs");
+    if (state.syncCode) {
+      await pushCloudSnapshotClient(state.syncCode, snap);
+    }
     renderAccessLogs();
-    showToast("🗑️ Registro accessi svuotato con successo!");
+    showToast("🗑️ Registro accessi svuotato su tutti i dispositivi!");
   }
 }
 function requestNotificationPermissionAndSchedule(rem) {

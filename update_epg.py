@@ -31,6 +31,62 @@ def get_italian_today() -> datetime.date:
         return datetime.datetime.now(tz_fallback).date()
 
 
+
+def sync_cloud_backup_to_github(data_dir: str, sync_code: str = "shynicy_nextontv"):
+    """
+    Recupera l'ultimo snapshot della libreria dal cloud (ntfy.sh + bytebin) salvato da cellulare
+    e aggiorna automaticamente data/library.json e data/library_backup.json prima del commit GitHub.
+    """
+    import urllib.request
+    import urllib.error
+
+    topic = f"nextontv_sync_{sync_code.strip().lower()}"
+    ntfy_url = f"https://ntfy.sh/{topic}/json?poll=1&since=all"
+    print(f"[Cloud Backup] Controllo salvataggi da cellulare su topic cloud: {topic}...")
+
+    try:
+        req = urllib.request.Request(ntfy_url, headers={"User-Agent": "NextOnTV-Bot/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            raw_text = resp.read().decode("utf-8")
+
+        bytebin_key = None
+        for line in reversed(raw_text.strip().split("\n")):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                msg = json.loads(line)
+                if msg.get("event") == "message" and msg.get("message"):
+                    m_text = msg["message"]
+                    if m_text.startswith("bytebin:"):
+                        bytebin_key = m_text.split(":", 1)[1].strip()
+                        break
+            except Exception:
+                pass
+
+        if not bytebin_key:
+            print("[Cloud Backup] Nessun nuovo snapshot remoto su topic (i file locali restano validi).")
+            return
+
+        bytebin_url = f"https://bytebin.lucko.me/{bytebin_key}"
+        print(f"[Cloud Backup] Trovato snapshot recente ({bytebin_key}), download da bytebin...")
+        with urllib.request.urlopen(urllib.request.Request(bytebin_url, headers={"User-Agent": "NextOnTV-Bot/1.0"}), timeout=10) as b_resp:
+            snap_data = json.loads(b_resp.read().decode("utf-8"))
+
+        cloud_lib = snap_data.get("library")
+        if isinstance(cloud_lib, list) and len(cloud_lib) > 0:
+            lib_path = os.path.join(data_dir, "library.json")
+            backup_path = os.path.join(data_dir, "library_backup.json")
+
+            with open(lib_path, "w", encoding="utf-8") as f:
+                json.dump(cloud_lib, f, ensure_ascii=False, indent=2)
+            with open(backup_path, "w", encoding="utf-8") as f:
+                json.dump(cloud_lib, f, ensure_ascii=False, indent=2)
+
+            print(f"[Cloud Backup] ✅ Backup automatico da telefono completato: {len(cloud_lib)} titoli aggiornati in library.json.")
+    except Exception as e:
+        print(f"[Cloud Backup] Controllo completato (nessun errore bloccante): {e}")
+
 def main():
     print("=" * 60)
     print("NextOnTV — Generatore Palinsesti 7 Giorni DTT (GitHub Actions)")
