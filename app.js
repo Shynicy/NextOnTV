@@ -114,10 +114,34 @@ const CLIENT_SAGAS = [
   { it: "L'ispettore Barnaby", orig: "Midsomer Murders", type: "series", year: "1997" , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/0/01/L%27ispettore_Barnaby.png/500px-L%27ispettore_Barnaby.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Supernatural", orig: "Supernatural", type: "series", year: "2005", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/476/1191593.jpg" },
   { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4763.jpg" },
-  { it: "Lupin e le profezie di Nostradamus", orig: "Lupin III - Kutabare! Nostradamus", type: "movie", year: "1995", aliases: ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/a1/Le_profezie_di_Nostradamus.PNG/500px-Le_profezie_di_Nostradamus.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "Lupin III - Il castello di Cagliostro", orig: "The Castle of Cagliostro", type: "movie", year: "1979", aliases: ["il castello di cagliostro", "castello di cagliostro", "cagliostro"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/9/90/Il_castello_di_Cagliostro.png/500px-Il_castello_di_Cagliostro.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "Lupin III - La pietra della saggezza", orig: "The Mystery of Mamo", type: "movie", year: "1978", aliases: ["la pietra della saggezza", "pietra della saggezza"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/c/cf/Lupin_III_-_La_pietra_della_saggezza.jpg/500px-Lupin_III_-_La_pietra_della_saggezza.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Lupin", orig: "Lupin", type: "series", year: "2021", aliases: ["lupin 2021", "lupin serie tv", "lupin netflix"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/646/1617244.jpg" },
+  { it: "Lupin III", orig: "Lupin III", type: "series", year: "1971", aliases: ["lupin 3", "le avventure di lupin iii", "le avventure di lupin 3", "lupin prima serie"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/38/96191.jpg" },
+  { it: "Le nuove avventure di Lupin III", orig: "Shin Rupan Sansei", type: "series", year: "1977", aliases: ["lupin giacca rossa", "lupin seconda serie"], poster: "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin, l'incorreggibile Lupin", orig: "Rupan Sansei: Part III", type: "series", year: "1984", aliases: ["lupin giacca rosa", "lupin terza serie"], poster: "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin e le profezie di Nostradamus", orig: "Lupin III - Kutabare! Nostradamus", type: "movie", year: "1995", aliases: ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus", "farewell to nostradamus"], poster: "https://m.media-amazon.com/images/M/MV5BMDI1MDU2MjQtODEwNi00MTEwLTkwOTUtYWZjZWNkYWJlY2ZmXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - Il castello di Cagliostro", orig: "The Castle of Cagliostro", type: "movie", year: "1979", aliases: ["il castello di cagliostro", "castello di cagliostro", "cagliostro", "lupin cagliostro"], poster: "https://m.media-amazon.com/images/M/MV5BYjQwZWNkMTYtYTU2Ny00YzgyLTljYTMtNjc0MjRkNWY5NDM4XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - La pietra della saggezza", orig: "The Mystery of Mamo", type: "movie", year: "1978", aliases: ["la pietra della saggezza", "pietra della saggezza", "mystery of mamo"], poster: "https://m.media-amazon.com/images/M/MV5BMTkzM2E4YjUtYmQ4Yi00NWZmLThiYmYtZjhhNzk3OGRhMjBlXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - La leggenda dell'oro di Babilonia", orig: "Legend of the Gold of Babylon", type: "movie", year: "1985", aliases: ["oro di babilonia", "babilonia", "la leggenda dell oro di babilonia"], poster: "https://m.media-amazon.com/images/M/MV5BYTQ4YmVjNTctYTE2MS00NTUyLWE0MjMtOTFkMDQ1NGE2OTU4XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - La cospirazione dei Fuma", orig: "The Fuma Conspiracy", type: "movie", year: "1987", aliases: ["cospirazione dei fuma", "fuma"], poster: "https://m.media-amazon.com/images/M/MV5BYTAwZWRmZjktMGU4MC00Zjk5LWI4YWUtMjE4MDdmMjBhYThkXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - Trappola mortale", orig: "Lupin III: Dead or Alive", type: "movie", year: "1996", aliases: ["trappola mortale", "dead or alive"], poster: "https://m.media-amazon.com/images/M/MV5BMzRlZDRkMzEtODgzNi00ZGQ4LWIwMDgtMzY0YWE5NzU2MTA2XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - The First", orig: "Lupin III: The First", type: "movie", year: "2019", aliases: ["the first", "lupin the first"], poster: "https://m.media-amazon.com/images/M/MV5BM2UwMjlmZWEtZjBiMi00ZmJmLTg1MDAtOWQ4NjFjMTY5MzhkXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin the Third - La donna chiamata Fujiko Mine", orig: "The Woman Called Fujiko Mine", type: "series", year: "2012", aliases: ["la donna chiamata fujiko mine", "fujiko mine"], poster: "https://m.media-amazon.com/images/M/MV5BYmY2ODI1YTYtZDQ4Zi00NDU0LWFkMzktOGEyMzJjYzU0OTc0XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III vs Detective Conan", orig: "Lupin the 3rd vs Detective Conan: The Movie", type: "movie", year: "2013", aliases: ["lupin vs detective conan", "lupin conan", "lupin terzo vs detective conan"], poster: "https://m.media-amazon.com/images/M/MV5BNDRlNmFjMzYtMDYzZi00NDI4LWE1MDItZGJmNmEwZTRhOWFhXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - Green vs Red", orig: "Lupin III: Green vs. Red", type: "movie", year: "2008", aliases: ["green vs red", "lupin green vs red"], poster: "https://m.media-amazon.com/images/M/MV5BZDk5NDRlNDMtNGNiNy00ZjZkLWI2NGEtMjM5ZDliNGJjNjBmXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin III - Walther P38", orig: "Lupin III: Island of Assassins", type: "movie", year: "1997", aliases: ["walther p38", "island of assassins"], poster: "https://m.media-amazon.com/images/M/MV5BODg3ZjY2MTItODhlNy00YzkzLTk5ODgtMGI3MjI2MWI0ZmYyXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Lupin Zero", orig: "Lupin Zero", type: "series", year: "2022", aliases: ["lupin zero"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/435/1088890.jpg" },
 ];
+
+function getPosterQualityRank(url) {
+  if (!url || typeof url !== "string") return 0;
+  const u = url.toLowerCase();
+  if (u.includes(".svg") || u.includes("logo_") || u.includes("flag_") || u.includes("icon_") || u.includes("symbol")) return 1;
+  if (u.includes("screenshot")) return 2;
+  if (u.includes("thumb.wikimedia.org") || u.includes("commons.wikimedia.org")) return 3;
+  if (u.includes("static.tvmaze.com")) return 4;
+  if (u.includes("m.media-amazon.com") || u.includes("imdb")) return 5;
+  return 3;
+}
 
 const ROMAN_NUMERALS_MAP = {
   i: "1", ii: "2", iii: "3", iv: "4", v: "5",
@@ -653,7 +677,7 @@ async function handleClientCloudGet(url) {
     return {
       ok: true,
       start_date: (statusFile && statusFile.start_date) || snap.start_date || getCurrentItalianDateIso(),
-      fetched_at: (statusFile && statusFile.fetched_at) ? `${statusFile.fetched_at} (GitHub Actions 00:01)` : "GitHub Pages H24",
+      fetched_at: (statusFile && statusFile.fetched_at) ? statusFile.fetched_at : "Aggiornato",
       total_epg_events: (statusFile && statusFile.total_epg_events) || 10003,
       channels_count: (statusFile && statusFile.channels_count) || 53,
       days: (statusFile && statusFile.days) || snap.days || [],
@@ -834,7 +858,7 @@ async function handleClientCloudGet(url) {
 
     return {
       start_date: (statusFile && statusFile.start_date) || state.startDate || getCurrentItalianDateIso(),
-      fetched_at: (statusFile && statusFile.fetched_at) ? `${statusFile.fetched_at} (GitHub Actions 00:01)` : "GitHub Pages (H24)",
+      fetched_at: (statusFile && statusFile.fetched_at) ? statusFile.fetched_at : "GitHub Pages (H24)",
       days: (statusFile && statusFile.days) || state.days || [],
       total_epg_events: allEvents.length || 10003,
       channels_polled: (statusFile && statusFile.channels_count) || 53,
@@ -961,7 +985,7 @@ async function directMobileSearch4G(query, libraryItems) {
     const mazeRes = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`);
     const mazeData = await mazeRes.json();
     if (Array.isArray(mazeData)) {
-      mazeData.slice(0, 10).forEach((row) => {
+      mazeData.forEach((row) => {
         const show = row.show || {};
         results.push({
           external_id: `tvmaze_${show.id}`,
@@ -979,22 +1003,44 @@ async function directMobileSearch4G(query, libraryItems) {
     }
   } catch (e) { }
 
-  // 3. Query Italian Wikipedia Full-Text Search (finds phrases and titles in ANY position: beginning, middle, or end!)
+  // 3. Query Italian Wikipedia Full-Text Search and Prefix Search (up to 50+ entries per query to fetch entire sagas/franchises)
   try {
-    const wikiSearchUrl = `https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=12&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`;
-    const wikiRes = await fetch(wikiSearchUrl);
-    const wikiData = await wikiRes.json();
-    const pages = (wikiData.query || {}).pages || {};
-    for (const pid of Object.keys(pages)) {
-      const page = pages[pid];
+    const wikiSearchUrl = `https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`;
+    const wikiPrefixUrl = `https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`;
+    
+    const [wikiRes1, wikiRes2] = await Promise.allSettled([
+      fetch(wikiSearchUrl).then(r => r.json()),
+      fetch(wikiPrefixUrl).then(r => r.json())
+    ]);
+
+    const pagesMap = {};
+    if (wikiRes1.status === "fulfilled" && wikiRes1.value?.query?.pages) {
+      Object.assign(pagesMap, wikiRes1.value.query.pages);
+    }
+    if (wikiRes2.status === "fulfilled" && wikiRes2.value?.query?.pages) {
+      Object.assign(pagesMap, wikiRes2.value.query.pages);
+    }
+
+    const ignoredPrefixes = ["episodi d", "personaggi d", "capitoli d", "colonn", "musich", "doppiatori", "pubblicazioni", "videogiochi d"];
+
+    for (const pid of Object.keys(pagesMap)) {
+      const page = pagesMap[pid];
       const rawTitle = page.title || "";
+      const tl = rawTitle.toLowerCase();
+
+      if (ignoredPrefixes.some(pre => tl.startsWith(pre))) continue;
+      if (tl.includes("(videogioco)") || tl.includes("(singolo)") || tl.includes("(album)") || tl.includes("(manga)")) continue;
+
       const extract = (page.extract || "").toLowerCase();
 
-      // Check if the article describes a film, anime, or series
-      const isMovie = extract.includes("film") || extract.includes("pellicola") || extract.includes("lungometraggio") || extract.includes("anime") || extract.includes("regia di") || extract.includes("diretto da");
-      const isSeries = extract.includes("serie televisiva") || extract.includes("serie tv") || extract.includes("telefilm") || extract.includes("fiction") || extract.includes("miniserie");
+      // Check if article describes a film, anime, or series
+      const isMovie = extract.includes("film") || extract.includes("pellicola") || extract.includes("lungometraggio") || extract.includes("anime") || extract.includes("regia di") || extract.includes("diretto da") || extract.includes("oav") || extract.includes("special") || tl.includes("(film");
+      const isSeries = extract.includes("serie televisiva") || extract.includes("serie tv") || extract.includes("serie anime") || extract.includes("telefilm") || extract.includes("fiction") || extract.includes("miniserie") || tl.includes("(serie");
 
       if (!isMovie && !isSeries) continue;
+
+      const isPerson = extract.includes("doppiatrice") || extract.includes("doppiatore") || extract.includes("attore") || extract.includes("attrice") || extract.includes("personaggio immaginario") || extract.includes("personaggio dei fumetti") || extract.includes("personaggio letterario");
+      if (isPerson && !(tl.includes("(film") || tl.includes("(serie"))) continue;
 
       // Clean Wikipedia disambiguation suffixes e.g. " (film)", " (serie televisiva)"
       const cleanTitle = rawTitle.replace(/\s*\((?:film|serie\s+televisiva|miniserie|telefilm|anime|movie|franchise).*?\)\s*$/i, "").trim();
@@ -1016,85 +1062,91 @@ async function directMobileSearch4G(query, libraryItems) {
 
   // 4. Query Wikidata Italian entities directly over HTTPS (CORS-enabled on 4G/5G!)
   try {
-    const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=it&uselang=it&format=json&origin=*&limit=12`;
-    const wdRes = await fetch(wdUrl);
-    const wdData = await wdRes.json();
-    const qids = [];
-    const matchedWd = [];
-    (wdData.search || []).forEach((item) => {
-      const desc = (item.description || "").toLowerCase();
-      const isMovie = desc.includes("film") || desc.includes("pellicola") || desc.includes("lungometraggio") || desc.includes("cinematograf");
-      const isSeries = desc.includes("serie") || desc.includes("telefilm") || desc.includes("fiction") || desc.includes("miniserie");
-      if (!isMovie && !isSeries) return;
-      qids.push(item.id);
-      matchedWd.push({ item, isSeries, desc });
-    });
-
-    // Fast bulk query for global sitelinks count and posters (Wikipedia articles + Wikimedia Commons images)
-    const sitelinksMap = {};
-    const wdPosterMap = {};
-    if (qids.length > 0) {
-      try {
-        const slUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qids.join("%7C")}&props=sitelinks|claims&format=json&origin=*`;
-        const slRes = await fetch(slUrl);
-        const slData = await slRes.json();
-        const ents = slData.entities || {};
-        const itWikiTitles = [];
-        const qidToItWiki = {};
-        for (const qid of qids) {
-          const ent = ents[qid];
-          if (!ent) continue;
-          if (ent.sitelinks) {
-            sitelinksMap[qid] = Object.keys(ent.sitelinks).length;
-            if (ent.sitelinks.itwiki && ent.sitelinks.itwiki.title) {
-              const itTitle = ent.sitelinks.itwiki.title;
-              itWikiTitles.push(itTitle);
-              qidToItWiki[qid] = itTitle;
-            }
-          }
-          const p18 = ent.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-          if (p18) {
-            wdPosterMap[qid] = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(p18)}?width=400`;
-          }
-        }
-        if (itWikiTitles.length > 0) {
-          try {
-            const piUrl = `https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(itWikiTitles.join("|"))}&prop=pageimages&pithumbsize=400&format=json&origin=*`;
-            const piRes = await fetch(piUrl);
-            const piData = await piRes.json();
-            const pages = piData.query?.pages || {};
-            const titleToThumb = {};
-            for (const pid of Object.keys(pages)) {
-              const p = pages[pid];
-              if (p.title && p.thumbnail?.source) {
-                titleToThumb[p.title] = p.thumbnail.source;
-              }
-            }
-            for (const qid of qids) {
-              const itT = qidToItWiki[qid];
-              if (itT && titleToThumb[itT]) {
-                wdPosterMap[qid] = titleToThumb[itT];
-              }
-            }
-          } catch (e) { }
-        }
-      } catch (e) { }
-    }
-
-    matchedWd.forEach(({ item, isSeries, desc }) => {
-      const yearMatch = desc.match(/\b(19\d\d|20\d\d)\b/);
-      results.push({
-        external_id: `wd_${item.id}`,
-        media_type: isSeries ? "series" : "movie",
-        title_it: item.label || query,
-        title_original: item.label || query,
-        year: yearMatch ? yearMatch[1] : "",
-        poster: wdPosterMap[item.id] || "",
-        genre: isSeries ? "Serie TV" : "Film",
-        description: item.description || "",
-        sitelinks_count: sitelinksMap[item.id] || 0,
+    const wdQueries = [query];
+    if (qNorm === "lupin") wdQueries.push("Lupin III");
+    
+    for (const wdQ of wdQueries) {
+      const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(wdQ)}&language=it&uselang=it&format=json&origin=*&limit=50`;
+      const wdRes = await fetch(wdUrl);
+      const wdData = await wdRes.json();
+      const qids = [];
+      const matchedWd = [];
+      (wdData.search || []).forEach((item) => {
+        const desc = (item.description || "").toLowerCase();
+        if (desc.includes("pianta") || desc.includes("specie") || desc.includes("comune") || desc.includes("proteina") || desc.includes("cognome") || desc.includes("azienda") || desc.includes("gene") || desc.includes("singolo") || desc.includes("album")) return;
+        const isMovie = desc.includes("film") || desc.includes("pellicola") || desc.includes("lungometraggio") || desc.includes("cinematograf") || desc.includes("anime");
+        const isSeries = desc.includes("serie") || desc.includes("telefilm") || desc.includes("fiction") || desc.includes("miniserie");
+        if (!isMovie && !isSeries) return;
+        qids.push(item.id);
+        matchedWd.push({ item, isSeries, desc });
       });
-    });
+
+      // Bulk query for sitelinks count and posters (Wikipedia articles + Wikimedia Commons images)
+      const sitelinksMap = {};
+      const wdPosterMap = {};
+      if (qids.length > 0) {
+        try {
+          const slUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qids.slice(0, 30).join("%7C")}&props=sitelinks|claims&format=json&origin=*`;
+          const slRes = await fetch(slUrl);
+          const slData = await slRes.json();
+          const ents = slData.entities || {};
+          const itWikiTitles = [];
+          const qidToItWiki = {};
+          for (const qid of qids) {
+            const ent = ents[qid];
+            if (!ent) continue;
+            if (ent.sitelinks) {
+              sitelinksMap[qid] = Object.keys(ent.sitelinks).length;
+              if (ent.sitelinks.itwiki && ent.sitelinks.itwiki.title) {
+                const itTitle = ent.sitelinks.itwiki.title;
+                itWikiTitles.push(itTitle);
+                qidToItWiki[qid] = itTitle;
+              }
+            }
+            const p18 = ent.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+            if (p18) {
+              wdPosterMap[qid] = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(p18)}?width=400`;
+            }
+          }
+          if (itWikiTitles.length > 0) {
+            try {
+              const piUrl = `https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(itWikiTitles.slice(0, 30).join("|"))}&prop=pageimages&pithumbsize=400&format=json&origin=*`;
+              const piRes = await fetch(piUrl);
+              const piData = await piRes.json();
+              const pages = piData.query?.pages || {};
+              const titleToThumb = {};
+              for (const pid of Object.keys(pages)) {
+                const p = pages[pid];
+                if (p.title && p.thumbnail?.source) {
+                  titleToThumb[p.title] = p.thumbnail.source;
+                }
+              }
+              for (const qid of qids) {
+                const itT = qidToItWiki[qid];
+                if (itT && titleToThumb[itT]) {
+                  wdPosterMap[qid] = titleToThumb[itT];
+                }
+              }
+            } catch (e) { }
+          }
+        } catch (e) { }
+      }
+
+      matchedWd.forEach(({ item, isSeries, desc }) => {
+        const yearMatch = desc.match(/\b(19\d\d|20\d\d)\b/);
+        results.push({
+          external_id: `wd_${item.id}`,
+          media_type: isSeries ? "series" : "movie",
+          title_it: item.label || query,
+          title_original: item.label || query,
+          year: yearMatch ? yearMatch[1] : "",
+          poster: wdPosterMap[item.id] || "",
+          genre: isSeries ? "Serie TV" : "Film",
+          description: item.description || "",
+          sitelinks_count: sitelinksMap[item.id] || 0,
+        });
+      });
+    }
   } catch (e) { }
 
   // 4. Score every result using smart relevance & popularity scoring
@@ -1118,7 +1170,18 @@ async function directMobileSearch4G(query, libraryItems) {
   relevantResults.forEach((r) => {
     const norm = normalizeTitleClient(r.title_it);
     const k = `${r.media_type}_${norm}`;
-    if (seen.has(k)) return;
+    if (seen.has(k)) {
+      const existing = dedup.find((x) => `${x.media_type}_${normalizeTitleClient(x.title_it)}` === k);
+      if (existing) {
+        if (getPosterQualityRank(r.poster) > getPosterQualityRank(existing.poster)) {
+          existing.poster = r.poster;
+        }
+        if (!existing.year && r.year) existing.year = r.year;
+        if (!existing.tvmaze_id && r.tvmaze_id) existing.tvmaze_id = r.tvmaze_id;
+        if (r.relevance_score > existing.relevance_score) existing.relevance_score = r.relevance_score;
+      }
+      return;
+    }
     seen.add(k);
     const ex = libMap[norm];
     r.in_library_status = ex ? ex.status : null;
@@ -1500,8 +1563,11 @@ async function loadMatches(forceRefresh = false) {
     renderDaysStrips();
   }
 
+  const cleanFetchedAt = (data.fetched_at || "ora")
+    .replace(/\s*\(GitHub Actions.*?\)/gi, "")
+    .replace(/\s*\(Ora Italiana\)/gi, "");
   document.getElementById("epg-header-status").textContent =
-    `${data.channels_polled || 52} canali del DTT attivi • ${data.total_epg_events || 0} programmi analizzati (7 giorni) • Agg. ${data.fetched_at || "ora"}`;
+    `${data.channels_polled || 52} canali del DTT attivi • ${data.total_epg_events || 0} programmi analizzati (7 giorni) • Palinsesti agg. ${cleanFetchedAt}`;
 
   const counts = data.counts || {};
   document.getElementById("count-all").textContent = counts.all || 0;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "nextontv-v24";
+const CACHE_NAME = "nextontv-v25";
 const STATIC_ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", (event) => {

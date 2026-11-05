@@ -87,10 +87,23 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
     {"it": "Rush Hour - Due mine vaganti", "orig": "Rush Hour", "type": "movie", "year": "1998"},
     {"it": "Colpo grosso al drago rosso - Rush Hour 2", "orig": "Rush Hour 2", "type": "movie", "year": "2001"},
     {"it": "Rush Hour 3 - Missione Parigi", "orig": "Rush Hour 3", "type": "movie", "year": "2007"},
-    # Lupin III Film Celebri
-    {"it": "Lupin e le profezie di Nostradamus", "orig": "Lupin III - Kutabare! Nostradamus", "type": "movie", "year": "1995", "aliases": ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus"]},
-    {"it": "Lupin III - Il castello di Cagliostro", "orig": "The Castle of Cagliostro", "type": "movie", "year": "1979", "aliases": ["il castello di cagliostro", "castello di cagliostro", "cagliostro"]},
-    {"it": "Lupin III - La pietra della saggezza", "orig": "The Mystery of Mamo", "type": "movie", "year": "1978", "aliases": ["la pietra della saggezza", "pietra della saggezza"]},
+    # Lupin III Film e Serie Celebri
+    {"it": "Lupin", "orig": "Lupin", "type": "series", "year": "2021", "aliases": ["lupin 2021", "lupin serie tv", "lupin netflix"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/646/1617244.jpg"},
+    {"it": "Lupin III", "orig": "Lupin III", "type": "series", "year": "1971", "aliases": ["lupin 3", "le avventure di lupin iii", "le avventure di lupin 3", "lupin prima serie"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/38/96191.jpg"},
+    {"it": "Le nuove avventure di Lupin III", "orig": "Shin Rupan Sansei", "type": "series", "year": "1977", "aliases": ["lupin giacca rossa", "lupin seconda serie"], "poster": "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin, l'incorreggibile Lupin", "orig": "Rupan Sansei: Part III", "type": "series", "year": "1984", "aliases": ["lupin giacca rosa", "lupin terza serie"], "poster": "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin e le profezie di Nostradamus", "orig": "Lupin III - Kutabare! Nostradamus", "type": "movie", "year": "1995", "aliases": ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus", "farewell to nostradamus"], "poster": "https://m.media-amazon.com/images/M/MV5BMDI1MDU2MjQtODEwNi00MTEwLTkwOTUtYWZjZWNkYWJlY2ZmXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Il castello di Cagliostro", "orig": "The Castle of Cagliostro", "type": "movie", "year": "1979", "aliases": ["il castello di cagliostro", "castello di cagliostro", "cagliostro", "lupin cagliostro"], "poster": "https://m.media-amazon.com/images/M/MV5BYjQwZWNkMTYtYTU2Ny00YzgyLTljYTMtNjc0MjRkNWY5NDM4XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - La pietra della saggezza", "orig": "The Mystery of Mamo", "type": "movie", "year": "1978", "aliases": ["la pietra della saggezza", "pietra della saggezza", "mystery of mamo"], "poster": "https://m.media-amazon.com/images/M/MV5BMTkzM2E4YjUtYmQ4Yi00NWZmLThiYmYtZjhhNzk3OGRhMjBlXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - La leggenda dell'oro di Babilonia", "orig": "Legend of the Gold of Babylon", "type": "movie", "year": "1985", "aliases": ["oro di babilonia", "babilonia", "la leggenda dell oro di babilonia"], "poster": "https://m.media-amazon.com/images/M/MV5BYTQ4YmVjNTctYTE2MS00NTUyLWE0MjMtOTFkMDQ1NGE2OTU4XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - La cospirazione dei Fuma", "orig": "The Fuma Conspiracy", "type": "movie", "year": "1987", "aliases": ["cospirazione dei fuma", "fuma"], "poster": "https://m.media-amazon.com/images/M/MV5BYTAwZWRmZjktMGU4MC00Zjk5LWI4YWUtMjE4MDdmMjBhYThkXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Trappola mortale", "orig": "Lupin III: Dead or Alive", "type": "movie", "year": "1996", "aliases": ["trappola mortale", "dead or alive"], "poster": "https://m.media-amazon.com/images/M/MV5BMzRlZDRkMzEtODgzNi00ZGQ4LWIwMDgtMzY0YWE5NzU2MTA2XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - The First", "orig": "Lupin III: The First", "type": "movie", "year": "2019", "aliases": ["the first", "lupin the first"], "poster": "https://m.media-amazon.com/images/M/MV5BM2UwMjlmZWEtZjBiMi00ZmJmLTg1MDAtOWQ4NjFjMTY5MzhkXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin the Third - La donna chiamata Fujiko Mine", "orig": "The Woman Called Fujiko Mine", "type": "series", "year": "2012", "aliases": ["la donna chiamata fujiko mine", "fujiko mine"], "poster": "https://m.media-amazon.com/images/M/MV5BYmY2ODI1YTYtZDQ4Zi00NDU0LWFkMzktOGEyMzJjYzU0OTc0XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III vs Detective Conan", "orig": "Lupin the 3rd vs Detective Conan: The Movie", "type": "movie", "year": "2013", "aliases": ["lupin vs detective conan", "lupin conan", "lupin terzo vs detective conan"], "poster": "https://m.media-amazon.com/images/M/MV5BNDRlNmFjMzYtMDYzZi00NDI4LWE1MDItZGJmNmEwZTRhOWFhXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Green vs Red", "orig": "Lupin III: Green vs. Red", "type": "movie", "year": "2008", "aliases": ["green vs red", "lupin green vs red"], "poster": "https://m.media-amazon.com/images/M/MV5BZDk5NDRlNDMtNGNiNy00ZjZkLWI2NGEtMjM5ZDliNGJjNjBmXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Walther P38", "orig": "Lupin III: Island of Assassins", "type": "movie", "year": "1997", "aliases": ["walther p38", "island of assassins"], "poster": "https://m.media-amazon.com/images/M/MV5BODg3ZjY2MTItODhlNy00YzkzLTk5ODgtMGI3MjI2MWI0ZmYyXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin Zero", "orig": "Lupin Zero", "type": "series", "year": "2022", "aliases": ["lupin zero"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/435/1088890.jpg"},
     # Serie TV Celebri
     {"it": "Una mamma per amica", "orig": "Gilmore Girls", "type": "series", "year": "2000"},
     {"it": "L'ispettore Barnaby", "orig": "Midsomer Murders", "type": "series", "year": "1997"},
@@ -670,30 +683,62 @@ def _search_tvmaze(query: str, extra_queries: Optional[List[str]] = None) -> Lis
     return results
 
 
+def _poster_quality_rank(url: str) -> int:
+    if not url:
+        return 0
+    u = url.lower()
+    if any(k in u for k in [".svg", "logo_", "flag_", "icon_", "symbol"]):
+        return 1
+    if "screenshot" in u:
+        return 2
+    if "thumb.wikimedia.org" in u or "commons.wikimedia.org" in u:
+        return 3
+    if "static.tvmaze.com" in u:
+        return 4
+    if "m.media-amazon.com" in u or "imdb" in u:
+        return 5
+    return 3
+
+
 def _search_wikipedia_generator(query: str) -> List[Dict]:
     """
     Query Italian Wikipedia Search Generator to find movie/series/anime titles
-    where keywords appear in ANY position (beginning, middle, or end).
+    where keywords appear in ANY position (beginning, middle, or end),
+    combining full-text search and prefixsearch to capture full franchises.
     """
-    url = (
-        f"https://it.wikipedia.org/w/api.php?action=query&generator=search"
-        f"&gsrsearch={urllib.parse.quote(query)}&gsrlimit=12"
-        f"&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
-    )
-    try:
-        data = _http_get_json(url, timeout=5)
-    except Exception:
-        return []
+    all_pages = {}
+    urls = [
+        f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(query)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json",
+        f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(query)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
+    ]
+    for url in urls:
+        try:
+            data = _http_get_json(url, timeout=5)
+            pages = (data.get("query") or {}).get("pages") or {}
+            all_pages.update(pages)
+        except Exception:
+            pass
 
-    pages = (data.get("query") or {}).get("pages") or {}
+    ignored_prefixes = ("episodi d", "personaggi d", "capitoli d", "colonn", "musich", "doppiatori", "pubblicazioni", "videogiochi d")
     results = []
-    for p in pages.values():
+    for p in all_pages.values():
         raw_t = p.get("title") or ""
+        tl = raw_t.lower()
+        if any(tl.startswith(pre) for pre in ignored_prefixes):
+            continue
+        if any(k in tl for k in ["(videogioco)", "(singolo)", "(album)", "(manga)"]):
+            continue
+
         extract = (p.get("extract") or "").lower()
-        is_movie = any(k in extract for k in ["film", "pellicola", "lungometraggio", "anime", "regia di", "diretto da"])
-        is_series = any(k in extract for k in ["serie televisiva", "serie tv", "telefilm", "fiction", "miniserie"])
+        is_movie = any(k in extract for k in ["film", "pellicola", "lungometraggio", "anime", "regia di", "diretto da", "oav", "special"]) or "(film" in tl
+        is_series = any(k in extract for k in ["serie televisiva", "serie tv", "serie anime", "telefilm", "fiction", "miniserie"]) or "(serie" in tl
         if not is_movie and not is_series:
             continue
+
+        is_person = any(k in extract for k in ["doppiatrice", "doppiatore", "attore", "attrice", "personaggio immaginario", "personaggio dei fumetti", "personaggio letterario"])
+        if is_person and not ("(film" in tl or "(serie" in tl):
+            continue
+
         clean_t = re.sub(
             r"\s*\((?:film|serie\s+televisiva|miniserie|telefilm|anime|movie|franchise).*?\)\s*$",
             "",
@@ -901,7 +946,7 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
                 "title_it": al["it"],
                 "title_original": al["orig"],
                 "year": al.get("year") or "",
-                "poster": "",
+                "poster": al.get("poster") or "",
                 "genre": "Serie TV" if al["type"] == "series" else "Film",
                 "description": f"{'Serie TV' if al['type'] == 'series' else 'Film'}{' (' + al['year'] + ')' if al.get('year') else ''} • Titolo orig.: {al['orig']}",
                 "source": "catalog_it",
@@ -1007,7 +1052,9 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
             # Prefer Italian title over English title
             if existing["title_it"] == existing["title_original"] and item["title_it"] != item["title_original"]:
                 existing["title_it"] = item["title_it"]
-            if not existing.get("poster") and item.get("poster"):
+            if _poster_quality_rank(item.get("poster", "")) > _poster_quality_rank(existing.get("poster", "")):
+                existing["poster"] = item["poster"]
+            elif not existing.get("poster") and item.get("poster"):
                 existing["poster"] = item["poster"]
             if not existing.get("tvmaze_id") and item.get("tvmaze_id"):
                 existing["tvmaze_id"] = item["tvmaze_id"]
@@ -1036,7 +1083,7 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
     # Sort descending by relevance score (exact/near-exact matches first!)
     scored_results.sort(key=lambda x: -x[0])
 
-    return [item for _, item in scored_results][:25]
+    return [item for _, item in scored_results][:100]
 
 
 def fetch_series_episodes(tvmaze_id: Optional[int] = None, title_original: str = "", title_it: str = "", epg_events: Optional[List[Dict]] = None) -> List[Dict]:
