@@ -1082,51 +1082,55 @@ async function handleClientCloudPost(url, body) {
   if (url === "/api/library/batch") {
     const action = body.action;
     const items = body.items || [];
-    for (const it of items) {
-      const title_it = (it.title_it || it.title || "").trim();
-      if (!title_it) continue;
-      const media_type = it.media_type || "movie";
-      const norm = normalizeTitleClient(title_it);
-      const idx = snap.library.findIndex((x) => x.media_type === media_type && normalizeTitleClient(x.title_it) === norm);
-      if (action === "delete") {
-        if (idx !== -1) {
-          snap.deleted_keys.push(`${media_type}_${norm}`);
-          snap.library.splice(idx, 1);
-        }
-      } else {
-        let targetItem;
-        if (idx !== -1) {
-          snap.library[idx].status = action;
-          targetItem = snap.library[idx];
+    if (action === "restore" && Array.isArray(items) && items.length > 0) {
+      snap.library = items;
+    } else {
+      for (const it of items) {
+        const title_it = (it.title_it || it.title || "").trim();
+        if (!title_it) continue;
+        const media_type = it.media_type || "movie";
+        const norm = normalizeTitleClient(title_it);
+        const idx = snap.library.findIndex((x) => x.media_type === media_type && normalizeTitleClient(x.title_it) === norm);
+        if (action === "delete") {
+          if (idx !== -1) {
+            snap.deleted_keys.push(`${media_type}_${norm}`);
+            snap.library.splice(idx, 1);
+          }
         } else {
-          targetItem = {
-            id: Date.now() + Math.floor(Math.random() * 10000),
-            external_id: it.external_id || `mobile_${media_type}_${norm.replace(/\s+/g, "_")}`,
-            tvmaze_id: it.tvmaze_id || null,
-            media_type,
-            status: action,
-            title_it,
-            title_original: it.title_original || title_it,
-            aliases: [norm, normalizeTitleClient(it.title_original || title_it)],
-            year: it.year || "",
-            poster: it.poster || "",
-            genre: it.genre || (media_type === "series" ? "Serie TV" : "Film"),
-            description: it.description || "",
-            watched_episodes: [],
-            watched_episodes_count: 0,
-            upcoming_airings: [],
-            created_at: new Date().toISOString(),
-          };
-          snap.library.unshift(targetItem);
-        }
-        if (media_type === "series") {
-          if (action === "watched") {
-            const eps = await fetchSeriesEpisodesClient4G(targetItem.title_it, targetItem.title_original, targetItem.tvmaze_id);
-            targetItem.watched_episodes = eps.map((ep) => `S${ep.season}E${ep.episode}`);
-            targetItem.watched_episodes_count = targetItem.watched_episodes.length;
-          } else if (action === "wishlist") {
-            targetItem.watched_episodes = [];
-            targetItem.watched_episodes_count = 0;
+          let targetItem;
+          if (idx !== -1) {
+            snap.library[idx].status = action;
+            targetItem = snap.library[idx];
+          } else {
+            targetItem = {
+              id: Date.now() + Math.floor(Math.random() * 10000),
+              external_id: it.external_id || `mobile_${media_type}_${norm.replace(/\s+/g, "_")}`,
+              tvmaze_id: it.tvmaze_id || null,
+              media_type,
+              status: action,
+              title_it,
+              title_original: it.title_original || title_it,
+              aliases: [norm, normalizeTitleClient(it.title_original || title_it)],
+              year: it.year || "",
+              poster: it.poster || "",
+              genre: it.genre || (media_type === "series" ? "Serie TV" : "Film"),
+              description: it.description || "",
+              watched_episodes: [],
+              watched_episodes_count: 0,
+              upcoming_airings: [],
+              created_at: new Date().toISOString(),
+            };
+            snap.library.unshift(targetItem);
+          }
+          if (media_type === "series") {
+            if (action === "watched") {
+              const eps = await fetchSeriesEpisodesClient4G(targetItem.title_it, targetItem.title_original, targetItem.tvmaze_id);
+              targetItem.watched_episodes = eps.map((ep) => `S${ep.season}E${ep.episode}`);
+              targetItem.watched_episodes_count = targetItem.watched_episodes.length;
+            } else if (action === "wishlist") {
+              targetItem.watched_episodes = [];
+              targetItem.watched_episodes_count = 0;
+            }
           }
         }
       }
@@ -3151,6 +3155,118 @@ function setupNavigationAndEvents() {
     libViewMode.addEventListener("change", (e) => {
       state.libViewMode = e.target.value || "cards";
       renderLibrary();
+    });
+  }
+
+  // Backup & Restore handlers
+  const btnExportBackup = document.getElementById("btn-export-backup");
+  if (btnExportBackup) {
+    btnExportBackup.addEventListener("click", () => {
+      const snap = getLocalSnapshot();
+      const lib = (snap.library && snap.library.length > 0) ? snap.library : state.libraryItems;
+      const backupObj = {
+        app: "NextOnTV",
+        version: "2.0",
+        created_at: new Date().toISOString(),
+        total_items: lib.length,
+        library: lib,
+      };
+      const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `NextOnTV_Backup_${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`💾 Backup salvato con successo! (${lib.length} titoli scaricati in NextOnTV_Backup_${dateStr}.json)`);
+    });
+  }
+
+  const btnImportTrigger = document.getElementById("btn-import-backup-trigger");
+  const fileInputBackup = document.getElementById("input-import-backup");
+  if (btnImportTrigger && fileInputBackup) {
+    btnImportTrigger.addEventListener("click", () => fileInputBackup.click());
+    fileInputBackup.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          let items = [];
+          if (Array.isArray(parsed)) items = parsed;
+          else if (parsed && Array.isArray(parsed.library)) items = parsed.library;
+          else if (parsed && Array.isArray(parsed.items)) items = parsed.items;
+
+          if (!items || items.length === 0) {
+            showToast("⚠️ Il file selezionato non contiene titoli validi.");
+            return;
+          }
+
+          const snap = getLocalSnapshot();
+          snap.library = items;
+          saveLocalSnapshot(snap);
+          state.libraryItems = items;
+
+          if (state.isCloudMode) {
+            await pushCloudSnapshotClient(state.syncCode, snap);
+          } else {
+            try {
+              await apiPost("/api/library/batch", { action: "restore", items });
+            } catch (err) { }
+          }
+
+          renderLibrary();
+          loadMatches(false);
+          showToast(`✅ Ripristinati con successo ${items.length} titoli dal backup!`);
+        } catch (err) {
+          showToast("❌ Errore nella lettura del file backup: " + err.message);
+        } finally {
+          fileInputBackup.value = "";
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  const btnRestoreGh = document.getElementById("btn-restore-github");
+  if (btnRestoreGh) {
+    btnRestoreGh.addEventListener("click", async () => {
+      btnRestoreGh.disabled = true;
+      btnRestoreGh.textContent = "⏳ Ricarica...";
+      try {
+        const res = await fetch(resolveAssetUrl("data/library.json"), { cache: "no-cache" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const defLib = await res.json();
+        if (!Array.isArray(defLib) || defLib.length === 0) {
+          throw new Error("File remoto vuoto o non valido");
+        }
+
+        const snap = getLocalSnapshot();
+        snap.library = defLib;
+        saveLocalSnapshot(snap);
+        state.libraryItems = defLib;
+
+        if (state.isCloudMode) {
+          await pushCloudSnapshotClient(state.syncCode, snap);
+        } else {
+          try {
+            await apiPost("/api/library/batch", { action: "restore", items: defLib });
+          } catch (err) { }
+        }
+
+        renderLibrary();
+        loadMatches(false);
+        showToast(`🔄 Copia ufficiale ripristinata da GitHub (${defLib.length} titoli)!`);
+      } catch (err) {
+        showToast("❌ Impossibile caricare da GitHub: " + err.message);
+      } finally {
+        btnRestoreGh.disabled = false;
+        btnRestoreGh.textContent = "🔄 Ricarica da GitHub";
+      }
     });
   }
 

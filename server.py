@@ -289,6 +289,20 @@ def get_all_library_items() -> List[Dict]:
     return items
 
 
+def export_library_to_json_file() -> None:
+    """Exports the SQLite library to data/library.json and data/library_backup.json."""
+    try:
+        items = get_all_library_items()
+        if not items:
+            return
+        os.makedirs("data", exist_ok=True)
+        with open("data/library.json", "w", encoding="utf-8") as f:
+            json.dump(items, f, ensure_ascii=False, indent=2)
+        with open("data/library_backup.json", "w", encoding="utf-8") as f:
+            json.dump(items, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[Backup] Errore esportazione automatica: {e}")
+
 def match_epg_with_library(
     events: List[Dict],
     library_items: List[Dict],
@@ -1039,7 +1053,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
         if path == "/api/library/batch":
             action = body.get("action")  # "wishlist", "watching", "watched", or "delete"
             items = body.get("items") or []
-            if action not in ("wishlist", "watching", "watched", "delete") or not isinstance(items, list):
+            if action not in ("wishlist", "watching", "watched", "delete", "restore") or not isinstance(items, list):
                 return self._send_json({"error": "Parametri batch non validi"}, 400)
 
             now_iso = datetime.datetime.now().isoformat()
