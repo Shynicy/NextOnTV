@@ -35,7 +35,7 @@
             <span>💾</span>
           </button>
           <button class="icon-btn" id="btn-open-android" title="Porta l'App su Telefono & Sincronizza Cloud">
-            <span>📱☁️</span>
+            <span>📱</span>
           </button>
           <button class="icon-btn" id="btn-refresh-epg" title="Sincronizza e aggiorna palinsesti TV">
             <span>🔄</span>
@@ -194,7 +194,8 @@
           </form>
           <div class="search-type-filters" id="search-type-filter-group">
             <button type="button" class="mini-pill" id="filter-search-movies" data-type="movie">🎬 Solo Film</button>
-            <button type="button" class="mini-pill" id="filter-search-series" data-type="series">📺 Solo Serie TV</button>
+            <button type="button" class="mini-pill" id="filter-search-series" data-type="series">📺 Solo Serie
+              TV</button>
           </div>
         </div>
 
@@ -332,7 +333,8 @@
       </div>
       <div class="modal-body android-guide">
         <!-- Centered QR Code -->
-        <h4 style="font-size:0.95rem;margin-top:4px;margin-bottom:8px;text-align:center;">📲 Inquadra il QR Code col Telefono</h4>
+        <h4 style="font-size:0.95rem;margin-top:4px;margin-bottom:8px;text-align:center;">📲 Inquadra il QR Code col
+          Telefono</h4>
         <div class="qr-box">
           <img id="android-qr-img" alt="QR Code per Android" src="" />
         </div>
@@ -376,16 +378,21 @@
           style="background:var(--bg-main);border:1px solid var(--border-subtle);border-radius:10px;padding:14px;margin-bottom:12px;">
           <strong style="font-size:0.9rem;color:#60a5fa;">💾 Backup Liste (Automatico ogni notte)</strong>
           <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;margin-bottom:12px;line-height:1.4;">
-            I tuoi film e serie salvati (da PC e da telefono) sono sincronizzati al sicuro. Ogni notte alle 00:01 GitHub Actions effettua inoltre una copia di sicurezza automatica del catalogo. Da qui puoi salvare una copia personale in JSON o ripristinare i tuoi programmi.
+            I tuoi film e serie salvati (da PC e da telefono) sono sincronizzati al sicuro. Ogni notte alle 00:01 GitHub
+            Actions effettua inoltre una copia di sicurezza automatica del catalogo. Da qui puoi salvare una copia
+            personale in JSON o ripristinare i tuoi programmi.
           </p>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <button type="button" class="btn-secondary btn-sm" id="btn-export-backup" title="Scarica una copia di sicurezza di tutti i tuoi programmi in formato JSON">
+            <button type="button" class="btn-secondary btn-sm" id="btn-export-backup"
+              title="Scarica una copia di sicurezza di tutti i tuoi programmi in formato JSON">
               💾 Scarica Backup JSON
             </button>
-            <button type="button" class="btn-secondary btn-sm" id="btn-import-backup-trigger" title="Carica e ripristina un file di backup salvato in precedenza">
+            <button type="button" class="btn-secondary btn-sm" id="btn-import-backup-trigger"
+              title="Carica e ripristina un file di backup salvato in precedenza">
               📂 Ripristina da File
             </button>
-            <button type="button" class="btn-secondary btn-sm" id="btn-restore-github" title="Ricarica all'istante la copia ufficiale dei tuoi programmi salvata su GitHub">
+            <button type="button" class="btn-secondary btn-sm" id="btn-restore-github"
+              title="Ricarica all'istante la copia ufficiale dei tuoi programmi salvata su GitHub">
               🔄 Ricarica da GitHub
             </button>
             <input type="file" id="input-import-backup" accept=".json" style="display:none;" />
@@ -413,7 +420,7 @@
   </div>
 
   <div id="toast-container" class="toast-container"></div>
-  <script src="./app.js?v=23"></script>
+  <script src="./app.js?v=24"></script>
 </body>
 
 </html>

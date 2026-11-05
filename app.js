@@ -114,6 +114,9 @@ const CLIENT_SAGAS = [
   { it: "L'ispettore Barnaby", orig: "Midsomer Murders", type: "series", year: "1997" , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/0/01/L%27ispettore_Barnaby.png/500px-L%27ispettore_Barnaby.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Supernatural", orig: "Supernatural", type: "series", year: "2005", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/476/1191593.jpg" },
   { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4763.jpg" },
+  { it: "Lupin e le profezie di Nostradamus", orig: "Lupin III - Kutabare! Nostradamus", type: "movie", year: "1995", aliases: ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/a1/Le_profezie_di_Nostradamus.PNG/500px-Le_profezie_di_Nostradamus.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Lupin III - Il castello di Cagliostro", orig: "The Castle of Cagliostro", type: "movie", year: "1979", aliases: ["il castello di cagliostro", "castello di cagliostro", "cagliostro"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/9/90/Il_castello_di_Cagliostro.png/500px-Il_castello_di_Cagliostro.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Lupin III - La pietra della saggezza", orig: "The Mystery of Mamo", type: "movie", year: "1978", aliases: ["la pietra della saggezza", "pietra della saggezza"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/c/cf/Lupin_III_-_La_pietra_della_saggezza.jpg/500px-Lupin_III_-_La_pietra_della_saggezza.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
 ];
 
 const ROMAN_NUMERALS_MAP = {
@@ -157,6 +160,8 @@ function computeRelevanceScoreClient(query, item) {
   const qStr = qTokens.join(" ");
   const qCoreStr = qCore.join(" ");
 
+  if (!qStr && !qCoreStr) return 0;
+
   const candidates = [item.title_it, item.title_original];
   if (item.aliases && Array.isArray(item.aliases)) {
     candidates.push(...item.aliases);
@@ -170,72 +175,100 @@ function computeRelevanceScoreClient(query, item) {
     const cStr = cTokens.join(" ");
     const cCoreStr = cCore.join(" ");
 
-    // 1. Exact match on full normalized text
+    // 1. Punteggio Massimo Assoluto (1000 Punti): Corrispondenza Esatta sul titolo completo
     if (qStr && qStr === cStr) {
       bestScore = Math.max(bestScore, 1000);
       continue;
     }
 
-    // 2. Exact match on core words (ignoring articles/stopwords)
+    // 2. Quasi Esatto (970 Punti): Corrispondenza Esatta sulle parole chiave (esclusi articoli)
     if (qCoreStr && qCoreStr === cCoreStr) {
-      bestScore = Math.max(bestScore, 980);
+      bestScore = Math.max(bestScore, 970);
       continue;
     }
 
-    // 3. Check core word presence
+    // 3. Frase Esatta Contenuta (900-940 Punti): La sequenza esatta cercata è presente nel titolo
+    // (all'inizio, in mezzo o alla fine, es. "le profezie di nostradamus" in "Lupin e le profezie di Nostradamus")
+    const hasFullPhrase = (qStr && cStr.includes(qStr)) || (qCoreStr && cCoreStr.includes(qCoreStr));
+    if (hasFullPhrase) {
+      const isStart = cStr.startsWith(qStr) || (qCoreStr && cCoreStr.startsWith(qCoreStr));
+      const isEnd = cStr.endsWith(qStr) || (qCoreStr && cCoreStr.endsWith(qCoreStr));
+      let phraseScore = isStart ? 940 : isEnd ? 920 : 900;
+      const extraWords = Math.abs(cCore.length - qCore.length);
+      phraseScore = Math.max(780, phraseScore - extraWords * 8);
+      bestScore = Math.max(bestScore, phraseScore);
+      continue;
+    }
+
+    // 4. Tutte le parole core cercate sono presenti nel titolo (anche in posizioni diverse o sparse)
     if (qCore.length > 0) {
       let matchedCount = 0;
+      let matchedIndices = [];
       for (const qw of qCore) {
-        if (cTokens.some((cw) => wordMatchClient(qw, cw))) {
-          matchedCount++;
+        let foundIdx = -1;
+        for (let ci = 0; ci < cTokens.length; ci++) {
+          if (wordMatchClient(qw, cTokens[ci])) {
+            matchedCount++;
+            foundIdx = ci;
+            break;
+          }
         }
+        if (foundIdx !== -1) matchedIndices.push(foundIdx);
       }
+
       const coverage = matchedCount / qCore.length;
-      if (coverage < 0.75) {
+
+      // Se tutte le parole sono presenti (100% delle parole chiave nel titolo)
+      if (coverage === 1.0) {
+        let inOrder = true;
+        for (let i = 1; i < matchedIndices.length; i++) {
+          if (matchedIndices[i] < matchedIndices[i - 1]) {
+            inOrder = false;
+            break;
+          }
+        }
+        let orderScore = inOrder ? 840 : 760;
+        const extraWords = Math.abs(cCore.length - qCore.length);
+        orderScore = Math.max(650, orderScore - extraWords * 10);
+        bestScore = Math.max(bestScore, orderScore);
+        continue;
+      }
+
+      // Se almeno la metà delle parole cercate è presente (es. 2 su 3 o 3 su 4)
+      if (coverage >= 0.5) {
+        const extraWords = Math.abs(cCore.length - qCore.length);
+        let partialScore = Math.round(coverage * 600) - extraWords * 15;
+        bestScore = Math.max(bestScore, Math.max(200, partialScore));
         continue;
       }
     }
-
-    // 4. Starting vs containing
-    const starts = cStr.startsWith(qStr) || (qCoreStr && cCoreStr.startsWith(qCoreStr));
-    const base = starts ? 800 : 500;
-
-    // 5. Length penalty (extra words)
-    const extraWords = Math.abs(cCore.length - qCore.length);
-    const penalty = extraWords * 40;
-    const score = Math.max(50, base - penalty);
-
-    bestScore = Math.max(bestScore, score);
   }
 
+  // Bonus Saghe
   if (item.is_saga) {
     const rank = Number(item.saga_rank || 1);
     if (bestScore >= 950) {
-      // Keep exact match 1000 or 980
+      // Mantieni punteggio massimo
     } else if (bestScore > 0) {
-      bestScore = Math.max(bestScore, 920 - rank * 8);
+      bestScore = Math.max(bestScore, 900 - rank * 8);
     } else {
-      bestScore = Math.max(bestScore, 880 - rank * 8);
+      bestScore = Math.max(bestScore, 850 - rank * 8);
     }
   }
 
-  // Popularity & Prominence Bonus (Prioritize famous movies & hit TV shows)
+  // Bonus Popolarità (dà una spinta ai titoli celebri senza mai superare la pertinenza delle parole cercate)
   if (bestScore > 0) {
     let popBonus = 0;
     const sl = Number(item.sitelinks_count || 0);
-    if (sl >= 50) popBonus = Math.max(popBonus, 320);
-    else if (sl >= 25) popBonus = Math.max(popBonus, 220);
-    else if (sl >= 10) popBonus = Math.max(popBonus, 140);
-    else if (sl >= 4) popBonus = Math.max(popBonus, 60);
+    if (sl >= 50) popBonus = Math.max(popBonus, 70);
+    else if (sl >= 25) popBonus = Math.max(popBonus, 45);
+    else if (sl >= 10) popBonus = Math.max(popBonus, 25);
+    else if (sl >= 4) popBonus = Math.max(popBonus, 10);
 
     const w = Number(item.tvmaze_weight || 0);
-    if (w >= 85) popBonus = Math.max(popBonus, 280);
-    else if (w >= 70) popBonus = Math.max(popBonus, 190);
-    else if (w >= 50) popBonus = Math.max(popBonus, 100);
-
-    if (item.is_saga) {
-      popBonus = Math.max(popBonus, 260);
-    }
+    if (w >= 85) popBonus = Math.max(popBonus, 60);
+    else if (w >= 70) popBonus = Math.max(popBonus, 40);
+    else if (w >= 50) popBonus = Math.max(popBonus, 20);
 
     bestScore += popBonus;
   }
@@ -898,10 +931,13 @@ async function directMobileSearch4G(query, libraryItems) {
 
   CLIENT_SAGAS.forEach((al) => {
     const isSagaMatch = al.saga && matchedSagaIds.has(al.saga);
+    const normIt = normalizeTitleClient(al.it);
+    const normOrig = normalizeTitleClient(al.orig);
     const isDirectMatch =
       fuzzyMatchTitleClient(query, al.it) ||
       fuzzyMatchTitleClient(query, al.orig) ||
-      (al.aliases && al.aliases.some((a) => fuzzyMatchTitleClient(query, a)));
+      (qStr && (normIt.includes(qStr) || normOrig.includes(qStr))) ||
+      (al.aliases && al.aliases.some((a) => fuzzyMatchTitleClient(query, a) || (qStr && normalizeTitleClient(a).includes(qStr))));
 
     if (isSagaMatch || isDirectMatch) {
       results.push({
@@ -943,7 +979,42 @@ async function directMobileSearch4G(query, libraryItems) {
     }
   } catch (e) { }
 
-  // 3. Query Wikidata Italian entities directly over HTTPS (CORS-enabled on 4G/5G!)
+  // 3. Query Italian Wikipedia Full-Text Search (finds phrases and titles in ANY position: beginning, middle, or end!)
+  try {
+    const wikiSearchUrl = `https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=12&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`;
+    const wikiRes = await fetch(wikiSearchUrl);
+    const wikiData = await wikiRes.json();
+    const pages = (wikiData.query || {}).pages || {};
+    for (const pid of Object.keys(pages)) {
+      const page = pages[pid];
+      const rawTitle = page.title || "";
+      const extract = (page.extract || "").toLowerCase();
+
+      // Check if the article describes a film, anime, or series
+      const isMovie = extract.includes("film") || extract.includes("pellicola") || extract.includes("lungometraggio") || extract.includes("anime") || extract.includes("regia di") || extract.includes("diretto da");
+      const isSeries = extract.includes("serie televisiva") || extract.includes("serie tv") || extract.includes("telefilm") || extract.includes("fiction") || extract.includes("miniserie");
+
+      if (!isMovie && !isSeries) continue;
+
+      // Clean Wikipedia disambiguation suffixes e.g. " (film)", " (serie televisiva)"
+      const cleanTitle = rawTitle.replace(/\s*\((?:film|serie\s+televisiva|miniserie|telefilm|anime|movie|franchise).*?\)\s*$/i, "").trim();
+      const yearMatch = (page.extract || "").match(/\b(19\d\d|20\d\d)\b/);
+
+      results.push({
+        external_id: `wiki_${page.pageprops?.wikibase_item || page.pageid}`,
+        media_type: isSeries && !isMovie ? "series" : "movie",
+        title_it: cleanTitle,
+        title_original: cleanTitle,
+        year: yearMatch ? yearMatch[1] : "",
+        poster: page.thumbnail?.source || "",
+        genre: isSeries && !isMovie ? "Serie TV" : "Film",
+        description: (page.extract || "").slice(0, 240),
+        sitelinks_count: 20, // Wikipedia presence
+      });
+    }
+  } catch (e) { }
+
+  // 4. Query Wikidata Italian entities directly over HTTPS (CORS-enabled on 4G/5G!)
   try {
     const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=it&uselang=it&format=json&origin=*&limit=12`;
     const wdRes = await fetch(wdUrl);
@@ -1031,8 +1102,8 @@ async function directMobileSearch4G(query, libraryItems) {
     r.relevance_score = computeRelevanceScoreClient(query, r);
   });
 
-  // Filter items with score >= 180 (eliminates false positives and obscure noise)
-  const relevantResults = results.filter((r) => (r.relevance_score || 0) >= 180);
+  // Keep all items with score > 0 (preserves exact matches, phrase matches, and niche/anime cult titles!)
+  const relevantResults = results.filter((r) => (r.relevance_score || 0) > 0);
 
   // Sort descending by relevance score (exact matches and famous titles first!)
   relevantResults.sort((a, b) => b.relevance_score - a.relevance_score);

@@ -87,6 +87,10 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
     {"it": "Rush Hour - Due mine vaganti", "orig": "Rush Hour", "type": "movie", "year": "1998"},
     {"it": "Colpo grosso al drago rosso - Rush Hour 2", "orig": "Rush Hour 2", "type": "movie", "year": "2001"},
     {"it": "Rush Hour 3 - Missione Parigi", "orig": "Rush Hour 3", "type": "movie", "year": "2007"},
+    # Lupin III Film Celebri
+    {"it": "Lupin e le profezie di Nostradamus", "orig": "Lupin III - Kutabare! Nostradamus", "type": "movie", "year": "1995", "aliases": ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus"]},
+    {"it": "Lupin III - Il castello di Cagliostro", "orig": "The Castle of Cagliostro", "type": "movie", "year": "1979", "aliases": ["il castello di cagliostro", "castello di cagliostro", "cagliostro"]},
+    {"it": "Lupin III - La pietra della saggezza", "orig": "The Mystery of Mamo", "type": "movie", "year": "1978", "aliases": ["la pietra della saggezza", "pietra della saggezza"]},
     # Serie TV Celebri
     {"it": "Una mamma per amica", "orig": "Gilmore Girls", "type": "series", "year": "2000"},
     {"it": "L'ispettore Barnaby", "orig": "Midsomer Murders", "type": "series", "year": "1997"},
@@ -666,6 +670,57 @@ def _search_tvmaze(query: str, extra_queries: Optional[List[str]] = None) -> Lis
     return results
 
 
+def _search_wikipedia_generator(query: str) -> List[Dict]:
+    """
+    Query Italian Wikipedia Search Generator to find movie/series/anime titles
+    where keywords appear in ANY position (beginning, middle, or end).
+    """
+    url = (
+        f"https://it.wikipedia.org/w/api.php?action=query&generator=search"
+        f"&gsrsearch={urllib.parse.quote(query)}&gsrlimit=12"
+        f"&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
+    )
+    try:
+        data = _http_get_json(url, timeout=5)
+    except Exception:
+        return []
+
+    pages = (data.get("query") or {}).get("pages") or {}
+    results = []
+    for p in pages.values():
+        raw_t = p.get("title") or ""
+        extract = (p.get("extract") or "").lower()
+        is_movie = any(k in extract for k in ["film", "pellicola", "lungometraggio", "anime", "regia di", "diretto da"])
+        is_series = any(k in extract for k in ["serie televisiva", "serie tv", "telefilm", "fiction", "miniserie"])
+        if not is_movie and not is_series:
+            continue
+        clean_t = re.sub(
+            r"\s*\((?:film|serie\s+televisiva|miniserie|telefilm|anime|movie|franchise).*?\)\s*$",
+            "",
+            raw_t,
+            flags=re.IGNORECASE,
+        ).strip()
+        y_match = re.search(r"\b(19\d\d|20\d\d)\b", p.get("extract") or "")
+        thumb = (p.get("thumbnail") or {}).get("source") or ""
+        qid = (p.get("pageprops") or {}).get("wikibase_item") or ""
+        m_type = "series" if (is_series and not is_movie) else "movie"
+        results.append({
+            "external_id": f"wiki_{qid or p.get('pageid')}",
+            "imdb_id": "",
+            "tvmaze_id": None,
+            "media_type": m_type,
+            "title_it": clean_t,
+            "title_original": clean_t,
+            "year": y_match.group(1) if y_match else "",
+            "poster": thumb,
+            "genre": "Serie TV" if m_type == "series" else "Film",
+            "description": (p.get("extract") or "")[:240],
+            "source": "wikipedia_it",
+            "popularity_rank": 50000,
+        })
+    return results
+
+
 STOP_WORDS_SCORING = {
     "the", "il", "lo", "la", "l", "i", "gli", "le", "a", "an", "and", "e", "ed", "n",
     "di", "dei", "del", "della", "delle", "of", "in", "on", "per", "con", "su"
@@ -708,70 +763,91 @@ def compute_relevance_score(query: str, item: Dict) -> int:
         c_str = " ".join(c_tokens)
         c_core_str = " ".join(c_core)
 
-        # 1. Exact match on full string
+        # 1. Punteggio Massimo Assoluto (1000 Punti): Corrispondenza Esatta sul titolo completo
         if q_str and q_str == c_str:
             best_score = max(best_score, 1000)
             continue
 
-        # 2. Exact match on core words (ignoring articles/stopwords)
+        # 2. Quasi Esatto (970 Punti): Corrispondenza Esatta sulle parole chiave (esclusi articoli)
         if q_core_str and q_core_str == c_core_str:
-            best_score = max(best_score, 980)
+            best_score = max(best_score, 970)
             continue
 
-        # 3. Check core word presence
+        # 3. Frase Esatta Contenuta (900-940 Punti): La sequenza esatta cercata è presente nel titolo
+        # (all'inizio, in mezzo o alla fine, es. "le profezie di nostradamus" in "Lupin e le profezie di Nostradamus")
+        has_full_phrase = (q_str and q_str in c_str) or (q_core_str and q_core_str in c_core_str)
+        if has_full_phrase:
+            is_start = c_str.startswith(q_str) or (q_core_str and c_core_str.startswith(q_core_str))
+            is_end = c_str.endswith(q_str) or (q_core_str and c_core_str.endswith(q_core_str))
+            phrase_score = 940 if is_start else (920 if is_end else 900)
+            extra_words = abs(len(c_core) - len(q_core))
+            phrase_score = max(780, phrase_score - extra_words * 8)
+            best_score = max(best_score, phrase_score)
+            continue
+
+        # 4. Tutte le parole core cercate sono presenti nel titolo (anche sparse)
         if q_core:
-            matched_words = sum(1 for qw in q_core if any(_word_match_scoring(qw, cw) for cw in c_tokens))
-            coverage = matched_words / len(q_core)
-            if coverage < 0.75:
+            matched_indices = []
+            matched_count = 0
+            for qw in q_core:
+                found_idx = -1
+                for ci, cw in enumerate(c_tokens):
+                    if _word_match_scoring(qw, cw):
+                        matched_count += 1
+                        found_idx = ci
+                        break
+                if found_idx != -1:
+                    matched_indices.append(found_idx)
+
+            coverage = matched_count / len(q_core)
+
+            # Se tutte le parole sono presenti (100% delle parole chiave nel titolo)
+            if coverage == 1.0:
+                in_order = all(matched_indices[i] > matched_indices[i - 1] for i in range(1, len(matched_indices)))
+                order_score = 840 if in_order else 760
+                extra_words = abs(len(c_core) - len(q_core))
+                order_score = max(650, order_score - extra_words * 10)
+                best_score = max(best_score, order_score)
                 continue
-        else:
-            coverage = 1.0
 
-        # 4. Starting vs containing
-        starts = c_str.startswith(q_str) or (q_core_str and c_core_str.startswith(q_core_str))
-        base = 800 if starts else 500
-
-        # 5. Length penalty (extra words)
-        extra_words = abs(len(c_core) - len(q_core))
-        penalty = extra_words * 40
-        score = max(50, base - penalty)
-
-        best_score = max(best_score, score)
+            # Se almeno la metà delle parole cercate è presente
+            if coverage >= 0.5:
+                extra_words = abs(len(c_core) - len(q_core))
+                partial_score = round(coverage * 600) - extra_words * 15
+                best_score = max(best_score, max(200, partial_score))
+                continue
 
     if item.get("is_saga"):
         rank = item.get("saga_rank", 1)
         if best_score >= 950:
-            pass  # Keep 1000 or 980
+            pass  # Keep 1000 or 970
         elif best_score > 0:
-            best_score = max(best_score, 920 - rank * 8)
+            best_score = max(best_score, 900 - rank * 8)
         else:
-            best_score = max(best_score, 880 - rank * 8)
+            best_score = max(best_score, 850 - rank * 8)
 
-    # Popularity & Prominence Bonus (Prioritize world-famous titles and mainstream hits)
+    # Popularity & Prominence Bonus (dà una spinta ai titoli celebri senza mai superare la pertinenza delle parole cercate)
     if best_score > 0:
         pop_bonus = 0
         imdb_rank = item.get("popularity_rank")
         if imdb_rank is not None and isinstance(imdb_rank, (int, float)) and imdb_rank > 0:
             if imdb_rank <= 2500:
-                pop_bonus = max(pop_bonus, 320)
+                pop_bonus = max(pop_bonus, 70)
             elif imdb_rank <= 15000:
-                pop_bonus = max(pop_bonus, 240)
+                pop_bonus = max(pop_bonus, 45)
             elif imdb_rank <= 60000:
-                pop_bonus = max(pop_bonus, 160)
+                pop_bonus = max(pop_bonus, 25)
             elif imdb_rank <= 150000:
-                pop_bonus = max(pop_bonus, 80)
+                pop_bonus = max(pop_bonus, 10)
 
         tv_weight = item.get("popularity_weight")
         if tv_weight is not None and isinstance(tv_weight, (int, float)):
             if tv_weight >= 85:
-                pop_bonus = max(pop_bonus, 280)
+                pop_bonus = max(pop_bonus, 60)
             elif tv_weight >= 70:
-                pop_bonus = max(pop_bonus, 200)
+                pop_bonus = max(pop_bonus, 40)
             elif tv_weight >= 50:
-                pop_bonus = max(pop_bonus, 100)
-
-        if item.get("is_saga"):
-            pop_bonus = max(pop_bonus, 260)
+                pop_bonus = max(pop_bonus, 20)
 
         best_score += pop_bonus
 
@@ -838,16 +914,21 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
     matched_sagas.sort(key=lambda x: x[0])
     combined.extend(item for _, item in matched_sagas)
 
-    # 2. Query IMDb+Wikidata and TVMaze in parallel (using expanded & typo-corrected queries)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
+    # 2. Query IMDb+Wikidata, TVMaze, and Wikipedia in parallel (using expanded & typo-corrected queries)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ex:
         f_imdb = ex.submit(_search_imdb_with_italian_labels, primary_q, extra_qs)
         f_maze = ex.submit(_search_tvmaze, primary_q, extra_qs)
+        f_wiki = ex.submit(_search_wikipedia_generator, query)
         try:
             combined.extend(f_imdb.result())
         except Exception:
             pass
         try:
             combined.extend(f_maze.result())
+        except Exception:
+            pass
+        try:
+            combined.extend(f_wiki.result())
         except Exception:
             pass
 
@@ -948,8 +1029,8 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
     scored_results: List[Tuple[int, Dict]] = []
     for item in merged.values():
         score = compute_relevance_score(query, item)
-        # Keep items with score >= 150 (filters out irrelevant fuzzy false positives)
-        if score >= 150:
+        # Keep all items with score > 0 (preserves exact matches, phrase matches, and niche/anime cult titles!)
+        if score > 0:
             scored_results.append((score, item))
 
     # Sort descending by relevance score (exact/near-exact matches first!)
