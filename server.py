@@ -853,10 +853,12 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
             return self._send_json({"reminders": [dict(r) for r in rows]})
 
         if path == "/" or path == "/index.html":
-            file_path = os.path.join(STATIC_DIR, "index.html")
+            file_path = os.path.join(BASE_DIR, "index.html")
         else:
             rel = path.lstrip("/").replace("/", os.sep)
-            file_path = os.path.join(STATIC_DIR, rel)
+            file_path = os.path.join(BASE_DIR, rel)
+            if not os.path.isfile(file_path) and os.path.isdir(STATIC_DIR):
+                file_path = os.path.join(STATIC_DIR, rel)
 
         if os.path.isfile(file_path):
             mime, _ = mimetypes.guess_type(file_path)

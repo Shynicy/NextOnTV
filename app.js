@@ -1569,17 +1569,6 @@ function renderMatchCard(ev, matchIndex) {
             ${watchedBtnText}
           </button>
 
-          <button
-            type="button"
-            class="btn-action btn-remove-from-match"
-            data-lib-id="${lib.id}"
-            data-title="${escapeHtml(lib.title_it || ev.title)}"
-            data-media-type="${itemMediaType}"
-            title="Rimuovi dalle mie liste"
-          >
-            🗑️ Rimuovi
-          </button>
-
           ${!isMovie
       ? `<button type="button" class="btn-action btn-open-series-tracker" data-series-id="${lib.id}">📋 Tutti gli episodi</button>`
       : ""
@@ -1642,21 +1631,6 @@ function bindMatchCardEvents(container) {
         });
         showToast(!currentlyWatched ? `✅ Episodio S${season}E${episode} segnato come visto!` : `Episodio S${season}E${episode} segnato come da vedere.`);
       }
-      await loadLibrary();
-      await loadMatches(false);
-    });
-  });
-
-  container.querySelectorAll(".btn-remove-from-match").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const libId = Number(btn.dataset.libId);
-      const title = btn.dataset.title || "questo elemento";
-      const mediaType = btn.dataset.mediaType;
-      const ok = await openConfirmModal(`Vuoi davvero rimuovere "${title}" da Le Mie Liste? Non apparirà più in 'In Onda per Te'.`);
-      if (!ok) return;
-
-      await apiPost("/api/library/delete", { id: libId, title_it: title, media_type: mediaType });
-      showToast(`🗑️ "${title}" rimosso dalle tue liste!`);
       await loadLibrary();
       await loadMatches(false);
     });
