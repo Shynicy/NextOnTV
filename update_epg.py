@@ -49,28 +49,25 @@ def sync_cloud_backup_to_github(data_dir: str, sync_code: str = "shynicy_nextont
         with urllib.request.urlopen(req, timeout=10) as resp:
             raw_text = resp.read().decode("utf-8")
 
-        bytebin_key = None
+        attachment_url = None
         for line in reversed(raw_text.strip().split("\n")):
             line = line.strip()
             if not line:
                 continue
             try:
                 msg = json.loads(line)
-                if msg.get("event") == "message" and msg.get("message"):
-                    m_text = msg["message"]
-                    if m_text.startswith("bytebin:"):
-                        bytebin_key = m_text.split(":", 1)[1].strip()
-                        break
+                if msg.get("attachment") and msg["attachment"].get("url"):
+                    attachment_url = msg["attachment"]["url"]
+                    break
             except Exception:
                 pass
 
-        if not bytebin_key:
+        if not attachment_url:
             print("[Cloud Backup] Nessun nuovo snapshot remoto su topic (i file locali restano validi).")
             return
 
-        bytebin_url = f"https://bytebin.lucko.me/{bytebin_key}"
-        print(f"[Cloud Backup] Trovato snapshot recente ({bytebin_key}), download da bytebin...")
-        with urllib.request.urlopen(urllib.request.Request(bytebin_url, headers={"User-Agent": "NextOnTV-Bot/1.0"}), timeout=10) as b_resp:
+        print(f"[Cloud Backup] Trovato snapshot recente, download da {attachment_url}...")
+        with urllib.request.urlopen(urllib.request.Request(attachment_url, headers={"User-Agent": "NextOnTV-Bot/1.0"}), timeout=10) as b_resp:
             snap_data = json.loads(b_resp.read().decode("utf-8"))
 
         cloud_lib = snap_data.get("library")
@@ -132,11 +129,15 @@ def main():
 
     # 3. Salva data/status.json
     status_path = os.path.join(data_dir, "status.json")
-    now_iso = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+    try:
+        tz_it = zoneinfo.ZoneInfo("Europe/Rome")
+        now_iso = datetime.datetime.now(tz_it).strftime("%d/%m/%Y %H:%M")
+    except Exception:
+        now_iso = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
     status_data = {
         "ok": True,
         "start_date": today_it.isoformat(),
-        "fetched_at": now_iso,
+        "fetched_at": f"{now_iso} (Ora Italiana)",
         "days": days_list,
         "channels_count": len(active_lcns),
         "total_epg_events": len(events),

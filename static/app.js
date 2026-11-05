@@ -32,7 +32,7 @@ const state = {
   reminders: [],
   mobileUrl: window.location.origin,
   publicUrl: "",
-  syncCode: localStorage.getItem("nextontv_sync_code") || "shynicy_nextontv",
+  syncCode: "shynicy_nextontv",
   isCloudMode: false,
 };
 
@@ -402,29 +402,29 @@ function saveLocalSnapshot(snap) {
 }
 
 async function pullCloudSnapshotClient(syncCode) {
-  if (!syncCode) return null;
-  const topic = `nextontv_sync_${syncCode.trim().toLowerCase()}`;
+  const code = (syncCode || state.syncCode || "shynicy_nextontv").trim().toLowerCase();
+  const topic = `nextontv_sync_${code}`;
   try {
     const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`);
     const text = await res.text();
     const lines = text.trim().split("\n");
-    let latestKey = null;
+    let latestUrl = null;
     let latestTs = -1;
     for (const line of lines) {
       if (!line) continue;
       try {
         const ev = JSON.parse(line);
-        if (ev.event !== "message") continue;
-        const msg = JSON.parse(ev.message || "{}");
-        const ts = Number(msg.updated_at || ev.time || 0);
-        if (msg.bytebin_key && ts >= latestTs) {
-          latestTs = ts;
-          latestKey = msg.bytebin_key;
+        if (ev.attachment && ev.attachment.url) {
+          const ts = Number(ev.time || 0);
+          if (ts >= latestTs) {
+            latestTs = ts;
+            latestUrl = ev.attachment.url;
+          }
         }
       } catch (e) { }
     }
-    if (!latestKey) return null;
-    const blobRes = await fetch(`https://bytebin.lucko.me/${latestKey}`);
+    if (!latestUrl) return null;
+    const blobRes = await fetch(latestUrl);
     const snap = await blobRes.json();
     saveLocalSnapshot(snap);
     return snap;
@@ -434,33 +434,21 @@ async function pullCloudSnapshotClient(syncCode) {
 }
 
 async function pushCloudSnapshotClient(syncCode, snap) {
+  const code = (syncCode || state.syncCode || "shynicy_nextontv").trim().toLowerCase();
   if (snap) {
     snap.updated_at = Date.now() / 1000;
     snap.source = "mobile";
     saveLocalSnapshot(snap);
   }
-  if (!syncCode) return null;
+  const topic = `nextontv_sync_${code}`;
   try {
-    const postRes = await fetch("https://bytebin.lucko.me/post", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const postRes = await fetch(`https://ntfy.sh/${topic}?filename=snapshot.json`, {
+      method: "PUT",
+      headers: { "Title": "NextOnTV Cloud Snapshot" },
       body: JSON.stringify(snap),
     });
     const postData = await postRes.json();
-    const bytebinKey = postData.key;
-    if (!bytebinKey) return null;
-
-    const topic = `nextontv_sync_${syncCode.trim().toLowerCase()}`;
-    await fetch(`https://ntfy.sh/${topic}`, {
-      method: "POST",
-      body: JSON.stringify({
-        bytebin_key: bytebinKey,
-        updated_at: snap.updated_at,
-        source: "mobile",
-        items_count: (snap.library || []).length,
-      }),
-    });
-    return bytebinKey;
+    return postData && postData.attachment ? postData.attachment.url : "ok";
   } catch (e) {
     return null;
   }
@@ -1279,7 +1267,7 @@ async function initApp() {
   const syncParam = urlParams.get("sync");
   if (syncParam) {
     state.syncCode = syncParam.trim().toLowerCase();
-    localStorage.setItem("nextontv_sync_code", state.syncCode);
+    localStorage.setItem("nextontv_sync_code", "shynicy_nextontv");
   }
 
   setupNavigationAndEvents();
@@ -1298,7 +1286,7 @@ async function initApp() {
   state.publicUrl = stRes.public_url || "";
   if (!state.syncCode || state.syncCode.startsWith("notv_") || state.syncCode.startsWith("user_")) {
     state.syncCode = (stRes && stRes.sync_code) || "shynicy_nextontv";
-    localStorage.setItem("nextontv_sync_code", state.syncCode);
+    localStorage.setItem("nextontv_sync_code", "shynicy_nextontv");
   }
 
   const remBadge = document.getElementById("reminders-count-badge");
@@ -2931,10 +2919,23 @@ async function logCurrentAccess() {
     saveLocalSnapshot(snap);
     localStorage.setItem("nextontv_access_logs", JSON.stringify(snap.access_logs));
 
-    // Share access logs in background with Cloud so both PC and phone see each other
-    if (state.syncCode) {
-      pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
-    }
+    // Post live access event directly to shared topic so PC and Phone see each other instantly!
+    const code = (state.syncCode || "shynicy_nextontv").trim().toLowerCase();
+    const topic = `nextontv_sync_${code}`;
+    const liveLogMsg = {
+      type: "access_log",
+      id: `${now}_${Math.random().toString(36).slice(2, 6)}`,
+      timestamp: now,
+      device: devInfo.label,
+      icon: devInfo.icon,
+      origin: originLabel,
+      url: window.location.href,
+    };
+    fetch(`https://ntfy.sh/${topic}`, {
+      method: "POST",
+      headers: { "Title": "AccessLog", "Tags": "security" },
+      body: JSON.stringify(liveLogMsg),
+    }).catch(() => {});
   } catch (e) { }
 }
 
@@ -2944,31 +2945,38 @@ async function openAccessLogModal() {
   modal.classList.remove("hidden");
   renderAccessLogs();
 
-  // Pull latest cloud snapshot to fetch other devices' accesses!
-  if (state.syncCode) {
-    try {
-      const cloudSnap = await pullCloudSnapshotClient(state.syncCode);
-      if (cloudSnap && Array.isArray(cloudSnap.access_logs) && cloudSnap.access_logs.length > 0) {
-        const snap = getLocalSnapshot();
-        const existing = new Set((snap.access_logs || []).map((x) => x.id));
-        let changed = false;
-        cloudSnap.access_logs.forEach((entry) => {
-          if (!existing.has(entry.id)) {
-            snap.access_logs = snap.access_logs || [];
-            snap.access_logs.push(entry);
-            existing.add(entry.id);
-            changed = true;
-          }
-        });
-        if (changed) {
-          snap.access_logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-          saveLocalSnapshot(snap);
-          localStorage.setItem("nextontv_access_logs", JSON.stringify(snap.access_logs));
-          renderAccessLogs();
+  // Poll all live access events from all devices from the shared topic!
+  const code = (state.syncCode || "shynicy_nextontv").trim().toLowerCase();
+  const topic = `nextontv_sync_${code}`;
+  try {
+    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`);
+    const raw = await res.text();
+    const snap = getLocalSnapshot();
+    snap.access_logs = snap.access_logs || [];
+    const seenIds = new Set(snap.access_logs.map((x) => x.id));
+    let changed = false;
+
+    for (const line of raw.trim().split("\n")) {
+      if (!line) continue;
+      try {
+        const ev = JSON.parse(line);
+        if (ev.event !== "message") continue;
+        const msg = JSON.parse(ev.message || "{}");
+        if (msg.type === "access_log" && msg.id && !seenIds.has(msg.id)) {
+          snap.access_logs.push(msg);
+          seenIds.add(msg.id);
+          changed = true;
         }
-      }
-    } catch (e) { }
-  }
+      } catch (e) { }
+    }
+
+    if (changed) {
+      snap.access_logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      saveLocalSnapshot(snap);
+      localStorage.setItem("nextontv_access_logs", JSON.stringify(snap.access_logs));
+      renderAccessLogs();
+    }
+  } catch (e) { }
 }
 
 function renderAccessLogs() {
@@ -3133,7 +3141,7 @@ async function openSyncAndAndroidModal() {
   const stRes = await apiGet("/api/status");
   if (stRes.sync_code) {
     state.syncCode = stRes.sync_code;
-    localStorage.setItem("nextontv_sync_code", state.syncCode);
+    localStorage.setItem("nextontv_sync_code", "shynicy_nextontv");
   }
   if (stRes.mobile_url) state.mobileUrl = stRes.mobile_url;
 
@@ -3547,7 +3555,7 @@ function setupNavigationAndEvents() {
       const newCode = inputEl ? inputEl.value.trim().toLowerCase() : "";
       if (newCode) {
         state.syncCode = newCode;
-        localStorage.setItem("nextontv_sync_code", state.syncCode);
+        localStorage.setItem("nextontv_sync_code", "shynicy_nextontv");
       }
       const msgEl = document.getElementById("sync-status-msg");
       if (msgEl) msgEl.textContent = "⏳ Sincronizzazione Cloud PC ↔ Telefono in corso...";
