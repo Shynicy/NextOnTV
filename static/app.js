@@ -1255,7 +1255,20 @@ function getCurrentItalianDateIso() {
 
 async function initApp() {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js").catch(() => { });
+    navigator.serviceWorker
+      .register("./sw.js")
+      .then((reg) => {
+        reg.update().catch(() => {});
+      })
+      .catch(() => {});
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
   }
 
   // Security & Device Audit Log (Discreet 🛡️ tracking with 7-day auto-purge)
