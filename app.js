@@ -61,6 +61,10 @@ const SAGA_DEFINITIONS = [
     id: "back_to_future",
     names: ["ritorno al futuro", "back to the future"],
   },
+  {
+    id: "rocky",
+    names: ["rocky", "rocky balboa", "creed"],
+  },
 ];
 
 const CLIENT_SAGAS = [
@@ -94,6 +98,15 @@ const CLIENT_SAGAS = [
   { it: "Ritorno al futuro", orig: "Back to the Future", type: "movie", year: "1985", saga: "back_to_future", rank: 1, aliases: ["ritorno al futuro 1", "back to the future 1"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2d/Marty_e_DocEmmet.png/500px-Marty_e_DocEmmet.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Ritorno al futuro - Parte II", orig: "Back to the Future Part II", type: "movie", year: "1989", saga: "back_to_future", rank: 2, aliases: ["ritorno al futuro 2", "back to the future 2"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/71/Ritorno_al_futuro_2.jpg/500px-Ritorno_al_futuro_2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Ritorno al futuro - Parte III", orig: "Back to the Future Part III", type: "movie", year: "1990", saga: "back_to_future", rank: 3, aliases: ["ritorno al futuro 3", "back to the future 3"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/6/60/Ritorno_al_futuro_3.jpg/500px-Ritorno_al_futuro_3.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Rocky", orig: "Rocky", type: "movie", year: "1976", saga: "rocky", rank: 1, aliases: ["rocky 1", "rocky i", "rocky balboa 1"], poster: "https://m.media-amazon.com/images/M/MV5BNTBkMjg2MjYtYTZjOS00YzQxLWEzZGQtZDAyNDAtZmZiAUY4Mzg2XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Rocky II", orig: "Rocky II", type: "movie", year: "1979", saga: "rocky", rank: 2, aliases: ["rocky 2", "rocky ii", "rocky balboa 2"], poster: "https://m.media-amazon.com/images/M/MV5BMjA4NjQ1MTkxN15BMl5BanBnXkFtZTgwNTU5NzM2MDE@._V1_UX400_.jpg" },
+  { it: "Rocky III", orig: "Rocky III", type: "movie", year: "1982", saga: "rocky", rank: 3, aliases: ["rocky 3", "rocky iii", "rocky balboa 3"], poster: "https://m.media-amazon.com/images/M/MV5BMTY0MDgwODU1OV5BMl5BanBnXkFtZTgwNjU5NzM2MDE@._V1_UX400_.jpg" },
+  { it: "Rocky IV", orig: "Rocky IV", type: "movie", year: "1985", saga: "rocky", rank: 4, aliases: ["rocky 4", "rocky iv", "rocky balboa 4"], poster: "https://m.media-amazon.com/images/M/MV5BMTY2OTI5NTg4Nl5BMl5BanBnXkFtZTgwODU5NzM2MDE@._V1_UX400_.jpg" },
+  { it: "Rocky V", orig: "Rocky V", type: "movie", year: "1990", saga: "rocky", rank: 5, aliases: ["rocky 5", "rocky v", "rocky balboa 5"], poster: "https://m.media-amazon.com/images/M/MV5BMTYwNDk2OTQxNV5BMl5BanBnXkFtZTgwNzU5NzM2MDE@._V1_UX400_.jpg" },
+  { it: "Rocky Balboa", orig: "Rocky Balboa", type: "movie", year: "2006", saga: "rocky", rank: 6, aliases: ["rocky 6", "rocky vi", "rocky balboa"], poster: "https://m.media-amazon.com/images/M/MV5BNzg5ZjM1OGQtNmY3NS00MzkxLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Creed - Nato per combattere", orig: "Creed", type: "movie", year: "2015", saga: "rocky", rank: 7, aliases: ["creed 1", "creed", "rocky 7", "rocky vii"], poster: "https://m.media-amazon.com/images/M/MV5BODg5NDM3ODUxN15BMl5BanBnXkFtZTgwNWQ0MzQ5NjE@._V1_UX400_.jpg" },
+  { it: "Creed II", orig: "Creed II", type: "movie", year: "2018", saga: "rocky", rank: 8, aliases: ["creed 2", "creed ii", "rocky 8", "rocky viii"], poster: "https://m.media-amazon.com/images/M/MV5BYmEyNWZhNzctZTQzYS00NWVkLTg3MmQtZDU0NDZhY2VmNDRhXkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Creed III", orig: "Creed III", type: "movie", year: "2023", saga: "rocky", rank: 9, aliases: ["creed 3", "creed iii", "rocky 9", "rocky ix"], poster: "https://m.media-amazon.com/images/M/MV5BYWY1ZDY4MmQtYjhiYS00N2QwLThkNGUtMmNiNmVhGFiZTk2XkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000" , poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Il_gladiatore.png/500px-Il_gladiatore.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024", poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/ad/Deadpool_%26_Wolverine.png/500px-Deadpool_%26_Wolverine.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4042.jpg" },
@@ -103,6 +116,20 @@ const CLIENT_SAGAS = [
   { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4763.jpg" },
 ];
 
+const ROMAN_NUMERALS_MAP = {
+  i: "1", ii: "2", iii: "3", iv: "4", v: "5",
+  vi: "6", vii: "7", viii: "8", ix: "9", x: "10",
+  xi: "11", xii: "12"
+};
+
+function convertRomanNumeralsClient(normStr) {
+  if (!normStr) return "";
+  return normStr
+    .split(/\s+/)
+    .map((w) => ROMAN_NUMERALS_MAP[w] || w)
+    .join(" ");
+}
+
 const STOP_WORDS_CLIENT = new Set([
   "the", "il", "lo", "la", "l", "i", "gli", "le", "a", "an", "and", "e", "ed", "n",
   "di", "dei", "del", "della", "delle", "of", "in", "on", "per", "con", "su"
@@ -110,7 +137,8 @@ const STOP_WORDS_CLIENT = new Set([
 
 function cleanTokensClient(text) {
   const norm = normalizeTitleClient(text);
-  const tokens = norm.split(" ").filter(Boolean);
+  const normArabic = convertRomanNumeralsClient(norm);
+  const tokens = normArabic.split(" ").filter(Boolean);
   const core = tokens.filter((t) => !STOP_WORDS_CLIENT.has(t));
   return { tokens, core };
 }
@@ -634,26 +662,27 @@ async function handleClientCloudGet(url) {
 
     // Pre-build lightning-fast normalized search index for library items & aliases (O(1) hash lookups)
     const libByKey = {};
-    const prefixEntries = [];
     libItems.forEach((it) => {
+      const mtype = it.media_type || "movie";
       const normIt = normalizeTitleClient(it.title_it);
       const normOrig = normalizeTitleClient(it.title_original || "");
       if (normIt) {
-        libByKey[`${it.media_type}_${normIt}`] = it;
-        libByKey[normIt] = it;
-        if (normIt.length >= 4) prefixEntries.push({ key: normIt, item: it });
+        libByKey[`${mtype}_${normIt}`] = it;
+        libByKey[`${mtype}_${convertRomanNumeralsClient(normIt)}`] = it;
+        libByKey[`${mtype}_${stripConjunctionsClient(normIt)}`] = it;
       }
       if (normOrig) {
-        libByKey[`${it.media_type}_${normOrig}`] = it;
-        libByKey[normOrig] = it;
-        if (normOrig.length >= 4) prefixEntries.push({ key: normOrig, item: it });
+        libByKey[`${mtype}_${normOrig}`] = it;
+        libByKey[`${mtype}_${convertRomanNumeralsClient(normOrig)}`] = it;
+        libByKey[`${mtype}_${stripConjunctionsClient(normOrig)}`] = it;
       }
       if (it.aliases && Array.isArray(it.aliases)) {
         it.aliases.forEach((al) => {
           const normAl = normalizeTitleClient(al);
           if (normAl) {
-            libByKey[normAl] = it;
-            if (normAl.length >= 4) prefixEntries.push({ key: normAl, item: it });
+            libByKey[`${mtype}_${normAl}`] = it;
+            libByKey[`${mtype}_${convertRomanNumeralsClient(normAl)}`] = it;
+            libByKey[`${mtype}_${stripConjunctionsClient(normAl)}`] = it;
           }
         });
       }
@@ -662,19 +691,46 @@ async function handleClientCloudGet(url) {
     const isMatch = (ev) => {
       const evNorm = ev.norm_title || normalizeTitleClient(ev.title || "");
       if (!evNorm) return null;
-      const kMovie = `movie_${evNorm}`;
-      const kSeries = `series_${evNorm}`;
-      let matched = libByKey[kMovie] || libByKey[kSeries] || libByKey[evNorm];
-      if (!matched) {
-        for (let i = 0; i < prefixEntries.length; i++) {
-          const p = prefixEntries[i];
-          if (evNorm.startsWith(p.key) || p.key.startsWith(evNorm)) {
-            matched = p.item;
-            break;
+      const evType = ev.media_type || "movie";
+
+      // 1. Strict typed lookup: movie against movie, series against series
+      let matched = libByKey[`${evType}_${evNorm}`];
+      if (matched) return matched;
+
+      const evRoman = convertRomanNumeralsClient(evNorm);
+      if (libByKey[`${evType}_${evRoman}`]) return libByKey[`${evType}_${evRoman}`];
+
+      const evConj = stripConjunctionsClient(evNorm);
+      if (libByKey[`${evType}_${evConj}`]) return libByKey[`${evType}_${evConj}`];
+
+      // 2. Controlled match ONLY within the same media_type:
+      // STRICT RULE: Series NEVER matches Movie! Movie NEVER matches Series!
+      for (let i = 0; i < libItems.length; i++) {
+        const it = libItems[i];
+        const itType = it.media_type || "movie";
+        if (itType !== evType) continue;
+
+        const itNorm = normalizeTitleClient(it.title_it);
+        const itOrig = normalizeTitleClient(it.title_original || "");
+        const allCandidates = [itNorm, itOrig, ...(it.aliases || []).map(normalizeTitleClient)].filter(Boolean);
+
+        for (const cand of allCandidates) {
+          // Roman numerals or conjunction equivalence
+          if (evRoman === convertRomanNumeralsClient(cand)) return it;
+          if (evConj === stripConjunctionsClient(cand)) return it;
+
+          // Controlled prefix match: ONLY allow prefix matching if:
+          // A. The candidate has at least 8 characters AND at least 2 words (not a single word like 'Lupin'!)
+          // B. The remaining suffix in evNorm is ONLY season/episode/part indicators (e.g. "st 1", "ep 2", "pt 2", "1", "2")
+          if (cand.length >= 8 && cand.includes(" ") && evNorm.startsWith(cand)) {
+            const remainder = evNorm.slice(cand.length).trim();
+            if (/^(s\d+|ep\d+|st\s*\d+|stagione\s*\d+|episodio\s*\d+|parte\s*\d+|pt\s*\d+|\d+|[ivx]+)$/i.test(remainder)) {
+              return it;
+            }
           }
         }
       }
-      return matched || null;
+      return null;
     };
 
     let counts = { all: 0, wishlist: 0, watched_movies: 0, watched_series: 0 };
@@ -1259,9 +1315,6 @@ async function initApp() {
     });
   }
 
-  // Security & Device Audit Log (Discreet 🛡️ tracking with 7-day auto-purge)
-  logCurrentAccess();
-
   // Check if URL has ?sync=nextontv-xxxx
   const urlParams = new URLSearchParams(window.location.search);
   const syncParam = urlParams.get("sync");
@@ -1473,6 +1526,7 @@ function renderMatchCard(ev, matchIndex) {
     ? `<img src="${escapeHtml(ev.poster)}" alt="${escapeHtml(ev.title)}" class="tv-poster" loading="lazy" onerror="this.outerHTML='<div class=\\'tv-poster\\'>${isMovie ? "🎬" : "📺"}</div>'" />`
     : `<div class="tv-poster">${isMovie ? "🎬" : "📺"}</div>`;
 
+  const itemMediaType = lib.media_type || ev.media_type || "movie";
   const calUrl = buildGoogleCalendarUrl(ev);
   const watchedBtnText = isMovie
     ? lib.status === "watched"
@@ -1507,12 +1561,23 @@ function renderMatchCard(ev, matchIndex) {
             type="button"
             class="btn-action btn-mark-watched ${ev.is_episode_watched ? "active-watched" : ""}"
             data-lib-id="${lib.id}"
-            data-media-type="${ev.media_type}"
+            data-media-type="${itemMediaType}"
             data-season="${ev.season || 1}"
             data-episode="${ev.episode || 1}"
             data-currently-watched="${ev.is_episode_watched ? "1" : "0"}"
           >
             ${watchedBtnText}
+          </button>
+
+          <button
+            type="button"
+            class="btn-action btn-remove-from-match"
+            data-lib-id="${lib.id}"
+            data-title="${escapeHtml(lib.title_it || ev.title)}"
+            data-media-type="${itemMediaType}"
+            title="Rimuovi dalle mie liste"
+          >
+            🗑️ Rimuovi
           </button>
 
           ${!isMovie
@@ -1577,8 +1642,23 @@ function bindMatchCardEvents(container) {
         });
         showToast(!currentlyWatched ? `✅ Episodio S${season}E${episode} segnato come visto!` : `Episodio S${season}E${episode} segnato come da vedere.`);
       }
-      loadMatches(false);
-      loadLibrary();
+      await loadLibrary();
+      await loadMatches(false);
+    });
+  });
+
+  container.querySelectorAll(".btn-remove-from-match").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const libId = Number(btn.dataset.libId);
+      const title = btn.dataset.title || "questo elemento";
+      const mediaType = btn.dataset.mediaType;
+      const ok = await openConfirmModal(`Vuoi davvero rimuovere "${title}" da Le Mie Liste? Non apparirà più in 'In Onda per Te'.`);
+      if (!ok) return;
+
+      await apiPost("/api/library/delete", { id: libId, title_it: title, media_type: mediaType });
+      showToast(`🗑️ "${title}" rimosso dalle tue liste!`);
+      await loadLibrary();
+      await loadMatches(false);
     });
   });
 
@@ -2880,193 +2960,12 @@ function detectDeviceName() {
   return { label: `${os} (${browser})`, icon };
 }
 
-async function logCurrentAccess() {
-  try {
-    const now = Date.now();
-    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-    const snap = getLocalSnapshot();
-    snap.access_logs = snap.access_logs || [];
-
-    // Auto-purge logs older than 7 days
-    snap.access_logs = snap.access_logs.filter((entry) => now - (entry.timestamp || 0) < SEVEN_DAYS_MS);
-
-    const devInfo = detectDeviceName();
-    const currentHost = window.location.hostname || "locale";
-    const originLabel = window.location.hostname.includes("github.io")
-      ? "GitHub Pages (Web)"
-      : currentHost.includes("192.168") || currentHost === "localhost"
-        ? "Rete Casa Wi-Fi"
-        : "Connessione Dati 4G/5G";
-
-    // Deduplicate rapid reloads from the same device within 10 minutes
-    const last = snap.access_logs[0];
-    if (last && last.device === devInfo.label && now - (last.timestamp || 0) < 10 * 60 * 1000) {
-      last.last_seen = now;
-    } else {
-      snap.access_logs.unshift({
-        id: `${now}_${Math.random().toString(36).slice(2, 6)}`,
-        timestamp: now,
-        last_seen: now,
-        device: devInfo.label,
-        icon: devInfo.icon,
-        origin: originLabel,
-        url: window.location.href,
-      });
-    }
-
-    if (snap.access_logs.length > 50) snap.access_logs = snap.access_logs.slice(0, 50);
-
-    saveLocalSnapshot(snap);
-    localStorage.setItem("nextontv_access_logs", JSON.stringify(snap.access_logs));
-
-    // Post live access event directly to shared topic so PC and Phone see each other instantly!
-    const code = (state.syncCode || "shynicy_nextontv").trim().toLowerCase();
-    const topic = `nextontv_sync_${code}`;
-    const liveLogMsg = {
-      type: "access_log",
-      id: `${now}_${Math.random().toString(36).slice(2, 6)}`,
-      timestamp: now,
-      device: devInfo.label,
-      icon: devInfo.icon,
-      origin: originLabel,
-      url: window.location.href,
-    };
-    fetch(`https://ntfy.sh/${topic}`, {
-      method: "POST",
-      headers: { "Title": "AccessLog", "Tags": "security" },
-      body: JSON.stringify(liveLogMsg),
-    }).catch(() => {});
-  } catch (e) { }
-}
-
-async function openAccessLogModal() {
-  const modal = document.getElementById("modal-access-log");
+function openBackupModal() {
+  const modal = document.getElementById("modal-backup");
   if (!modal) return;
   modal.classList.remove("hidden");
-  renderAccessLogs();
-
-  // Poll all live access events from all devices from the shared topic!
-  const code = (state.syncCode || "shynicy_nextontv").trim().toLowerCase();
-  const topic = `nextontv_sync_${code}`;
-  try {
-    const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`);
-    const raw = await res.text();
-    const snap = getLocalSnapshot();
-    snap.access_logs = snap.access_logs || [];
-    const seenIds = new Set(snap.access_logs.map((x) => x.id));
-    let changed = false;
-
-    for (const line of raw.trim().split("\n")) {
-      if (!line) continue;
-      try {
-        const ev = JSON.parse(line);
-        if (ev.event !== "message") continue;
-        const msg = JSON.parse(ev.message || "{}");
-        if (msg.type === "access_log" && msg.id && !seenIds.has(msg.id)) {
-          snap.access_logs.push(msg);
-          seenIds.add(msg.id);
-          changed = true;
-        }
-      } catch (e) { }
-    }
-
-    if (changed) {
-      snap.access_logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-      saveLocalSnapshot(snap);
-      localStorage.setItem("nextontv_access_logs", JSON.stringify(snap.access_logs));
-      renderAccessLogs();
-    }
-  } catch (e) { }
 }
 
-function renderAccessLogs() {
-  const container = document.getElementById("access-log-list-body");
-  if (!container) return;
-
-  const now = Date.now();
-  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-  const snap = getLocalSnapshot();
-  let logs = snap.access_logs || [];
-  if (logs.length === 0) {
-    const raw = localStorage.getItem("nextontv_access_logs");
-    if (raw) logs = JSON.parse(raw);
-  }
-
-  // Filter out expired (> 7 days)
-  logs = logs.filter((entry) => now - (entry.timestamp || 0) < SEVEN_DAYS_MS);
-  snap.access_logs = logs;
-  saveLocalSnapshot(snap);
-  localStorage.setItem("nextontv_access_logs", JSON.stringify(logs));
-
-  if (logs.length === 0) {
-    container.innerHTML = `
-      <div class="empty-box" style="padding:18px;">
-        Nessun accesso registrato negli ultimi 7 giorni.
-      </div>
-    `;
-    return;
-  }
-
-  const formatLogDate = (ts) => {
-    try {
-      return new Intl.DateTimeFormat("it-IT", {
-        timeZone: "Europe/Rome",
-        weekday: "short",
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(new Date(ts));
-    } catch (e) {
-      return new Date(ts).toLocaleString("it-IT");
-    }
-  };
-
-  const getDaysLeft = (ts) => {
-    const elapsed = now - ts;
-    const remaining = Math.max(0, SEVEN_DAYS_MS - elapsed);
-    const days = Math.ceil(remaining / (24 * 60 * 60 * 1000));
-    return days <= 1 ? "Scade oggi" : `Scade tra ${days} giorni`;
-  };
-
-  container.innerHTML = logs
-    .map((l, idx) => {
-      const isCurrentSession = idx === 0;
-      return `
-        <div class="tv-card" style="padding:11px 13px;align-items:center;">
-          <div style="font-size:1.6rem;padding:0 6px;">${l.icon || "📱"}</div>
-          <div class="tv-body">
-            <div class="tv-meta-top">
-              <span class="lcn-badge" style="background:#3b82f6;">${escapeHtml(l.origin || "Accesso Web")}</span>
-              <span class="time-badge">🕒 ${formatLogDate(l.timestamp)}</span>
-              ${isCurrentSession ? `<span class="list-status-pill watched">🟢 Sessione Attuale</span>` : ""}
-            </div>
-            <h4 class="tv-title" style="font-size:0.88rem;margin:2px 0;">${escapeHtml(l.device || "Dispositivo")}</h4>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--text-muted);margin-top:4px;">
-              <span>Dispositivo sincronizzato (Cloud PC + Telefono)</span>
-              <span style="color:#fcd34d;">⏳ ${getDaysLeft(l.timestamp)}</span>
-            </div>
-          </div>
-        </div>
-      `;
-    })
-    .join("");
-}
-
-async function clearAllAccessLogs() {
-  if (confirm("Vuoi cancellare tutto lo storico degli accessi da tutti i dispositivi?")) {
-    const snap = getLocalSnapshot();
-    snap.access_logs = [];
-    saveLocalSnapshot(snap);
-    localStorage.removeItem("nextontv_access_logs");
-    if (state.syncCode) {
-      await pushCloudSnapshotClient(state.syncCode, snap);
-    }
-    renderAccessLogs();
-    showToast("🗑️ Registro accessi svuotato su tutti i dispositivi!");
-  }
-}
 function requestNotificationPermissionAndSchedule(rem) {
   if (!("Notification" in window)) return;
   if (Notification.permission === "default") {
@@ -3430,28 +3329,25 @@ function setupNavigationAndEvents() {
     });
   }
 
-  // Access Log Modal Listeners (🛡️)
-  const btnOpenAccessLog = document.getElementById("btn-open-access-log");
-  if (btnOpenAccessLog) {
-    btnOpenAccessLog.addEventListener("click", openAccessLogModal);
+  // Backup Modal Listeners (💾)
+  const btnOpenBackupModal = document.getElementById("btn-open-backup-modal");
+  if (btnOpenBackupModal) {
+    btnOpenBackupModal.addEventListener("click", openBackupModal);
   }
-  const btnCloseAccessLog = document.getElementById("close-modal-access-log");
-  if (btnCloseAccessLog) {
-    btnCloseAccessLog.addEventListener("click", () => {
-      document.getElementById("modal-access-log").classList.add("hidden");
+  const btnCloseBackup = document.getElementById("close-modal-backup");
+  if (btnCloseBackup) {
+    btnCloseBackup.addEventListener("click", () => {
+      const modal = document.getElementById("modal-backup");
+      if (modal) modal.classList.add("hidden");
     });
   }
-  const modalAccessLog = document.getElementById("modal-access-log");
-  if (modalAccessLog) {
-    modalAccessLog.addEventListener("click", (e) => {
-      if (e.target.id === "modal-access-log") {
-        modalAccessLog.classList.add("hidden");
+  const modalBackup = document.getElementById("modal-backup");
+  if (modalBackup) {
+    modalBackup.addEventListener("click", (e) => {
+      if (e.target.id === "modal-backup") {
+        modalBackup.classList.add("hidden");
       }
     });
-  }
-  const btnClearAccess = document.getElementById("btn-clear-access-logs");
-  if (btnClearAccess) {
-    btnClearAccess.addEventListener("click", clearAllAccessLogs);
   }
 
   // Modals Close & Open

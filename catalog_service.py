@@ -50,6 +50,16 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
     {"it": "Ritorno al futuro", "orig": "Back to the Future", "type": "movie", "year": "1985"},
     {"it": "Ritorno al futuro - Parte II", "orig": "Back to the Future Part II", "type": "movie", "year": "1989"},
     {"it": "Ritorno al futuro - Parte III", "orig": "Back to the Future Part III", "type": "movie", "year": "1990"},
+    # Rocky & Creed Complete 9-Movie Saga
+    {"it": "Rocky", "orig": "Rocky", "type": "movie", "year": "1976", "aliases": ["rocky 1", "rocky i", "rocky balboa 1"], "saga_group": "rocky", "saga_rank": 1},
+    {"it": "Rocky II", "orig": "Rocky II", "type": "movie", "year": "1979", "aliases": ["rocky 2", "rocky ii", "rocky balboa 2"], "saga_group": "rocky", "saga_rank": 2},
+    {"it": "Rocky III", "orig": "Rocky III", "type": "movie", "year": "1982", "aliases": ["rocky 3", "rocky iii", "rocky balboa 3"], "saga_group": "rocky", "saga_rank": 3},
+    {"it": "Rocky IV", "orig": "Rocky IV", "type": "movie", "year": "1985", "aliases": ["rocky 4", "rocky iv", "rocky balboa 4"], "saga_group": "rocky", "saga_rank": 4},
+    {"it": "Rocky V", "orig": "Rocky V", "type": "movie", "year": "1990", "aliases": ["rocky 5", "rocky v", "rocky balboa 5"], "saga_group": "rocky", "saga_rank": 5},
+    {"it": "Rocky Balboa", "orig": "Rocky Balboa", "type": "movie", "year": "2006", "aliases": ["rocky 6", "rocky vi", "rocky balboa"], "saga_group": "rocky", "saga_rank": 6},
+    {"it": "Creed - Nato per combattere", "orig": "Creed", "type": "movie", "year": "2015", "aliases": ["creed 1", "creed", "rocky 7", "rocky vii"], "saga_group": "rocky", "saga_rank": 7},
+    {"it": "Creed II", "orig": "Creed II", "type": "movie", "year": "2018", "aliases": ["creed 2", "creed ii", "rocky 8", "rocky viii"], "saga_group": "rocky", "saga_rank": 8},
+    {"it": "Creed III", "orig": "Creed III", "type": "movie", "year": "2023", "aliases": ["creed 3", "creed iii", "rocky 9", "rocky ix"], "saga_group": "rocky", "saga_rank": 9},
     # Pirati dei Caraibi
     {"it": "La maledizione della prima luna", "orig": "Pirates of the Caribbean: The Curse of the Black Pearl", "type": "movie", "year": "2003", "keywords": "pirati dei caraibi 1"},
     {"it": "Pirati dei Caraibi - La maledizione del forziere fantasma", "orig": "Pirates of the Caribbean: Dead Man's Chest", "type": "movie", "year": "2006"},
@@ -170,10 +180,24 @@ def damerau_levenshtein(s1: str, s2: str, max_dist: int = 2) -> int:
     return prev1[len2]
 
 
+ROMAN_NUMERALS_MAP = {
+    "i": "1", "ii": "2", "iii": "3", "iv": "4", "v": "5",
+    "vi": "6", "vii": "7", "viii": "8", "ix": "9", "x": "10",
+    "xi": "11", "xii": "12"
+}
+
+def convert_roman_numerals(text: str) -> str:
+    if not text:
+        return ""
+    words = text.split()
+    return " ".join(ROMAN_NUMERALS_MAP.get(w, w) for w in words)
+
+
 def _candidate_conjunction_variants(raw_text: str) -> List[str]:
     """
     Given a raw title (possibly containing '&' or '+' or 'and'/'e'),
-    return normalized variants where '&' is expanded to '', 'and', 'end', 'e'.
+    return normalized variants where '&' is expanded to '', 'and', 'end', 'e',
+    and Roman numerals are converted to numbers.
     """
     if not raw_text:
         return []
@@ -194,6 +218,15 @@ def _candidate_conjunction_variants(raw_text: str) -> List[str]:
             v = normalize_title(raw_text.replace("&", repl).replace("+", repl))
             if v:
                 variants.add(v)
+
+    # Add Roman numeral converted variants (e.g. 'rocky ii' <-> 'rocky 2')
+    extra_roman = set()
+    for v in list(variants):
+        r_conv = convert_roman_numerals(v)
+        if r_conv and r_conv != v:
+            extra_roman.add(r_conv)
+    variants.update(extra_roman)
+
     return [v for v in variants if v]
 
 
@@ -219,6 +252,8 @@ def fuzzy_match_title(query: str, candidate_raw: str) -> Tuple[bool, int]:
     if not q_norm:
         return False, 99
     q_conj = strip_conjunctions(q_norm) or q_norm
+    q_roman = convert_roman_numerals(q_norm)
+    q_conj_roman = convert_roman_numerals(q_conj)
     q_nospace = q_norm.replace(" ", "")
     q_conj_nospace = q_conj.replace(" ", "")
 
@@ -229,7 +264,12 @@ def fuzzy_match_title(query: str, candidate_raw: str) -> Tuple[bool, int]:
     # 1. Exact or substring match (distance 0)
     for cv in cand_variants:
         cv_nospace = cv.replace(" ", "")
-        if q_norm in cv or (len(q_conj) >= 3 and q_conj in cv):
+        if (
+            q_norm in cv
+            or q_roman in cv
+            or (len(q_conj) >= 3 and q_conj in cv)
+            or (len(q_conj_roman) >= 3 and q_conj_roman in cv)
+        ):
             return True, 0
         if len(q_nospace) >= 4 and (q_nospace in cv_nospace or (len(q_conj_nospace) >= 4 and q_conj_nospace in cv_nospace)):
             return True, 0

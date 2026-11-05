@@ -369,7 +369,7 @@ def match_epg_with_library(
 
         full_matches = full_exact_map.get(ev_norm) or []
         for fm in full_matches:
-            if fm["media_type"] == ev["media_type"] or ev["media_type"] in ("movie", "series"):
+            if fm["media_type"] == ev["media_type"]:
                 counts_by_category["all"] += 1
                 if fm["status"] == "wishlist":
                     counts_by_category["wishlist"] += 1
@@ -407,7 +407,7 @@ def match_epg_with_library(
                 lib_item = cand
                 break
         if not lib_item:
-            lib_item = candidates[0]
+            continue
 
         watched_ep_set = set(lib_item.get("watched_episodes") or [])
         s_num = ev.get("season")

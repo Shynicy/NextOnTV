@@ -31,8 +31,8 @@
           </div>
         </div>
         <div class="header-actions">
-          <button class="icon-btn" id="btn-open-access-log" title="Registro Accessi & Sicurezza (ultimi 7 giorni)">
-            <span>🛡️</span>
+          <button class="icon-btn" id="btn-open-backup-modal" title="Backup & Ripristino Liste">
+            <span>💾</span>
           </button>
           <button class="icon-btn" id="btn-open-android" title="Porta l'App su Telefono & Sincronizza Cloud">
             <span>📱☁️</span>
@@ -363,23 +363,22 @@
   </div>
 
   <!-- =========================================================================
-       MODAL: REGISTRO ACCESSI & SICUREZZA (ULTIMI 7 GIORNI)
+       MODAL: BACKUP & RIPRISTINO LISTE
        ========================================================================= -->
-  <div class="modal-backdrop hidden" id="modal-access-log">
+  <div class="modal-backdrop hidden" id="modal-backup">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3>🛡️ Sicurezza, Accessi & Backup</h3>
-        <button class="close-btn" id="close-modal-access-log">✕</button>
+        <h3>💾 Backup & Ripristino Liste</h3>
+        <button class="close-btn" id="close-modal-backup">✕</button>
       </div>
       <div class="modal-body">
-        <!-- Discreet Backup & Restore Section -->
         <div
-          style="background:var(--bg-main);border:1px solid var(--border-subtle);border-radius:10px;padding:12px;margin-bottom:12px;">
-          <strong style="font-size:0.86rem;color:#60a5fa;">💾 Backup Liste (Automatico ogni notte alle 00:01)</strong>
-          <p style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;margin-bottom:10px;">
-            I programmi salvati da telefono vengono sincronizzati automaticamente su GitHub ogni notte. Da qui puoi anche salvare o ripristinare una copia a mano in qualsiasi momento.
+          style="background:var(--bg-main);border:1px solid var(--border-subtle);border-radius:10px;padding:14px;margin-bottom:12px;">
+          <strong style="font-size:0.9rem;color:#60a5fa;">💾 Backup Liste (Automatico ogni notte)</strong>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;margin-bottom:12px;line-height:1.4;">
+            I tuoi film e serie salvati (da PC e da telefono) sono sincronizzati al sicuro. Ogni notte alle 00:01 GitHub Actions effettua inoltre una copia di sicurezza automatica del catalogo. Da qui puoi salvare una copia personale in JSON o ripristinare i tuoi programmi.
           </p>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <button type="button" class="btn-secondary btn-sm" id="btn-export-backup" title="Scarica una copia di sicurezza di tutti i tuoi programmi in formato JSON">
               💾 Scarica Backup JSON
             </button>
@@ -392,24 +391,6 @@
             <input type="file" id="input-import-backup" accept=".json" style="display:none;" />
           </div>
         </div>
-
-        <div
-          style="background:var(--bg-main);border:1px solid var(--border-subtle);border-radius:10px;padding:12px;margin-bottom:12px;">
-          <div class="row-between" style="align-items:center;">
-            <div>
-              <strong style="font-size:0.86rem;color:#fcd34d;">🔒 Monitoraggio Attività</strong>
-              <p style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">
-                Mostra quando e da quale dispositivo è stata aperta l'app. I registri con più di 7 giorni vengono
-                eliminati automaticamente.
-              </p>
-            </div>
-            <button type="button" class="btn-action btn-sm" id="btn-clear-access-logs"
-              style="color:#f87171;border-color:rgba(248,113,113,0.4);white-space:nowrap;margin-top:6px;">
-              🗑️ Svuota Registro
-            </button>
-          </div>
-        </div>
-        <div id="access-log-list-body" class="cards-list"></div>
       </div>
     </div>
   </div>
@@ -432,7 +413,7 @@
   </div>
 
   <div id="toast-container" class="toast-container"></div>
-  <script src="./app.js?v=21"></script>
+  <script src="./app.js?v=22"></script>
 </body>
 
 </html>
