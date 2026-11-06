@@ -1,19 +1,19 @@
 {
   "ok": true,
-  "start_date": "2026-11-05",
-  "fetched_at": "05/11/2026 13:20 (Ora Italiana)",
+  "start_date": "2026-11-06",
+  "fetched_at": "06/11/2026 03:13 (Ora Italiana)",
   "days": [
-    "2026-11-05",
     "2026-11-06",
     "2026-11-07",
     "2026-11-08",
     "2026-11-09",
     "2026-11-10",
-    "2026-11-11"
+    "2026-11-11",
+    "2026-11-12"
   ],
   "channels_count": 52,
-  "total_epg_events": 10076,
-  "movies_count": 533,
-  "series_count": 3708,
+  "total_epg_events": 9991,
+  "movies_count": 520,
+  "series_count": 4106,
   "generator": "NextOnTV GitHub Actions Bot"
 }
