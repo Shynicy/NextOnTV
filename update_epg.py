@@ -167,16 +167,8 @@ def main():
         }
         for al in ITALIAN_ORIGINAL_ALIASES
     ]
-    print(f"[Streaming] Verifica disponibilita' streaming IT (Netflix, Prime, Disney+, Sky/NOW, HBO, ecc.) per {len(lib_items)} titoli in lista + {len(alias_probe_items)} titoli catalogo...")
+    print(f"[Streaming] Verifica disponibilita' streaming IT (Netflix, Prime, Disney+, NOW, Sky Go, HBO, ecc.) per {len(lib_items)} titoli in lista + {len(alias_probe_items)} titoli catalogo...")
     stream_map = {}
-    if os.path.isfile(streaming_cat_path):
-        try:
-            with open(streaming_cat_path, "r", encoding="utf-8") as f:
-                existing_map = json.load(f)
-                if isinstance(existing_map, dict):
-                    stream_map.update(existing_map)
-        except Exception:
-            pass
 
     stream_map.update(enrich_items_with_streaming(alias_probe_items, max_workers=10))
     if lib_items:

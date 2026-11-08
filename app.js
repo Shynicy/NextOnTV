@@ -716,17 +716,18 @@ let _staticEpgCache = null;
 let _staticStreamingCatalog = null;
 
 const STREAMING_PLATFORM_META = {
-  netflix: { id: "netflix", name: "Netflix", color: "#e50914", sub: "Abbonamento" },
-  prime: { id: "prime", name: "Prime Video", color: "#00a8e1", sub: "Incluso con Prime" },
-  disney: { id: "disney", name: "Disney+", color: "#113ccf", sub: "Abbonamento" },
-  now: { id: "now", name: "NOW / Sky", color: "#00d66c", sub: "Abbonamento" },
-  hbo: { id: "hbo", name: "HBO / Max", color: "#7b2cbf", sub: "Abbonamento" },
-  apple: { id: "apple", name: "Apple TV+", color: "#64748b", sub: "Abbonamento" },
-  paramount: { id: "paramount", name: "Paramount+", color: "#0064ff", sub: "Abbonamento" },
-  raiplay: { id: "raiplay", name: "RaiPlay", color: "#0046ad", sub: "Gratuito" },
-  mediaset: { id: "mediaset", name: "Mediaset Infinity", color: "#f39200", sub: "Incluso" },
-  crunchyroll: { id: "crunchyroll", name: "Crunchyroll", color: "#f47521", sub: "Anime" },
-  timvision: { id: "timvision", name: "TIMVISION", color: "#003399", sub: "Abbonamento" },
+  netflix: { id: "netflix", name: "Netflix", color: "#e50914" },
+  prime: { id: "prime", name: "Prime Video", color: "#00a8e1" },
+  disney: { id: "disney", name: "Disney+", color: "#113ccf" },
+  now: { id: "now", name: "NOW", color: "#00d66c" },
+  sky: { id: "sky", name: "Sky Go", color: "#0072ce" },
+  hbo: { id: "hbo", name: "HBO / Max", color: "#7b2cbf" },
+  apple: { id: "apple", name: "Apple TV+", color: "#64748b" },
+  paramount: { id: "paramount", name: "Paramount+", color: "#0064ff" },
+  raiplay: { id: "raiplay", name: "RaiPlay", color: "#0046ad" },
+  mediaset: { id: "mediaset", name: "Mediaset Infinity", color: "#f39200" },
+  crunchyroll: { id: "crunchyroll", name: "Crunchyroll", color: "#f47521" },
+  timvision: { id: "timvision", name: "TIMVISION", color: "#003399" },
 };
 
 async function fetchStaticStreamingCatalog() {
@@ -2445,6 +2446,7 @@ function renderStreamingTab() {
     prime: 0,
     disney: 0,
     now: 0,
+    sky: 0,
     hbo: 0,
     apple: 0,
     paramount: 0,

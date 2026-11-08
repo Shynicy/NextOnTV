@@ -31,7 +31,13 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-hobbs-and-shaw/R_570220_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
         "monetization": "FLATRATE",
         "url": "https://skygo.sky.it/"
       }
@@ -69,7 +75,13 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-solo-parti-originali/R_570215_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
         "monetization": "FLATRATE",
         "url": "https://skygo.sky.it/"
       }
@@ -107,7 +119,13 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/2-fast-2-furious/R_570254_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
         "monetization": "FLATRATE",
         "url": "https://skygo.sky.it/"
       }
@@ -145,7 +163,7 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
         "monetization": "FLATRATE",
         "url": "https://www.nowtv.it/watch/asset/fast-and-furious/R_570221_HD"
       }
@@ -724,7 +742,13 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-6/R_570216_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
         "monetization": "FLATRATE",
         "url": "https://skygo.sky.it/"
       }
@@ -762,7 +786,13 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-5/R_570219_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
         "monetization": "FLATRATE",
         "url": "https://skygo.sky.it/"
       }
@@ -800,7 +830,13 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-8/R_570218_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
         "monetization": "FLATRATE",
         "url": "https://skygo.sky.it/"
       }
@@ -864,7 +900,13 @@
       },
       {
         "id": "now",
-        "name": "NOW / Sky",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-7/R_570217_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
         "monetization": "FLATRATE",
         "url": "https://skygo.sky.it/"
       },
