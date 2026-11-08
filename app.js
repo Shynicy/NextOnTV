@@ -2300,13 +2300,17 @@ function renderMatchCard(ev, matchIndex) {
       ? `✅ ${ev.ep_code || "Episodio"} Visto`
       : `✓ Segna ${ev.ep_code || "Episodio"} Visto`;
 
+  const isSkyEv = Boolean(ev.is_sky || Number(ev.lcn || 0) >= 100);
+  const badgeColor = isSkyEv ? "#dc2626" : "#009fe3";
+  const badgePrefix = isSkyEv ? "🛰️ SKY" : "CH";
+
   return `
     <article class="tv-card">
       ${posterHtml}
       <div class="tv-body">
         <div class="tv-meta-top">
-          <span class="lcn-badge" style="background:${ev.channel_color || "#334155"}">
-            ${(ev.is_sky || Number(ev.lcn || 0) >= 100) ? "🛰️ SKY" : "CH"} ${ev.lcn} • ${escapeHtml(ev.channel_name)}
+          <span class="lcn-badge ${isSkyEv ? "sky" : "dtt"}" style="background:${badgeColor};">
+            ${badgePrefix} ${ev.lcn} • ${escapeHtml(ev.channel_name)}
           </span>
           <span class="time-badge">
             🕒 ${ev.start_time}${ev.end_time ? " - " + ev.end_time : ""} (${ev.duration_min} min)
@@ -3895,13 +3899,17 @@ async function loadExploreEpg() {
         ? `<img src="${escapeHtml(ev.poster)}" alt="${escapeHtml(ev.title)}" class="tv-poster" loading="lazy" onerror="this.outerHTML='<div class=\\'tv-poster\\'>${isMovie ? "🎬" : "📺"}</div>'" />`
         : `<div class="tv-poster">${isMovie ? "🎬" : "📺"}</div>`;
 
+      const isSkyEv = Boolean(ev.is_sky || Number(ev.lcn || 0) >= 100);
+      const badgeColor = isSkyEv ? "#dc2626" : "#009fe3";
+      const badgePrefix = isSkyEv ? "🛰️ SKY" : "CH";
+
       return `
         <article class="tv-card">
           ${posterHtml}
           <div class="tv-body">
             <div class="tv-meta-top">
-              <span class="lcn-badge" style="background:${ev.channel_color || "#334155"}">
-                CH ${ev.lcn} • ${escapeHtml(ev.channel_name)}
+              <span class="lcn-badge ${isSkyEv ? "sky" : "dtt"}" style="background:${badgeColor};">
+                ${badgePrefix} ${ev.lcn} • ${escapeHtml(ev.channel_name)}
               </span>
               <span class="time-badge">
                 📅 ${formatItalianDate(ev.date)} • 🕒 ${ev.start_time}
@@ -4038,12 +4046,15 @@ async function openRemindersModal() {
   }
 
   listEl.innerHTML = state.reminders
-    .map(
-      (r) => `
+    .map((r) => {
+      const isSkyR = Boolean(r.is_sky || Number(r.lcn || 0) >= 100);
+      const badgeColor = isSkyR ? "#dc2626" : "#009fe3";
+      const badgePrefix = isSkyR ? "🛰️ SKY" : "CH";
+      return `
       <div class="tv-card">
         <div class="tv-body">
           <div class="tv-meta-top">
-            <span class="lcn-badge" style="background:#f59e0b;color:#000;">CH ${r.lcn} • ${escapeHtml(r.channel_name)}</span>
+            <span class="lcn-badge ${isSkyR ? "sky" : "dtt"}" style="background:${badgeColor};color:#fff;">${badgePrefix} ${r.lcn} • ${escapeHtml(r.channel_name)}</span>
             <span class="time-badge">📅 ${formatItalianDate(r.date)} • 🕒 ${r.start_time}</span>
           </div>
           <h4 class="tv-title">${escapeHtml(r.title)} ${r.episode_info ? `(${escapeHtml(r.episode_info)})` : ""}</h4>
@@ -4053,8 +4064,8 @@ async function openRemindersModal() {
           </div>
         </div>
       </div>
-    `
-    )
+    `;
+    })
     .join("");
 
   listEl.querySelectorAll(".btn-remove-rem").forEach((btn) => {

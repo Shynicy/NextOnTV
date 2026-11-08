@@ -580,6 +580,15 @@ body {
   padding: 2px 8px;
   border-radius: 6px;
   color: #fff;
+  letter-spacing: 0.2px;
+}
+
+.lcn-badge.dtt {
+  background: #009fe3;
+}
+
+.lcn-badge.sky {
+  background: #dc2626;
 }
 
 .time-badge {

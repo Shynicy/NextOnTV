@@ -94,8 +94,16 @@ SKY_CHANNELS: List[Dict] = [
     {"lcn": 310, "name": "Sky Cinema Uno +24", "sky_id": 9037, "group": "Sky Cinema", "color": "#b71c1c", "is_sky": True},
 ]
 
+DTT_CHANNEL_COLOR = "#009fe3"  # Azzurro uniforme per Digitale Terrestre
+SKY_CHANNEL_COLOR = "#dc2626"  # Rosso uniforme per Sky
+
 for _ch in DTT_CHANNELS:
     _ch["is_sky"] = False
+    _ch["color"] = DTT_CHANNEL_COLOR
+
+for _ch in SKY_CHANNELS:
+    _ch["is_sky"] = True
+    _ch["color"] = SKY_CHANNEL_COLOR
 
 ALL_CHANNELS: List[Dict] = DTT_CHANNELS + SKY_CHANNELS
 
