@@ -1044,14 +1044,14 @@ async function fetchSeriesEpisodesClient4G(titleIt, titleOriginal, tvmazeId) {
 }
 
 async function directMobileSearch4G(query, libraryItems) {
-  const cleanQ = query.replace(/[-:+"*~_]/g, " ").replace(/\s+/g, " ").trim();
+  const cleanQ = query.replace(/[^a-zA-Z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
   const qNorm = normalizeTitleClient(cleanQ || query);
   if (!qNorm) return { results: [] };
   const results = [];
 
   // Extract subtitle variant for franchises (e.g. "Lupin III - Il castello di Cagliostro" -> "Il castello di Cagliostro")
   const mSub = query.match(/^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter)\s*[-:–]?\s*(.+)$/i);
-  const subTitle = (mSub && mSub[1] && mSub[1].trim().length >= 3) ? mSub[1].replace(/[-:+"*~_]/g, " ").replace(/\s+/g, " ").trim() : "";
+  const subTitle = (mSub && mSub[1] && mSub[1].trim().length >= 3) ? mSub[1].replace(/[^a-zA-Z0-9\s]/g, " ").replace(/\s+/g, " ").trim() : "";
 
   // Check Wikipedia suggestion / spellcheck for typos (e.g. "cagliostor" -> "cagliostro", "nostradmus" -> "nostradamus")
   let suggestion = "";
