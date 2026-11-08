@@ -44,58 +44,83 @@ def save_sync_config(cfg: Dict) -> None:
 
 def push_snapshot_to_cloud(sync_code: str, snapshot: Dict) -> Optional[str]:
     """
-    Upload full database & matches snapshot to bytebin.lucko.me and announce the key
-    on ntfy.sh/nextontv_sync_{sync_code} so any device (PC or Android on 4G/5G) can sync.
+    Upload full database & matches snapshot to ntfy.sh and bytebin so any device
+    (PC or Android on 4G/5G) can sync bi-directionally without loss.
     """
     if not sync_code:
         return None
+    topic = f"nextontv_sync_{sync_code.strip().lower()}"
+    raw_payload = json.dumps(snapshot, ensure_ascii=False).encode("utf-8")
+    att_url = None
+
+    # 1. Upload snapshot directly to ntfy.sh attachment
     try:
-        raw_payload = json.dumps(snapshot, ensure_ascii=False).encode("utf-8")
-        req = urllib.request.Request(
+        req_ntfy_file = urllib.request.Request(
+            f"https://ntfy.sh/{topic}?filename=snapshot.json",
+            data=raw_payload,
+            headers={
+                "User-Agent": USER_AGENT,
+                "Title": "NextOnTV Cloud Snapshot",
+                "Tags": "package",
+            },
+            method="PUT",
+        )
+        with urllib.request.urlopen(req_ntfy_file, timeout=12, context=SSL_CTX) as resp_f:
+            f_data = json.loads(resp_f.read().decode("utf-8", errors="ignore"))
+            att_url = (f_data.get("attachment") or {}).get("url")
+    except Exception:
+        pass
+
+    # 2. Try bytebin as secondary mirror
+    bytebin_key = None
+    try:
+        req_b = urllib.request.Request(
             "https://bytebin.lucko.me/post",
             data=raw_payload,
             headers={"Content-Type": "application/json", "User-Agent": USER_AGENT},
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=10, context=SSL_CTX) as resp:
-            res_data = json.loads(resp.read().decode("utf-8"))
+        with urllib.request.urlopen(req_b, timeout=8, context=SSL_CTX) as resp_b:
+            res_data = json.loads(resp_b.read().decode("utf-8", errors="ignore"))
             bytebin_key = res_data.get("key")
+    except Exception:
+        pass
 
-        if not bytebin_key:
-            return None
-
-        # Announce on ntfy.sh topic
-        topic = f"nextontv_sync_{sync_code.strip().lower()}"
+    # 3. Post summary message to ntfy
+    try:
         ntfy_msg = json.dumps({
-            "bytebin_key": bytebin_key,
+            "bytebin_key": bytebin_key or "",
+            "attachment_url": att_url or "",
             "updated_at": snapshot.get("updated_at") or time.time(),
             "source": snapshot.get("source") or "pc",
-            "tunnel_url": snapshot.get("tunnel_url") or "",
             "items_count": len(snapshot.get("library") or []),
         })
         req_ntfy = urllib.request.Request(
             f"https://ntfy.sh/{topic}",
             data=ntfy_msg.encode("utf-8"),
-            headers={"User-Agent": USER_AGENT, "Title": "NextOnTV Cloud Sync"},
+            headers={"User-Agent": USER_AGENT, "Title": "NextOnTV Sync Notice"},
             method="POST",
         )
         with urllib.request.urlopen(req_ntfy, timeout=8, context=SSL_CTX) as _:
             pass
-
-        cfg = get_or_create_sync_config()
-        cfg["sync_code"] = sync_code.strip().lower()
-        cfg["last_bytebin_key"] = bytebin_key
-        cfg["last_synced_at"] = snapshot.get("updated_at") or time.time()
-        save_sync_config(cfg)
-        return bytebin_key
     except Exception:
-        return None
+        pass
+
+    cfg = get_or_create_sync_config()
+    cfg["sync_code"] = sync_code.strip().lower()
+    if bytebin_key:
+        cfg["last_bytebin_key"] = bytebin_key
+    cfg["last_synced_at"] = snapshot.get("updated_at") or time.time()
+    save_sync_config(cfg)
+    return att_url or bytebin_key or "ok"
 
 
 def pull_latest_snapshot_from_cloud(sync_code: str) -> Optional[Dict]:
     """
-    Query ntfy.sh/nextontv_sync_{sync_code} for the newest bytebin_key and download
-    the full cloud snapshot from bytebin.lucko.me.
+    Query ntfy.sh/nextontv_sync_{sync_code} for the newest snapshot, checking:
+      1. Direct ntfy file attachments
+      2. Inlined JSON messages
+      3. Bytebin key references
     """
     if not sync_code:
         return None
@@ -105,39 +130,70 @@ def pull_latest_snapshot_from_cloud(sync_code: str) -> Optional[Dict]:
             f"https://ntfy.sh/{topic}/json?poll=1&since=all",
             headers={"User-Agent": USER_AGENT},
         )
-        with urllib.request.urlopen(req, timeout=8, context=SSL_CTX) as resp:
+        with urllib.request.urlopen(req, timeout=10, context=SSL_CTX) as resp:
             lines = resp.read().decode("utf-8", errors="ignore").strip().splitlines()
 
-        latest_key = None
+        latest_snap = None
         latest_ts = -1.0
+
         for line in lines:
+            line = line.strip()
+            if not line:
+                continue
             try:
                 ev = json.loads(line)
                 if ev.get("event") != "message":
                     continue
-                msg_obj = json.loads(ev.get("message") or "{}")
-                b_key = msg_obj.get("bytebin_key")
-                u_ts = float(msg_obj.get("updated_at") or ev.get("time") or 0)
-                if b_key and u_ts >= latest_ts:
-                    latest_ts = u_ts
-                    latest_key = b_key
+                ev_time = float(ev.get("time") or 0)
+
+                # Check attachment first
+                att = ev.get("attachment") or {}
+                if att.get("url"):
+                    try:
+                        req_att = urllib.request.Request(att["url"], headers={"User-Agent": USER_AGENT})
+                        with urllib.request.urlopen(req_att, timeout=10, context=SSL_CTX) as a_resp:
+                            snap_obj = json.loads(a_resp.read().decode("utf-8", errors="ignore"))
+                            if isinstance(snap_obj, dict) and isinstance(snap_obj.get("library"), list):
+                                u_ts = float(snap_obj.get("updated_at") or ev_time)
+                                if u_ts >= latest_ts:
+                                    latest_ts = u_ts
+                                    latest_snap = snap_obj
+                                    continue
+                    except Exception:
+                        pass
+
+                # Check inlined JSON message or bytebin key
+                msg_raw = (ev.get("message") or "").strip()
+                if msg_raw.startswith("{") and msg_raw.endswith("}"):
+                    try:
+                        msg_obj = json.loads(msg_raw)
+                        if isinstance(msg_obj, dict) and isinstance(msg_obj.get("library"), list):
+                            u_ts = float(msg_obj.get("updated_at") or ev_time)
+                            if u_ts >= latest_ts:
+                                latest_ts = u_ts
+                                latest_snap = msg_obj
+                                continue
+                        
+                        b_key = msg_obj.get("bytebin_key")
+                        if b_key:
+                            req_blob = urllib.request.Request(
+                                f"https://bytebin.lucko.me/{b_key}",
+                                headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+                            )
+                            with urllib.request.urlopen(req_blob, timeout=8, context=SSL_CTX) as resp_b:
+                                snap_obj = json.loads(resp_b.read().decode("utf-8", errors="ignore"))
+                                if isinstance(snap_obj, dict) and isinstance(snap_obj.get("library"), list):
+                                    u_ts = float(snap_obj.get("updated_at") or ev_time)
+                                    if u_ts >= latest_ts:
+                                        latest_ts = u_ts
+                                        latest_snap = snap_obj
+                                        continue
+                    except Exception:
+                        pass
             except Exception:
                 continue
 
-        if not latest_key:
-            cfg = get_or_create_sync_config()
-            latest_key = cfg.get("last_bytebin_key")
-        if not latest_key:
-            return None
-
-        req_blob = urllib.request.Request(
-            f"https://bytebin.lucko.me/{latest_key}",
-            headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
-        )
-        with urllib.request.urlopen(req_blob, timeout=10, context=SSL_CTX) as resp_b:
-            snapshot = json.loads(resp_b.read().decode("utf-8", errors="ignore"))
-            snapshot["bytebin_key"] = latest_key
-            return snapshot
+        return latest_snap
     except Exception:
         return None
 

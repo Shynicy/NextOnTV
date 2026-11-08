@@ -495,6 +495,17 @@ def expand_query_variants(query: str, epg_events: Optional[List[Dict]] = None) -
 
     _add(q_raw)
 
+    clean_no_ops = re.sub(r"[-:+\"_*~]", " ", q_raw).strip()
+    if clean_no_ops != q_raw:
+        _add(clean_no_ops)
+
+    # Subtitle extraction for franchises (e.g. 'Lupin III - Il castello di Cagliostro' -> 'Il castello di Cagliostro')
+    m_sub = re.match(r"^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter)\s*[-:–]?\s*(.+)$", q_raw, flags=re.IGNORECASE)
+    if m_sub and m_sub.group(1).strip() and len(m_sub.group(1).strip()) >= 3:
+        sub_title = m_sub.group(1).strip()
+        _add(sub_title)
+        _add(re.sub(r"[-:+\"_*~]", " ", sub_title).strip())
+
     if "&" in q_raw:
         _add(q_raw.replace("&", " and "))
         _add(q_raw.replace("&", " e "))
@@ -707,10 +718,27 @@ def _search_wikipedia_generator(query: str) -> List[Dict]:
     combining full-text search and prefixsearch to capture full franchises.
     """
     all_pages = {}
+    clean_q = re.sub(r"[-:+\"_*~]", " ", query).strip()
     urls = [
-        f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(query)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json",
-        f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(query)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
+        f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(clean_q)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json",
+        f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(clean_q)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
     ]
+    # Check if subtitle variant exists (e.g. 'Lupin III - Il castello di Cagliostro' -> 'Il castello di Cagliostro')
+    m_sub = re.match(r"^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter)\s*[-:–]?\s*(.+)$", query, flags=re.IGNORECASE)
+    if m_sub and m_sub.group(1).strip() and len(m_sub.group(1).strip()) >= 3:
+        sub_t = re.sub(r"[-:+\"_*~]", " ", m_sub.group(1)).strip()
+        urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(sub_t)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
+        urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(sub_t)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
+    # Check Wikipedia spellchecker suggestion for typos
+    try:
+        spell_url = f"https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(clean_q)}&format=json"
+        sdata = _http_get_json(spell_url, timeout=3)
+        sug = ((sdata.get("query") or {}).get("searchinfo") or {}).get("suggestion")
+        if sug and sug.lower() != clean_q.lower():
+            urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(sug)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
+            urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(sug)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
+    except Exception:
+        pass
     for url in urls:
         try:
             data = _http_get_json(url, timeout=5)
@@ -780,10 +808,12 @@ def _clean_tokens_scoring(text: str) -> Tuple[List[str], List[str]]:
 def _word_match_scoring(qw: str, cw: str) -> bool:
     if qw == cw:
         return True
-    if len(qw) >= 4 and len(cw) >= 4:
+    if len(qw) >= 3 and len(cw) >= 3:
         if qw in cw or cw in qw:
             return True
-        if damerau_levenshtein(qw, cw, max_dist=1) <= 1:
+        min_l = min(len(qw), len(cw))
+        max_d = 2 if min_l >= 6 else (1 if min_l >= 4 else 0)
+        if max_d > 0 and damerau_levenshtein(qw, cw, max_dist=max_d) <= max_d:
             return True
     return False
 

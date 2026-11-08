@@ -172,9 +172,11 @@ function cleanTokensClient(text) {
 
 function wordMatchClient(qw, cw) {
   if (qw === cw) return true;
-  if (qw.length >= 4 && cw.length >= 4) {
+  if (qw.length >= 3 && cw.length >= 3) {
     if (qw.includes(cw) || cw.includes(qw)) return true;
-    if (damerauLevenshteinClient(qw, cw, 1) <= 1) return true;
+    const minL = Math.min(qw.length, cw.length);
+    const maxD = minL >= 6 ? 2 : (minL >= 4 ? 1 : 0);
+    if (maxD > 0 && damerauLevenshteinClient(qw, cw, maxD) <= maxD) return true;
   }
   return false;
 }
@@ -486,6 +488,57 @@ function saveLocalSnapshot(snap) {
   } catch (e) { }
 }
 
+function mergeSnapshotsClient(localSnap, cloudSnap) {
+  if (!cloudSnap || !Array.isArray(cloudSnap.library)) return localSnap;
+  if (!localSnap || !Array.isArray(localSnap.library)) return cloudSnap;
+
+  const mergedLib = [...(localSnap.library || [])];
+  const deletedKeys = new Set([
+    ...(localSnap.deleted_keys || []),
+    ...(cloudSnap.deleted_keys || []),
+  ]);
+
+  const localKeySet = new Set(
+    mergedLib.map((x) => `${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`)
+  );
+
+  cloudSnap.library.forEach((item) => {
+    if (!item || !item.title_it) return;
+    const mtype = item.media_type || "movie";
+    const k = `${mtype}_${normalizeTitleClient(item.title_it)}`;
+    if (deletedKeys.has(k)) return;
+
+    if (!localKeySet.has(k)) {
+      localKeySet.add(k);
+      mergedLib.push(item);
+    } else {
+      const existing = mergedLib.find((x) => `${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}` === k);
+      if (existing) {
+        if (item.status && existing.status !== item.status) {
+          if ((cloudSnap.updated_at || 0) >= (localSnap.updated_at || 0)) {
+            existing.status = item.status;
+          }
+        }
+        if (!existing.poster && item.poster) existing.poster = item.poster;
+        if ((item.watched_episodes || []).length > (existing.watched_episodes || []).length) {
+          existing.watched_episodes = item.watched_episodes;
+          existing.watched_episodes_count = item.watched_episodes.length;
+        }
+      }
+    }
+  });
+
+  const filteredLib = mergedLib.filter((x) => !deletedKeys.has(`${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`));
+
+  return {
+    ...localSnap,
+    library: filteredLib,
+    deleted_keys: Array.from(deletedKeys),
+    reminders: (cloudSnap.reminders && cloudSnap.reminders.length >= (localSnap.reminders || []).length) ? cloudSnap.reminders : (localSnap.reminders || []),
+    updated_at: Math.max(localSnap.updated_at || 0, cloudSnap.updated_at || 0, Date.now() / 1000),
+  };
+}
+
 async function pullCloudSnapshotClient(syncCode) {
   const code = (syncCode || state.syncCode || "shynicy_nextontv").trim().toLowerCase();
   const topic = `nextontv_sync_${code}`;
@@ -493,26 +546,60 @@ async function pullCloudSnapshotClient(syncCode) {
     const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`);
     const text = await res.text();
     const lines = text.trim().split("\n");
-    let latestUrl = null;
+    let cloudSnap = null;
     let latestTs = -1;
-    for (const line of lines) {
+
+    for (let i = lines.length - 1; i >= 0; i--) {
+      const line = lines[i].trim();
       if (!line) continue;
       try {
         const ev = JSON.parse(line);
+        if (ev.event !== "message") continue;
+        const evTime = Number(ev.time || 0);
+
+        // 1. Direct attachment URL
         if (ev.attachment && ev.attachment.url) {
-          const ts = Number(ev.time || 0);
-          if (ts >= latestTs) {
-            latestTs = ts;
-            latestUrl = ev.attachment.url;
-          }
+          try {
+            const bRes = await fetch(ev.attachment.url);
+            if (bRes.ok) {
+              const snapObj = await bRes.json();
+              if (snapObj && Array.isArray(snapObj.library)) {
+                const uTs = Number(snapObj.updated_at || evTime);
+                if (uTs >= latestTs) {
+                  latestTs = uTs;
+                  cloudSnap = snapObj;
+                  break;
+                }
+              }
+            }
+          } catch (e) { }
+        }
+
+        // 2. Direct JSON body in message
+        const msgRaw = (ev.message || "").trim();
+        if (msgRaw.startsWith("{") && msgRaw.endsWith("}")) {
+          try {
+            const snapObj = JSON.parse(msgRaw);
+            if (snapObj && Array.isArray(snapObj.library)) {
+              const uTs = Number(snapObj.updated_at || evTime);
+              if (uTs >= latestTs) {
+                latestTs = uTs;
+                cloudSnap = snapObj;
+                break;
+              }
+            }
+          } catch (e) { }
         }
       } catch (e) { }
     }
-    if (!latestUrl) return null;
-    const blobRes = await fetch(latestUrl);
-    const snap = await blobRes.json();
-    saveLocalSnapshot(snap);
-    return snap;
+
+    if (!cloudSnap || !Array.isArray(cloudSnap.library)) return null;
+
+    // Smart merge: NEVER wipe out items that were added locally!
+    const localSnap = getLocalSnapshot();
+    const merged = mergeSnapshotsClient(localSnap, cloudSnap);
+    saveLocalSnapshot(merged);
+    return merged;
   } catch (e) {
     return null;
   }
@@ -527,13 +614,35 @@ async function pushCloudSnapshotClient(syncCode, snap) {
   }
   const topic = `nextontv_sync_${code}`;
   try {
-    const postRes = await fetch(`https://ntfy.sh/${topic}?filename=snapshot.json`, {
-      method: "PUT",
-      headers: { "Title": "NextOnTV Cloud Snapshot" },
-      body: JSON.stringify(snap),
-    });
-    const postData = await postRes.json();
-    return postData && postData.attachment ? postData.attachment.url : "ok";
+    const rawPayload = JSON.stringify(snap);
+    let attUrl = null;
+    try {
+      const postRes = await fetch(`https://ntfy.sh/${topic}?filename=snapshot.json`, {
+        method: "PUT",
+        headers: { "Title": "NextOnTV Cloud Snapshot", "Tags": "package" },
+        body: rawPayload,
+      });
+      if (postRes.ok) {
+        const postData = await postRes.json();
+        attUrl = postData?.attachment?.url || null;
+      }
+    } catch (e) { }
+
+    try {
+      const notice = JSON.stringify({
+        attachment_url: attUrl || "",
+        updated_at: (snap && snap.updated_at) || Date.now() / 1000,
+        source: "mobile",
+        items_count: ((snap && snap.library) || []).length,
+      });
+      await fetch(`https://ntfy.sh/${topic}`, {
+        method: "POST",
+        headers: { "Title": "NextOnTV Sync Notice" },
+        body: notice,
+      });
+    } catch (e) { }
+
+    return attUrl || "ok";
   } catch (e) {
     return null;
   }
@@ -935,12 +1044,29 @@ async function fetchSeriesEpisodesClient4G(titleIt, titleOriginal, tvmazeId) {
 }
 
 async function directMobileSearch4G(query, libraryItems) {
-  const qNorm = normalizeTitleClient(query);
+  const cleanQ = query.replace(/[-:+"*~_]/g, " ").replace(/\s+/g, " ").trim();
+  const qNorm = normalizeTitleClient(cleanQ || query);
   if (!qNorm) return { results: [] };
   const results = [];
 
-  // 1. Check sagas (franchises like Fast & Furious, Harry Potter, etc.)
-  const { tokens: qTokens, core: qCore } = cleanTokensClient(query);
+  // Extract subtitle variant for franchises (e.g. "Lupin III - Il castello di Cagliostro" -> "Il castello di Cagliostro")
+  const mSub = query.match(/^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter)\s*[-:–]?\s*(.+)$/i);
+  const subTitle = (mSub && mSub[1] && mSub[1].trim().length >= 3) ? mSub[1].replace(/[-:+"*~_]/g, " ").replace(/\s+/g, " ").trim() : "";
+
+  // Check Wikipedia suggestion / spellcheck for typos (e.g. "cagliostor" -> "cagliostro", "nostradmus" -> "nostradamus")
+  let suggestion = "";
+  try {
+    const spellUrl = `https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&format=json&origin=*`;
+    const spellRes = await fetch(spellUrl);
+    const spellData = await spellRes.json();
+    const sug = spellData.query?.searchinfo?.suggestion;
+    if (sug && sug.toLowerCase() !== cleanQ.toLowerCase()) {
+      suggestion = sug;
+    }
+  } catch (e) { }
+
+  // 1. Check sagas (franchises like Fast & Furious, Harry Potter, Lupin, Rocky, etc.)
+  const { tokens: qTokens, core: qCore } = cleanTokensClient(cleanQ);
   const qStr = qTokens.join(" ");
   const qCoreStr = qCore.join(" ");
 
@@ -948,7 +1074,7 @@ async function directMobileSearch4G(query, libraryItems) {
   SAGA_DEFINITIONS.forEach((sagaDef) => {
     const isMatch = sagaDef.names.some((sname) => {
       const { tokens: sTokens, core: sCore } = cleanTokensClient(sname);
-      return sTokens.join(" ") === qStr || (sCore.length > 0 && sCore.join(" ") === qCoreStr);
+      return sTokens.join(" ") === qStr || (sCore.length > 0 && sCore.join(" ") === qCoreStr) || (suggestion && sname.toLowerCase() === suggestion.toLowerCase());
     });
     if (isMatch) matchedSagaIds.add(sagaDef.id);
   });
@@ -958,10 +1084,17 @@ async function directMobileSearch4G(query, libraryItems) {
     const normIt = normalizeTitleClient(al.it);
     const normOrig = normalizeTitleClient(al.orig);
     const isDirectMatch =
-      fuzzyMatchTitleClient(query, al.it) ||
-      fuzzyMatchTitleClient(query, al.orig) ||
+      fuzzyMatchTitleClient(cleanQ, al.it) ||
+      fuzzyMatchTitleClient(cleanQ, al.orig) ||
+      (subTitle && (fuzzyMatchTitleClient(subTitle, al.it) || fuzzyMatchTitleClient(subTitle, al.orig))) ||
+      (suggestion && (fuzzyMatchTitleClient(suggestion, al.it) || fuzzyMatchTitleClient(suggestion, al.orig))) ||
       (qStr && (normIt.includes(qStr) || normOrig.includes(qStr))) ||
-      (al.aliases && al.aliases.some((a) => fuzzyMatchTitleClient(query, a) || (qStr && normalizeTitleClient(a).includes(qStr))));
+      (al.aliases && al.aliases.some((a) =>
+        fuzzyMatchTitleClient(cleanQ, a) ||
+        (subTitle && fuzzyMatchTitleClient(subTitle, a)) ||
+        (suggestion && fuzzyMatchTitleClient(suggestion, a)) ||
+        (qStr && normalizeTitleClient(a).includes(qStr))
+      ));
 
     if (isSagaMatch || isDirectMatch) {
       results.push({
@@ -981,44 +1114,55 @@ async function directMobileSearch4G(query, libraryItems) {
   });
 
   // 2. Query TVMaze directly over HTTPS (CORS-enabled on 4G/5G!)
-  try {
-    const mazeRes = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(query)}`);
-    const mazeData = await mazeRes.json();
-    if (Array.isArray(mazeData)) {
-      mazeData.forEach((row) => {
-        const show = row.show || {};
-        results.push({
-          external_id: `tvmaze_${show.id}`,
-          tvmaze_id: show.id,
-          media_type: "series",
-          title_it: show.name || "",
-          title_original: show.name || "",
-          year: (show.premiered || "").slice(0, 4),
-          poster: ((show.image || {}).medium || "").replace("http://", "https://"),
-          genre: (show.genres || []).join(", ") || "Serie TV",
-          description: (show.summary || "").replace(/<[^>]+>/g, "").slice(0, 240),
-          tvmaze_weight: show.weight || 0,
+  const tvmazeQueries = [cleanQ];
+  if (subTitle && !tvmazeQueries.includes(subTitle)) tvmazeQueries.push(subTitle);
+  if (suggestion && !tvmazeQueries.includes(suggestion)) tvmazeQueries.push(suggestion);
+
+  for (const tmQ of tvmazeQueries) {
+    try {
+      const mazeRes = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(tmQ)}`);
+      const mazeData = await mazeRes.json();
+      if (Array.isArray(mazeData)) {
+        mazeData.forEach((row) => {
+          const show = row.show || {};
+          results.push({
+            external_id: `tvmaze_${show.id}`,
+            tvmaze_id: show.id,
+            media_type: "series",
+            title_it: show.name || "",
+            title_original: show.name || "",
+            year: (show.premiered || "").slice(0, 4),
+            poster: ((show.image || {}).medium || "").replace("http://", "https://"),
+            genre: (show.genres || []).join(", ") || "Serie TV",
+            description: (show.summary || "").replace(/<[^>]+>/g, "").slice(0, 240),
+            tvmaze_weight: show.weight || 0,
+          });
         });
-      });
-    }
-  } catch (e) { }
+      }
+    } catch (e) { }
+  }
 
-  // 3. Query Italian Wikipedia Full-Text Search and Prefix Search (up to 50+ entries per query to fetch entire sagas/franchises)
+  // 3. Query Italian Wikipedia Full-Text Search and Prefix Search
+  const wikiQueries = [cleanQ];
+  if (subTitle && !wikiQueries.includes(subTitle)) wikiQueries.push(subTitle);
+  if (suggestion && !wikiQueries.includes(suggestion)) wikiQueries.push(suggestion);
+
   try {
-    const wikiSearchUrl = `https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`;
-    const wikiPrefixUrl = `https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`;
-    
-    const [wikiRes1, wikiRes2] = await Promise.allSettled([
-      fetch(wikiSearchUrl).then(r => r.json()),
-      fetch(wikiPrefixUrl).then(r => r.json())
-    ]);
-
-    const pagesMap = {};
-    if (wikiRes1.status === "fulfilled" && wikiRes1.value?.query?.pages) {
-      Object.assign(pagesMap, wikiRes1.value.query.pages);
+    const wikiPromises = [];
+    for (const wq of wikiQueries) {
+      wikiPromises.push(
+        fetch(`https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(wq)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`).then(r => r.json()).catch(() => null)
+      );
+      wikiPromises.push(
+        fetch(`https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch=${encodeURIComponent(wq)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`).then(r => r.json()).catch(() => null)
+      );
     }
-    if (wikiRes2.status === "fulfilled" && wikiRes2.value?.query?.pages) {
-      Object.assign(pagesMap, wikiRes2.value.query.pages);
+    const wikiSettled = await Promise.allSettled(wikiPromises);
+    const pagesMap = {};
+    for (const res of wikiSettled) {
+      if (res.status === "fulfilled" && res.value?.query?.pages) {
+        Object.assign(pagesMap, res.value.query.pages);
+      }
     }
 
     const ignoredPrefixes = ["episodi d", "personaggi d", "capitoli d", "colonn", "musich", "doppiatori", "pubblicazioni", "videogiochi d"];
@@ -1062,8 +1206,12 @@ async function directMobileSearch4G(query, libraryItems) {
 
   // 4. Query Wikidata Italian entities directly over HTTPS (CORS-enabled on 4G/5G!)
   try {
-    const wdQueries = [query];
-    if (qNorm === "lupin") wdQueries.push("Lupin III");
+    const wdQueries = [cleanQ];
+    if (subTitle && !wdQueries.includes(subTitle)) wdQueries.push(subTitle);
+    if (suggestion && !wdQueries.includes(suggestion)) wdQueries.push(suggestion);
+    if (qNorm === "lupin" || cleanQ.toLowerCase().startsWith("lupin")) {
+      if (!wdQueries.includes("Lupin III")) wdQueries.push("Lupin III");
+    }
     
     for (const wdQ of wdQueries) {
       const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(wdQ)}&language=it&uselang=it&format=json&origin=*&limit=50`;
@@ -1151,7 +1299,12 @@ async function directMobileSearch4G(query, libraryItems) {
 
   // 4. Score every result using smart relevance & popularity scoring
   results.forEach((r) => {
-    r.relevance_score = computeRelevanceScoreClient(query, r);
+    let score = computeRelevanceScoreClient(query, r);
+    if (suggestion) {
+      const sugScore = computeRelevanceScoreClient(suggestion, r) - 40;
+      if (sugScore > score) score = sugScore;
+    }
+    r.relevance_score = score;
   });
 
   // Keep all items with score > 0 (preserves exact matches, phrase matches, and niche/anime cult titles!)
@@ -1785,11 +1938,26 @@ function bindMatchCardEvents(container) {
 // ============================================================================
 async function loadLibrary() {
   const data = await apiGet(`/api/library?start_date=${state.startDate}`);
-  state.libraryItems = data.items || [];
+  const serverItems = data.items || [];
   if (!state.isCloudMode) {
     const snap = getLocalSnapshot();
+    const serverKeySet = new Set(serverItems.map((x) => `${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`));
+    const missingOnServer = (snap.library || []).filter((x) => !serverKeySet.has(`${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`));
+    if (missingOnServer.length > 0) {
+      try {
+        await apiPost("/api/library/batch", { action: "restore", items: snap.library });
+        const refreshed = await apiGet(`/api/library?start_date=${state.startDate}`);
+        state.libraryItems = refreshed.items || serverItems;
+      } catch (e) {
+        state.libraryItems = serverItems;
+      }
+    } else {
+      state.libraryItems = serverItems;
+    }
     snap.library = state.libraryItems;
     saveLocalSnapshot(snap);
+  } else {
+    state.libraryItems = serverItems;
   }
   renderLibrary();
 }

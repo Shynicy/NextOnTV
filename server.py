@@ -584,6 +584,13 @@ def merge_cloud_snapshot_into_db(snapshot: Dict) -> int:
 
         conn.commit()
         conn.close()
+
+    if changes > 0:
+        try:
+            export_library_to_json()
+        except Exception:
+            pass
+
     return changes
 
 

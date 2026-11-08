@@ -49,7 +49,7 @@ def sync_cloud_backup_to_github(data_dir: str, sync_code: str = "shynicy_nextont
         with urllib.request.urlopen(req, timeout=10) as resp:
             raw_text = resp.read().decode("utf-8")
 
-        attachment_url = None
+        snap_data = None
         for line in reversed(raw_text.strip().split("\n")):
             line = line.strip()
             if not line:
@@ -58,17 +58,31 @@ def sync_cloud_backup_to_github(data_dir: str, sync_code: str = "shynicy_nextont
                 msg = json.loads(line)
                 if msg.get("attachment") and msg["attachment"].get("url"):
                     attachment_url = msg["attachment"]["url"]
-                    break
+                    try:
+                        with urllib.request.urlopen(urllib.request.Request(attachment_url, headers={"User-Agent": "NextOnTV-Bot/1.0"}), timeout=10) as b_resp:
+                            data_parsed = json.loads(b_resp.read().decode("utf-8"))
+                            if isinstance(data_parsed, dict) and isinstance(data_parsed.get("library"), list):
+                                snap_data = data_parsed
+                                break
+                    except Exception:
+                        pass
+                
+                # Check inlined JSON message
+                msg_body = (msg.get("message") or "").strip()
+                if msg_body.startswith("{") and msg_body.endswith("}"):
+                    try:
+                        data_parsed = json.loads(msg_body)
+                        if isinstance(data_parsed, dict) and isinstance(data_parsed.get("library"), list):
+                            snap_data = data_parsed
+                            break
+                    except Exception:
+                        pass
             except Exception:
                 pass
 
-        if not attachment_url:
+        if not snap_data or not isinstance(snap_data.get("library"), list) or len(snap_data["library"]) == 0:
             print("[Cloud Backup] Nessun nuovo snapshot remoto su topic (i file locali restano validi).")
             return
-
-        print(f"[Cloud Backup] Trovato snapshot recente, download da {attachment_url}...")
-        with urllib.request.urlopen(urllib.request.Request(attachment_url, headers={"User-Agent": "NextOnTV-Bot/1.0"}), timeout=10) as b_resp:
-            snap_data = json.loads(b_resp.read().decode("utf-8"))
 
         cloud_lib = snap_data.get("library")
         if isinstance(cloud_lib, list) and len(cloud_lib) > 0:

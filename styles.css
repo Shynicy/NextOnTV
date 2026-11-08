@@ -26,7 +26,19 @@
   touch-action: manipulation;
 }
 
-button, a, input, select, .nav-item, .seg-btn, .mini-pill, .day-pill, .cat-card, .tv-card, .btn-action, .btn-primary, .btn-secondary {
+button,
+a,
+input,
+select,
+.nav-item,
+.seg-btn,
+.mini-pill,
+.day-pill,
+.cat-card,
+.tv-card,
+.btn-action,
+.btn-primary,
+.btn-secondary {
   touch-action: manipulation;
   cursor: pointer;
 }
@@ -246,8 +258,15 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Hero / Filter Header Cards */
@@ -453,11 +472,12 @@ body {
   text-overflow: ellipsis;
 }
 
-.subfilters-row > .search-inline {
+.subfilters-row>.search-inline {
   grid-column: 1 / -1;
 }
 
 @media (min-width: 640px) {
+
   .select-pill,
   .search-inline {
     flex: 1;
@@ -1218,7 +1238,7 @@ body {
 }
 
 /* Compact / Title-Only List View in Le Mie Liste */
-.library-grid > .multi-select-bar {
+.library-grid>.multi-select-bar {
   grid-column: 1 / -1;
 }
 
@@ -1303,7 +1323,7 @@ body {
   flex-shrink: 0;
 }
 
-.tv-card.selectable-lib-card > .btn-lib-single-delete {
+.tv-card.selectable-lib-card>.btn-lib-single-delete {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -1383,6 +1403,3 @@ body {
 .btn-danger-confirm:hover {
   filter: brightness(1.1);
 }
-
-
-
