@@ -2164,8 +2164,9 @@ function renderMatchCard(ev, matchIndex) {
     epLineHtml = `<div class="tv-ep-line">🎞️ ${seText}${epT}</div>`;
   }
 
-  const posterHtml = ev.poster
-    ? `<img src="${escapeHtml(ev.poster)}" alt="${escapeHtml(ev.title)}" class="tv-poster" loading="lazy" onerror="this.outerHTML='<div class=\\'tv-poster\\'>${isMovie ? "🎬" : "📺"}</div>'" />`
+  const chosenPoster = (lib && lib.poster) ? lib.poster : ev.poster;
+  const posterHtml = chosenPoster
+    ? `<img src="${escapeHtml(chosenPoster)}" alt="${escapeHtml(ev.title)}" class="tv-poster" loading="lazy" onerror="this.outerHTML='<div class=\\'tv-poster\\'>${isMovie ? "🎬" : "📺"}</div>'" />`
     : `<div class="tv-poster">${isMovie ? "🎬" : "📺"}</div>`;
 
   const itemMediaType = lib.media_type || ev.media_type || "movie";
@@ -3815,16 +3816,17 @@ function setupNavigationAndEvents() {
     btnExportBackup.addEventListener("click", () => {
       const snap = getLocalSnapshot();
       const lib = (snap.library && snap.library.length > 0) ? snap.library : state.libraryItems;
+      const dateStr = new Date().toISOString().slice(0, 10);
       const blob = new Blob([JSON.stringify(lib, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "library.json";
+      a.download = `NextOnTV_Backup_${dateStr}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast(`💾 File "library.json" scaricato con successo (${lib.length} titoli)! Pronto da caricare nella cartella data/ su GitHub.`);
+      showToast(`💾 Backup salvato con successo! (${lib.length} titoli scaricati in NextOnTV_Backup_${dateStr}.json)`);
     });
   }
 
