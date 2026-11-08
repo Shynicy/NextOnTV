@@ -2556,14 +2556,12 @@ function renderStreamingCard(item) {
 
   const badgesHtml = provs
     .map((p) => {
-      const meta = STREAMING_PLATFORM_META[p.id] || { name: p.name || p.id, color: "#334155", sub: "Streaming" };
+      const meta = STREAMING_PLATFORM_META[p.id] || { name: p.name || p.id, color: "#334155" };
       const isHighlighted = selectedPlats && selectedPlats.size > 0 && selectedPlats.has(p.id);
       const borderStyle = isHighlighted ? `border: 2px solid #fff; box-shadow: 0 0 8px ${meta.color};` : "";
-      const subText = p.id === "prime" ? "Incluso con Prime" : (p.monetization === "FREE" || p.monetization === "ADS" ? "Gratuito" : meta.sub);
       const tagContent = `
         <span class="plat-dot" style="background:#fff;"></span>
         <span>${escapeHtml(meta.name)}</span>
-        <span class="plat-sub-tag">• ${escapeHtml(subText)}</span>
       `;
       if (p.url) {
         return `<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener" class="stream-provider-badge" style="background:${meta.color};${borderStyle}" title="Apri su ${escapeHtml(meta.name)}">${tagContent}</a>`;
