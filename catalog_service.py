@@ -715,14 +715,24 @@ def _search_wikipedia_generator(query: str) -> List[Dict]:
     """
     Query Italian Wikipedia Search Generator to find movie/series/anime titles
     where keywords appear in ANY position (beginning, middle, or end),
-    combining full-text search and prefixsearch to capture full franchises.
+    combining OpenSearch, full-text search, and prefixsearch to capture full franchises.
     """
     all_pages = {}
+    os_titles = []
     clean_q = re.sub(r"[^\w\s]", " ", query).strip()
     urls = [
         f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(clean_q)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json",
         f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(clean_q)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
     ]
+    # Check OpenSearch instant suggestions
+    try:
+        os_url = f"https://it.wikipedia.org/w/api.php?action=opensearch&search={urllib.parse.quote(clean_q)}&limit=15&namespace=0&format=json"
+        os_data = _http_get_json(os_url, timeout=3)
+        if isinstance(os_data, list) and len(os_data) > 1 and isinstance(os_data[1], list):
+            os_titles = os_data[1]
+    except Exception:
+        pass
+
     # Check if subtitle variant exists (e.g. 'Lupin III - Il castello di Cagliostro' -> 'Il castello di Cagliostro')
     m_sub = re.match(r"^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter)\s*[-:–]?\s*(.+)$", query, flags=re.IGNORECASE)
     if m_sub and m_sub.group(1).strip() and len(m_sub.group(1).strip()) >= 3:
@@ -747,7 +757,22 @@ def _search_wikipedia_generator(query: str) -> List[Dict]:
         except Exception:
             pass
 
+    # Batch fetch details for missing OpenSearch titles
+    missing_os = [t for t in os_titles if not any(p.get("title") == t for p in all_pages.values())]
+    if missing_os:
+        try:
+            os_batch_url = f"https://it.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote('|'.join(missing_os[:20]))}&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
+            bdata = _http_get_json(os_batch_url, timeout=4)
+            bpages = (bdata.get("query") or {}).get("pages") or {}
+            all_pages.update(bpages)
+        except Exception:
+            pass
+
     ignored_prefixes = ("episodi d", "personaggi d", "capitoli d", "colonn", "musich", "doppiatori", "pubblicazioni", "videogiochi d")
+    person_bio_regex = re.compile(
+        r"\b(è un|è una|fu un|fu una)\s+(?:attore|attrice|doppiatore|doppiatrice|regista|cantante|cantautore|politico|calciatore|cestista|sportivo|sceneggiatore|conduttore|giornalista|scrittore|modello|modella)\b",
+        re.IGNORECASE
+    )
     results = []
     for p in all_pages.values():
         raw_t = p.get("title") or ""
@@ -758,13 +783,15 @@ def _search_wikipedia_generator(query: str) -> List[Dict]:
             continue
 
         extract = (p.get("extract") or "").lower()
-        is_movie = any(k in extract for k in ["film", "pellicola", "lungometraggio", "anime", "regia di", "diretto da", "oav", "special"]) or "(film" in tl
-        is_series = any(k in extract for k in ["serie televisiva", "serie tv", "serie anime", "telefilm", "fiction", "miniserie"]) or "(serie" in tl
-        if not is_movie and not is_series:
+        first_sentence = extract[:250]
+
+        # Only discard as person if first sentence explicitly defines subject as person
+        if person_bio_regex.search(first_sentence) and not ("(film" in tl or "(serie" in tl):
             continue
 
-        is_person = any(k in extract for k in ["doppiatrice", "doppiatore", "attore", "attrice", "personaggio immaginario", "personaggio dei fumetti", "personaggio letterario"])
-        if is_person and not ("(film" in tl or "(serie" in tl):
+        is_movie = any(k in extract for k in ["film", "pellicola", "lungometraggio", "cortometraggio", "mediometraggio", "cartone animato", "anime", "oav", "special", "speciale", "regia di", "diretto da"]) or "(film" in tl or "(anime" in tl
+        is_series = any(k in extract for k in ["serie televisiva", "serie tv", "serie anime", "telefilm", "fiction", "miniserie", "sitcom", "soap opera", "telenovela", "programma televisivo", "show"]) or "(serie" in tl or "(fiction" in tl
+        if not is_movie and not is_series and raw_t not in os_titles:
             continue
 
         clean_t = re.sub(
@@ -891,6 +918,16 @@ def compute_relevance_score(query: str, item: Dict) -> int:
                 partial_score = round(coverage * 600) - extra_words * 15
                 best_score = max(best_score, max(200, partial_score))
                 continue
+
+            # Se almeno 1 parola cercata è presente (preserva titoli correlati / franchise)
+            if matched_count > 0:
+                extra_words = abs(len(c_core) - len(q_core))
+                partial_score = round(coverage * 500) - extra_words * 10
+                best_score = max(best_score, max(100, partial_score))
+                continue
+
+    if best_score == 0:
+        best_score = 50
 
     if item.get("is_saga"):
         rank = item.get("saga_rank", 1)

@@ -267,7 +267,20 @@ function computeRelevanceScoreClient(query, item) {
         bestScore = Math.max(bestScore, Math.max(200, partialScore));
         continue;
       }
+
+      // Se almeno una parola chiave è presente (mantiene titoli correlati/franchise senza scartarli!)
+      if (matchedCount > 0) {
+        const extraWords = Math.abs(cCore.length - qCore.length);
+        let partialScore = Math.round(coverage * 500) - extraWords * 10;
+        bestScore = Math.max(bestScore, Math.max(100, partialScore));
+        continue;
+      }
     }
+  }
+
+  // Base fallback score if candidate was explicitly found by OpenSearch, TVMaze, or Sagas
+  if (bestScore === 0) {
+    bestScore = 50;
   }
 
   // Bonus Saghe
@@ -1142,14 +1155,25 @@ async function directMobileSearch4G(query, libraryItems) {
     } catch (e) { }
   }
 
-  // 3. Query Italian Wikipedia Full-Text Search and Prefix Search
+  // 3. Query Italian Wikipedia OpenSearch, Full-Text Search, and Prefix Search
   const wikiQueries = [cleanQ];
   if (subTitle && !wikiQueries.includes(subTitle)) wikiQueries.push(subTitle);
   if (suggestion && !wikiQueries.includes(suggestion)) wikiQueries.push(suggestion);
 
   try {
     const wikiPromises = [];
+    const osTitles = [];
     for (const wq of wikiQueries) {
+      wikiPromises.push(
+        fetch(`https://it.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(wq)}&limit=15&namespace=0&format=json&origin=*`)
+          .then(r => r.json())
+          .then(data => {
+            if (Array.isArray(data) && Array.isArray(data[1])) {
+              osTitles.push(...data[1]);
+            }
+          })
+          .catch(() => null)
+      );
       wikiPromises.push(
         fetch(`https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(wq)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`).then(r => r.json()).catch(() => null)
       );
@@ -1165,6 +1189,18 @@ async function directMobileSearch4G(query, libraryItems) {
       }
     }
 
+    // Fetch batch details for OpenSearch titles if not already in pagesMap
+    const missingOs = osTitles.filter((t) => !Object.values(pagesMap).some((p) => p.title === t));
+    if (missingOs.length > 0) {
+      try {
+        const osFetchRes = await fetch(`https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(missingOs.slice(0, 20).join("|"))}&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`);
+        const osFetchData = await osFetchRes.json();
+        if (osFetchData.query?.pages) {
+          Object.assign(pagesMap, osFetchData.query.pages);
+        }
+      } catch (e) { }
+    }
+
     const ignoredPrefixes = ["episodi d", "personaggi d", "capitoli d", "colonn", "musich", "doppiatori", "pubblicazioni", "videogiochi d"];
 
     for (const pid of Object.keys(pagesMap)) {
@@ -1176,15 +1212,17 @@ async function directMobileSearch4G(query, libraryItems) {
       if (tl.includes("(videogioco)") || tl.includes("(singolo)") || tl.includes("(album)") || tl.includes("(manga)")) continue;
 
       const extract = (page.extract || "").toLowerCase();
+      const firstSentence = extract.slice(0, 250);
+
+      // Only discard as person if first sentence defines the subject as a person!
+      const isPersonBio = /\b(è un|è una|fu un|fu una)\s+(?:attore|attrice|doppiatore|doppiatrice|regista|cantante|cantautore|politico|calciatore|cestista|sportivo|sceneggiatore|conduttore|giornalista|scrittore|modello|modella)\b/i.test(firstSentence);
+      if (isPersonBio && !(tl.includes("(film") || tl.includes("(serie"))) continue;
 
       // Check if article describes a film, anime, or series
-      const isMovie = extract.includes("film") || extract.includes("pellicola") || extract.includes("lungometraggio") || extract.includes("anime") || extract.includes("regia di") || extract.includes("diretto da") || extract.includes("oav") || extract.includes("special") || tl.includes("(film");
-      const isSeries = extract.includes("serie televisiva") || extract.includes("serie tv") || extract.includes("serie anime") || extract.includes("telefilm") || extract.includes("fiction") || extract.includes("miniserie") || tl.includes("(serie");
+      const isMovie = tl.includes("(film") || tl.includes("(anime") || tl.includes("(cortometraggio") || tl.includes("(lungometraggio") || /\b(film|pellicola|lungometraggio|cortometraggio|mediometraggio|cartone animato|anime|oav|special|speciale|regia di|diretto da)\b/i.test(extract);
+      const isSeries = tl.includes("(serie") || tl.includes("(miniserie") || tl.includes("(fiction") || /\b(serie televisiva|serie tv|serie anime|telefilm|fiction|miniserie|sitcom|soap opera|telenovela|programma televisivo|show)\b/i.test(extract);
 
-      if (!isMovie && !isSeries) continue;
-
-      const isPerson = extract.includes("doppiatrice") || extract.includes("doppiatore") || extract.includes("attore") || extract.includes("attrice") || extract.includes("personaggio immaginario") || extract.includes("personaggio dei fumetti") || extract.includes("personaggio letterario");
-      if (isPerson && !(tl.includes("(film") || tl.includes("(serie"))) continue;
+      if (!isMovie && !isSeries && !osTitles.includes(rawTitle)) continue;
 
       // Clean Wikipedia disambiguation suffixes e.g. " (film)", " (serie televisiva)"
       const cleanTitle = rawTitle.replace(/\s*\((?:film|serie\s+televisiva|miniserie|telefilm|anime|movie|franchise).*?\)\s*$/i, "").trim();
