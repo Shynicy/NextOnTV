@@ -1587,3 +1587,229 @@ def fetch_series_episodes(tvmaze_id: Optional[int] = None, title_original: str =
 
     episodes.sort(key=lambda x: (x["season"], x["episode"]))
     return episodes
+
+
+# Official Italian Streaming Platforms (100% Free Lookup, Strictly Flatrate / Included in Subscription)
+STREAMING_PLATFORMS: List[Dict] = [
+    {"id": "netflix", "name": "Netflix", "short_codes": ["nfx", "nfk"], "color": "#e50914"},
+    {"id": "prime", "name": "Prime Video", "short_codes": ["prv", "pva"], "color": "#00a8e1"},
+    {"id": "disney", "name": "Disney+", "short_codes": ["dnp"], "color": "#113ccf"},
+    {"id": "now", "name": "NOW / Sky", "short_codes": ["ntv", "skg", "sky"], "color": "#00d66c"},
+    {"id": "hbo", "name": "HBO / Max", "short_codes": ["mxx", "hbo"], "color": "#7b2cbf"},
+    {"id": "apple", "name": "Apple TV+", "short_codes": ["atp"], "color": "#a2aaad"},
+    {"id": "paramount", "name": "Paramount+", "short_codes": ["pmp"], "color": "#0064ff"},
+    {"id": "raiplay", "name": "RaiPlay", "short_codes": ["rpl"], "color": "#0046ad"},
+    {"id": "mediaset", "name": "Mediaset Infinity", "short_codes": ["mds", "mde"], "color": "#f39200"},
+    {"id": "crunchyroll", "name": "Crunchyroll", "short_codes": ["fuj", "cru"], "color": "#f47521"},
+    {"id": "timvision", "name": "TIMVISION", "short_codes": ["tvi"], "color": "#003399"},
+]
+
+JUSTWATCH_PACKAGE_MAP: Dict[str, Dict] = {}
+for _plat in STREAMING_PLATFORMS:
+    for _sc in _plat["short_codes"]:
+        JUSTWATCH_PACKAGE_MAP[_sc] = _plat
+
+_JW_GRAPHQL_QUERY = """
+query SearchTitleOffers($searchQuery: String!, $country: Country!, $language: Language!, $objectTypes: [ObjectType!]) {
+  popularTitles(
+    country: $country
+    first: 6
+    filter: {
+      searchQuery: $searchQuery
+      objectTypes: $objectTypes
+    }
+  ) {
+    edges {
+      node {
+        objectId
+        objectType
+        content(country: $country, language: $language) {
+          title
+          originalReleaseYear
+        }
+        content_en: content(country: US, language: "en") {
+          title
+        }
+        offers(country: $country, platform: WEB) {
+          monetizationType
+          standardWebURL
+          package {
+            shortName
+            clearName
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def fetch_justwatch_streaming_offers(
+    title_it: str,
+    title_original: str = "",
+    media_type: str = "movie",
+    year: str = "",
+) -> List[Dict]:
+    """
+    Query JustWatch Italy GraphQL API (100% free, no API key) to find which Italian streaming
+    platforms currently include this movie or series in their subscription (FLATRATE / FREE / ADS).
+    Strictly excludes rentals (RENT), purchases (BUY), and paid Prime add-on channels.
+    """
+    obj_type = "SHOW" if media_type == "series" else "MOVIE"
+    queries = []
+    for q in (title_it, title_original):
+        q_clean = (q or "").strip()
+        if q_clean and q_clean.lower() not in [x.lower() for x in queries]:
+            queries.append(q_clean)
+    if not queries:
+        return []
+
+    target_norms = set()
+    for t in (title_it, title_original):
+        for v in _candidate_conjunction_variants(t):
+            target_norms.add(v)
+        for al in get_aliases_for_titles(title_it, title_original):
+            target_norms.add(al)
+
+    target_year = int(str(year).strip()) if str(year).strip().isdigit() else 0
+
+    best_node = None
+    best_score = -1
+
+    for q_str in queries[:2]:
+        payload = {
+            "query": _JW_GRAPHQL_QUERY,
+            "variables": {
+                "searchQuery": q_str,
+                "country": "IT",
+                "language": "it",
+                "objectTypes": [obj_type],
+            },
+        }
+        try:
+            data = _http_post_json("https://apis.justwatch.com/graphql", payload, timeout=7)
+        except Exception:
+            continue
+
+        edges = (((data or {}).get("data") or {}).get("popularTitles") or {}).get("edges") or []
+        for idx, edge in enumerate(edges):
+            node = edge.get("node") or {}
+            c_it = node.get("content") or {}
+            c_en = node.get("content_en") or {}
+            jw_title_it = (c_it.get("title") or "").strip()
+            jw_title_en = (c_en.get("title") or "").strip()
+            jw_year = int(c_it.get("originalReleaseYear") or 0)
+
+            node_norms = set()
+            for jt in (jw_title_it, jw_title_en):
+                for v in _candidate_conjunction_variants(jt):
+                    node_norms.add(v)
+
+            score = 0
+            if target_norms & node_norms:
+                score += 100
+            else:
+                # Check fuzzy or substring match
+                ok_it, d_it = fuzzy_match_title(title_it, jw_title_it)
+                ok_or, d_or = fuzzy_match_title(title_original or title_it, jw_title_en or jw_title_it)
+                if (ok_it and d_it <= 1) or (ok_or and d_or <= 1):
+                    score += 65
+
+            if score == 0:
+                continue
+
+            if target_year and jw_year:
+                year_diff = abs(target_year - jw_year)
+                if year_diff == 0:
+                    score += 40
+                elif year_diff <= 1:
+                    score += 25
+                elif year_diff <= 2 and media_type == "series":
+                    score += 10
+                elif year_diff > 3:
+                    score -= 60
+
+            # Slight preference to higher ranked popular result when tied
+            score -= idx * 2
+
+            if score > best_score and score >= 50:
+                best_score = score
+                best_node = node
+
+        if best_score >= 120:
+            break
+
+    if not best_node:
+        return []
+
+    seen_plat = set()
+    providers: List[Dict] = []
+    for off in best_node.get("offers") or []:
+        mtype = (off.get("monetizationType") or "").upper()
+        # Strictly included in subscription or free streaming (no RENT, no BUY)
+        if mtype not in ("FLATRATE", "FREE", "ADS"):
+            continue
+        pkg = off.get("package") or {}
+        short_name = (pkg.get("shortName") or "").lower()
+        plat = JUSTWATCH_PACKAGE_MAP.get(short_name)
+        if not plat:
+            continue
+        pid = plat["id"]
+        if pid in seen_plat:
+            continue
+        seen_plat.add(pid)
+        providers.append({
+            "id": pid,
+            "name": plat["name"],
+            "monetization": mtype,
+            "url": off.get("standardWebURL") or "",
+        })
+
+    # Sort providers in the canonical order defined in STREAMING_PLATFORMS
+    plat_order = {p["id"]: idx for idx, p in enumerate(STREAMING_PLATFORMS)}
+    providers.sort(key=lambda x: plat_order.get(x["id"], 99))
+    return providers
+
+
+def enrich_items_with_streaming(items: List[Dict], max_workers: int = 8) -> Dict[str, List[Dict]]:
+    """
+    Batch-resolve Italian streaming availability for a list of library/catalog items in parallel.
+    Updates each item's `streaming_providers` in place and returns a lookup dict keyed by
+    `{media_type}_{norm_title}` for static caching (`data/streaming_catalog.json`).
+    """
+    catalog_map: Dict[str, List[Dict]] = {}
+    if not items:
+        return catalog_map
+
+    def _task(it: Dict) -> Tuple[Dict, List[Dict]]:
+        t_it = (it.get("title_it") or it.get("title") or "").strip()
+        t_or = (it.get("title_original") or t_it).strip()
+        mtype = it.get("media_type") if it.get("media_type") in ("movie", "series") else "movie"
+        yr = str(it.get("year") or "").strip()
+        offers = fetch_justwatch_streaming_offers(t_it, t_or, mtype, yr)
+        return it, offers
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as ex:
+        futs = [ex.submit(_task, item) for item in items]
+        for fut in concurrent.futures.as_completed(futs):
+            try:
+                it, offers = fut.result()
+                it["streaming_providers"] = offers
+                mtype = it.get("media_type") if it.get("media_type") in ("movie", "series") else "movie"
+                for field in (it.get("title_it"), it.get("title_original")):
+                    norm = normalize_title(field or "")
+                    if norm:
+                        catalog_map[f"{mtype}_{norm}"] = offers
+                        c_norm = strip_conjunctions(norm)
+                        if c_norm:
+                            catalog_map[f"{mtype}_{c_norm}"] = offers
+                for al in it.get("aliases") or []:
+                    na = normalize_title(al)
+                    if na:
+                        catalog_map[f"{mtype}_{na}"] = offers
+            except Exception:
+                pass
+
+    return catalog_map
+

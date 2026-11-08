@@ -11,7 +11,7 @@
   <title>NextOnTV — Film, Serie TV & Palinsesti 7 Giorni</title>
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./styles.css?v=21" />
+  <link rel="stylesheet" href="./styles.css?v=22" />
 </head>
 
 <body>
@@ -49,7 +49,7 @@
     <main class="app-content">
 
       <!-- =====================================================================
-           TAB 1: IN ONDA PER TE (PROSSIMI 7 GIORNI - MATCH CON LE TUE LISTE)
+           TAB 1: IN ONDA (PROSSIMI 7 GIORNI - MATCH CON LE TUE LISTE)
            ===================================================================== -->
       <section class="tab-panel active" id="tab-matches">
         <div class="hero-card">
@@ -120,6 +120,13 @@
               <option value="">📺 Tutti i canali del DTT (LCN 1–70)</option>
             </select>
 
+            <button type="button" class="sky-toggle-btn" id="btn-toggle-sky"
+              title="Attiva o disattiva il palinsesto dei canali Sky (Cinema, Atlantic, Serie, Uno, ecc.)">
+              <span class="sky-toggle-icon">🛰️</span>
+              <span class="sky-toggle-label">Sky</span>
+              <span class="sky-toggle-state" id="sky-toggle-state-text">OFF</span>
+            </button>
+
             <label class="checkbox-pill">
               <input type="checkbox" id="match-only-unwatched" />
               <span>Nascondi già visti</span>
@@ -129,6 +136,150 @@
 
         <div id="matches-results-container" class="cards-list">
           <div class="loading-state">Ricerca corrispondenze nei palinsesti dei prossimi 7 giorni...</div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           TAB 2: IN STREAMING (PIATTAFORME STREAMING PER LE TUE LISTE)
+           ===================================================================== -->
+      <section class="tab-panel" id="tab-streaming">
+        <div class="hero-card">
+          <div class="hero-top">
+            <div>
+              <h2 class="section-heading">🍿 In Streaming nelle Tue Liste</h2>
+              <p class="section-desc">
+                Controlla su quali piattaforme streaming sono disponibili i Film e le Serie TV delle tue liste (per
+                <strong>Prime Video</strong> sono inclusi solo i titoli gratuiti con l'abbonamento, esclusi quelli a
+                noleggio).
+              </p>
+            </div>
+          </div>
+
+          <!-- 4 Category Filter Cards (come nella prima pagina) -->
+          <div class="category-grid" id="streaming-category-grid">
+            <button class="cat-card active" data-mode="all">
+              <span class="cat-icon">🌟</span>
+              <div class="cat-info">
+                <span class="cat-title">Tutto</span>
+                <span class="cat-sub">Tutte le tue liste</span>
+              </div>
+              <span class="cat-badge" id="stream-count-all">0</span>
+            </button>
+
+            <button class="cat-card" data-mode="wishlist">
+              <span class="cat-icon">🎯</span>
+              <div class="cat-info">
+                <span class="cat-title">Da Vedere</span>
+                <span class="cat-sub">La tua Wishlist</span>
+              </div>
+              <span class="cat-badge" id="stream-count-wishlist">0</span>
+            </button>
+
+            <button class="cat-card" data-mode="watching">
+              <span class="cat-icon">▶️</span>
+              <div class="cat-info">
+                <span class="cat-title">Stai Seguendo</span>
+                <span class="cat-sub">Serie TV in corso</span>
+              </div>
+              <span class="cat-badge" id="stream-count-watching">0</span>
+            </button>
+
+            <button class="cat-card" data-mode="watched">
+              <span class="cat-icon">✅</span>
+              <div class="cat-info">
+                <span class="cat-title">Già Visti</span>
+                <span class="cat-sub">Film e Serie visti</span>
+              </div>
+              <span class="cat-badge" id="stream-count-watched">0</span>
+            </button>
+          </div>
+
+          <!-- Platform Filter Pills (Multi-selezione o Tutte insieme) -->
+          <div class="streaming-platforms-section">
+            <div class="streaming-platforms-label">
+              <span>🎛️ Filtra Piattaforme (clicca una o più piattaforme insieme):</span>
+            </div>
+            <div class="platforms-grid" id="streaming-platforms-bar">
+              <button type="button" class="plat-pill active" data-plat="all">
+                <span>🌐 Tutte</span>
+                <span class="plat-cnt" id="plat-cnt-all">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="netflix">
+                <span class="plat-dot" style="background:#e50914;"></span>
+                <span>Netflix</span>
+                <span class="plat-cnt" id="plat-cnt-netflix">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="prime"
+                title="Solo film e serie compresi nell'abbonamento Prime (escluso noleggio/acquisto)">
+                <span class="plat-dot" style="background:#00a8e1;"></span>
+                <span>Prime Video</span>
+                <span class="plat-cnt" id="plat-cnt-prime">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="disney">
+                <span class="plat-dot" style="background:#113ccf;"></span>
+                <span>Disney+</span>
+                <span class="plat-cnt" id="plat-cnt-disney">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="now">
+                <span class="plat-dot" style="background:#00d66c;"></span>
+                <span>NOW / Sky</span>
+                <span class="plat-cnt" id="plat-cnt-now">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="hbo">
+                <span class="plat-dot" style="background:#7b2cbf;"></span>
+                <span>HBO / Max</span>
+                <span class="plat-cnt" id="plat-cnt-hbo">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="apple">
+                <span class="plat-dot" style="background:#a2aaad;"></span>
+                <span>Apple TV+</span>
+                <span class="plat-cnt" id="plat-cnt-apple">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="paramount">
+                <span class="plat-dot" style="background:#0064ff;"></span>
+                <span>Paramount+</span>
+                <span class="plat-cnt" id="plat-cnt-paramount">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="raiplay">
+                <span class="plat-dot" style="background:#0046ad;"></span>
+                <span>RaiPlay</span>
+                <span class="plat-cnt" id="plat-cnt-raiplay">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="mediaset">
+                <span class="plat-dot" style="background:#f39200;"></span>
+                <span>Mediaset Infinity</span>
+                <span class="plat-cnt" id="plat-cnt-mediaset">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="crunchyroll">
+                <span class="plat-dot" style="background:#f47521;"></span>
+                <span>Crunchyroll</span>
+                <span class="plat-cnt" id="plat-cnt-crunchyroll">0</span>
+              </button>
+              <button type="button" class="plat-pill" data-plat="timvision">
+                <span class="plat-dot" style="background:#003399;"></span>
+                <span>TIMVISION</span>
+                <span class="plat-cnt" id="plat-cnt-timvision">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Secondary Filters: Solo Film, Solo Serie TV, Nascondi già visti -->
+          <div class="subfilters-row">
+            <div class="type-pills" id="stream-type-pills">
+              <button type="button" class="mini-pill active" data-type="all">Tutti</button>
+              <button type="button" class="mini-pill" data-type="movie">🎬 Solo Film</button>
+              <button type="button" class="mini-pill" data-type="series">📺 Solo Serie TV</button>
+            </div>
+
+            <label class="checkbox-pill">
+              <input type="checkbox" id="stream-only-unwatched" />
+              <span>Nascondi già visti</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="streaming-results-container" class="cards-list">
+          <div class="loading-state">Controllo disponibilità sulle piattaforme streaming...</div>
         </div>
       </section>
 
@@ -201,7 +352,9 @@
 
         <div id="search-results-container" class="cards-list">
           <div class="empty-box">
-            <p>Digita il titolo (anche incompleto) di un Film o di una Serie TV qui sopra e premi <strong>Cerca</strong>!</p>
+            <p>Digita il titolo (anche incompleto) di un Film o di una Serie TV qui sopra e premi
+              <strong>Cerca</strong>!
+            </p>
           </div>
         </div>
       </section>
@@ -212,7 +365,11 @@
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="tab-matches">
         <span class="nav-icon">📡</span>
-        <span class="nav-label">In Onda per Te</span>
+        <span class="nav-label">In Onda</span>
+      </button>
+      <button class="nav-item" data-tab="tab-streaming">
+        <span class="nav-icon">🍿</span>
+        <span class="nav-label">In Streaming</span>
       </button>
       <button class="nav-item" data-tab="tab-library">
         <span class="nav-icon">📚</span>
@@ -384,11 +541,11 @@
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <button type="button" class="btn-secondary btn-sm" id="btn-export-backup"
               title="Scarica una copia di sicurezza di tutti i tuoi programmi in formato JSON">
-              💾 Scarica Backup JSON
+              💾 Scarica Backup
             </button>
             <button type="button" class="btn-secondary btn-sm" id="btn-import-backup-trigger"
               title="Carica e ripristina un file di backup salvato in precedenza">
-              📂 Ripristina da File
+              📂 Ripristina da File JSON
             </button>
             <button type="button" class="btn-secondary btn-sm" id="btn-restore-github"
               title="Ricarica all'istante la copia ufficiale dei tuoi programmi salvata su GitHub">
@@ -419,7 +576,7 @@
   </div>
 
   <div id="toast-container" class="toast-container"></div>
-  <script src="./app.js?v=29"></script>
+  <script src="./app.js?v=30"></script>
 </body>
 
 </html>

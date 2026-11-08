@@ -13,6 +13,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Dict, List, Optional, Tuple
 
 from catalog_service import (
+    STREAMING_PLATFORMS,
+    fetch_justwatch_streaming_offers,
     fetch_series_episodes,
     fuzzy_match_title,
     get_aliases_for_titles,
@@ -25,7 +27,9 @@ from cloud_sync import (
     save_sync_config,
 )
 from epg_engine import (
+    ALL_CHANNELS,
     DTT_CHANNELS,
+    SKY_CHANNELS,
     fetch_7day_epg,
     normalize_title,
     strip_conjunctions,
@@ -39,8 +43,55 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 _DB_LOCK = threading.Lock()
 _EPG_MEMORY_CACHE: Dict[str, Dict] = {}
+_STREAMING_CATALOG_CACHE: Optional[Dict[str, List[Dict]]] = None
 _PUBLIC_TUNNEL_URL: str = ""
 _LAST_CLOUD_PULL_TS: float = 0.0
+
+
+def _get_streaming_catalog_cache() -> Dict[str, List[Dict]]:
+    global _STREAMING_CATALOG_CACHE
+    if _STREAMING_CATALOG_CACHE is not None:
+        return _STREAMING_CATALOG_CACHE
+    cat_path = os.path.join(BASE_DIR, "data", "streaming_catalog.json")
+    if os.path.isfile(cat_path):
+        try:
+            with open(cat_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    _STREAMING_CATALOG_CACHE = data
+                    return _STREAMING_CATALOG_CACHE
+        except Exception:
+            pass
+    _STREAMING_CATALOG_CACHE = {}
+    return _STREAMING_CATALOG_CACHE
+
+
+def resolve_item_streaming_offers(
+    title_it: str,
+    title_original: str = "",
+    media_type: str = "movie",
+    year: str = "",
+    allow_live_fetch: bool = True,
+) -> List[Dict]:
+    cat = _get_streaming_catalog_cache()
+    mtype = media_type if media_type in ("movie", "series") else "movie"
+    for t in (title_it, title_original):
+        norm = normalize_title(t or "")
+        if norm:
+            key = f"{mtype}_{norm}"
+            if key in cat:
+                return cat[key]
+            c_key = f"{mtype}_{strip_conjunctions(norm)}"
+            if c_key in cat:
+                return cat[c_key]
+    if not allow_live_fetch:
+        return []
+    offers = fetch_justwatch_streaming_offers(title_it, title_original, mtype, year)
+    for t in (title_it, title_original):
+        norm = normalize_title(t or "")
+        if norm:
+            cat[f"{mtype}_{norm}"] = offers
+    return offers
 
 
 def get_db() -> sqlite3.Connection:
@@ -71,10 +122,15 @@ def init_db() -> None:
                 imdb_id TEXT,
                 rating INTEGER DEFAULT 0,
                 notes TEXT DEFAULT '',
+                streaming_json TEXT DEFAULT '[]',
                 created_at TEXT NOT NULL
             )
             """
         )
+        try:
+            cur.execute("ALTER TABLE library ADD COLUMN streaming_json TEXT DEFAULT '[]'")
+        except Exception:
+            pass
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS watched_episodes (
@@ -285,6 +341,22 @@ def get_all_library_items() -> List[Dict]:
         d["aliases"] = json.loads(d.get("aliases_json") or "[]")
         d["watched_episodes"] = ep_map.get(d["id"], [])
         d["watched_episodes_count"] = len(d["watched_episodes"])
+        st_prov = []
+        raw_st = d.get("streaming_json")
+        if raw_st and raw_st not in ("", "[]", "null"):
+            try:
+                st_prov = json.loads(raw_st)
+            except Exception:
+                st_prov = []
+        if not st_prov:
+            st_prov = resolve_item_streaming_offers(
+                d.get("title_it") or "",
+                d.get("title_original") or "",
+                d.get("media_type") or "movie",
+                str(d.get("year") or ""),
+                allow_live_fetch=False,
+            )
+        d["streaming_providers"] = st_prov
         items.append(d)
     return items
 
@@ -311,6 +383,7 @@ def match_epg_with_library(
     time_slot: str = "all",
     only_unwatched_episodes: bool = False,
     lcn_filter: Optional[int] = None,
+    include_sky: bool = False,
 ) -> Dict:
     filtered_lib = []
     for item in library_items:
@@ -362,6 +435,9 @@ def match_epg_with_library(
 
     for ev in events:
         if ev.get("media_type") not in ("movie", "series"):
+            continue
+        is_sky_ev = bool(ev.get("is_sky") or (ev.get("lcn") or 0) >= 100)
+        if not include_sky and is_sky_ev:
             continue
         ev_norm = ev.get("norm_title") or ""
         if not ev_norm:
@@ -650,15 +726,52 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
             })
 
         if path == "/api/channels":
-            return self._send_json({"channels": DTT_CHANNELS})
+            return self._send_json({
+                "channels": ALL_CHANNELS,
+                "dtt_channels": DTT_CHANNELS,
+                "sky_channels": SKY_CHANNELS,
+            })
+
+        if path == "/api/streaming":
+            start_date = (qs.get("start_date") or [None])[0]
+            _, events, _ = get_7day_epg_cached(start_date)
+            seed_starter_library_if_empty(events)
+            items = get_all_library_items()
+            for item in items:
+                if not item.get("streaming_providers"):
+                    offers = resolve_item_streaming_offers(
+                        item.get("title_it") or "",
+                        item.get("title_original") or "",
+                        item.get("media_type") or "movie",
+                        str(item.get("year") or ""),
+                        allow_live_fetch=True,
+                    )
+                    item["streaming_providers"] = offers
+                    if item.get("id"):
+                        with _DB_LOCK:
+                            conn = get_db()
+                            conn.execute(
+                                "UPDATE library SET streaming_json = ? WHERE id = ?",
+                                (json.dumps(offers, ensure_ascii=False), item["id"]),
+                            )
+                            conn.commit()
+                            conn.close()
+            return self._send_json({
+                "platforms": STREAMING_PLATFORMS,
+                "items": items,
+            })
 
         if path == "/api/library":
             start_date = (qs.get("start_date") or [None])[0]
+            include_sky = (qs.get("include_sky") or ["0"])[0] == "1"
             _, events, _ = get_7day_epg_cached(start_date)
             seed_starter_library_if_empty(events)
             items = get_all_library_items()
             epg_norm_counts: Dict[str, List[Dict]] = {}
             for ev in events:
+                is_sky_ev = bool(ev.get("is_sky") or (ev.get("lcn") or 0) >= 100)
+                if not include_sky and is_sky_ev:
+                    continue
                 if ev["media_type"] in ("movie", "series") and ev.get("norm_title"):
                     epg_norm_counts.setdefault(ev["norm_title"], []).append({
                         "date": ev["date"],
@@ -668,6 +781,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                         "season": ev.get("season"),
                         "episode": ev.get("episode"),
                         "episode_title": ev.get("episode_title"),
+                        "is_sky": is_sky_ev,
                     })
             for item in items:
                 upcoming = []
@@ -690,6 +804,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
             day_filter = (qs.get("day") or ["all"])[0]
             time_slot = (qs.get("time_slot") or ["all"])[0]
             only_unwatched = (qs.get("only_unwatched") or ["0"])[0] == "1"
+            include_sky = (qs.get("include_sky") or ["0"])[0] == "1"
             lcn_str = (qs.get("lcn") or [""])[0]
             lcn_filter = int(lcn_str) if lcn_str.isdigit() else None
 
@@ -704,6 +819,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 time_slot=time_slot,
                 only_unwatched_episodes=only_unwatched,
                 lcn_filter=lcn_filter,
+                include_sky=include_sky,
             )
             days_available = [
                 (datetime.date.fromisoformat(s_date) + datetime.timedelta(days=i)).isoformat()
@@ -717,6 +833,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 "channels_polled": len({e["lcn"] for e in events}),
                 "matches": res["matches"],
                 "counts": res["counts"],
+                "include_sky": include_sky,
             })
 
         if path == "/api/explore_epg":
@@ -724,6 +841,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
             media_filter = (qs.get("media_type") or ["all"])[0]
             day_filter = (qs.get("day") or ["all"])[0]
             time_slot = (qs.get("time_slot") or ["primetime"])[0]
+            include_sky = (qs.get("include_sky") or ["0"])[0] == "1"
             lcn_str = (qs.get("lcn") or [""])[0]
             q_raw = (qs.get("q") or [""])[0].strip()
 
@@ -740,6 +858,9 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
             filtered = []
             for ev in events:
                 if ev["media_type"] not in ("movie", "series"):
+                    continue
+                is_sky_ev = bool(ev.get("is_sky") or (ev.get("lcn") or 0) >= 100)
+                if not include_sky and is_sky_ev:
                     continue
                 if media_filter in ("movie", "series") and ev["media_type"] != media_filter:
                     continue
@@ -926,6 +1047,16 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                     epg_events=events_cached,
                 )
 
+            streaming_offers = body.get("streaming_providers")
+            if not isinstance(streaming_offers, list) or not streaming_offers:
+                streaming_offers = resolve_item_streaming_offers(
+                    title_it,
+                    title_orig,
+                    media_type,
+                    str(body.get("year") or ""),
+                    allow_live_fetch=True,
+                )
+
             with _DB_LOCK:
                 conn = get_db()
                 # Remove from deleted tombstones if re-added
@@ -940,8 +1071,8 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
 
                 if matched_id:
                     conn.execute(
-                        "UPDATE library SET status = ?, rating = COALESCE(?, rating), notes = COALESCE(?, notes) WHERE id = ?",
-                        (status, body.get("rating"), body.get("notes"), matched_id),
+                        "UPDATE library SET status = ?, rating = COALESCE(?, rating), notes = COALESCE(?, notes), streaming_json = ? WHERE id = ?",
+                        (status, body.get("rating"), body.get("notes"), json.dumps(streaming_offers, ensure_ascii=False), matched_id),
                     )
                     item_id = matched_id
                 else:
@@ -950,8 +1081,8 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                         INSERT OR REPLACE INTO library (
                             external_id, media_type, status, title_it, title_original,
                             aliases_json, year, poster, genre, description,
-                            tvmaze_id, imdb_id, rating, notes, created_at
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            tvmaze_id, imdb_id, rating, notes, streaming_json, created_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
                         (
                             ext_id,
@@ -968,6 +1099,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                             body.get("imdb_id") or "",
                             int(body.get("rating") or 0),
                             body.get("notes") or "",
+                            json.dumps(streaming_offers, ensure_ascii=False),
                             now_iso,
                         ),
                     )
@@ -992,7 +1124,14 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.close()
 
             trigger_async_cloud_push()
-            return self._send_json({"ok": True, "id": item_id, "status": status, "title_it": title_it, "watched_episodes_count": ep_cnt})
+            return self._send_json({
+                "ok": True,
+                "id": item_id,
+                "status": status,
+                "title_it": title_it,
+                "watched_episodes_count": ep_cnt,
+                "streaming_providers": streaming_offers,
+            })
 
         if path == "/api/library/status":
             item_id = body.get("id")

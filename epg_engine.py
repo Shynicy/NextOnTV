@@ -70,8 +70,37 @@ DTT_CHANNELS: List[Dict] = [
     {"lcn": 70, "name": "RadioItaliaTV", "sky_id": 9833, "group": "Musica", "color": "#283593"},
 ]
 
-SKY_ID_TO_CHANNEL = {ch["sky_id"]: ch for ch in DTT_CHANNELS if "sky_id" in ch}
-LCN_TO_CHANNEL = {ch["lcn"]: ch for ch in DTT_CHANNELS}
+# Official Sky Italia Satellite / Pay TV Channels (Cinema & Serie/Intrattenimento LCN 108-310)
+SKY_CHANNELS: List[Dict] = [
+    {"lcn": 108, "name": "Sky Uno", "sky_id": 9115, "group": "Sky Serie & Show", "color": "#0072ce", "is_sky": True},
+    {"lcn": 111, "name": "Sky Atlantic", "sky_id": 9095, "group": "Sky Serie & Show", "color": "#0055a5", "is_sky": True},
+    {"lcn": 112, "name": "Sky Serie", "sky_id": 11244, "group": "Sky Serie & Show", "color": "#6a1b9a", "is_sky": True},
+    {"lcn": 113, "name": "Sky Investigation", "sky_id": 11246, "group": "Sky Serie & Show", "color": "#1565c0", "is_sky": True},
+    {"lcn": 115, "name": "Sky Crime", "sky_id": 8336, "group": "Sky Serie & Show", "color": "#b71c1c", "is_sky": True},
+    {"lcn": 117, "name": "Sky Documentaries", "sky_id": 11239, "group": "Sky Doc & Arte", "color": "#e65100", "is_sky": True},
+    {"lcn": 119, "name": "Sky Nature", "sky_id": 11242, "group": "Sky Doc & Arte", "color": "#2e7d32", "is_sky": True},
+    {"lcn": 120, "name": "Sky Arte", "sky_id": 8473, "group": "Sky Doc & Arte", "color": "#ad1457", "is_sky": True},
+    {"lcn": 122, "name": "Sky Adventure", "sky_id": 11889, "group": "Sky Doc & Arte", "color": "#00838f", "is_sky": True},
+    {"lcn": 129, "name": "Comedy Central", "sky_id": 318, "group": "Sky Serie & Show", "color": "#f57c00", "is_sky": True},
+    {"lcn": 301, "name": "Sky Cinema Uno", "sky_id": 9044, "group": "Sky Cinema", "color": "#c62828", "is_sky": True},
+    {"lcn": 302, "name": "Sky Cinema Stories", "sky_id": 9034, "group": "Sky Cinema", "color": "#ad1457", "is_sky": True},
+    {"lcn": 303, "name": "Sky Cinema Collection", "sky_id": 9047, "group": "Sky Cinema", "color": "#d84315", "is_sky": True},
+    {"lcn": 304, "name": "Sky Cinema Family", "sky_id": 9042, "group": "Sky Cinema", "color": "#00897b", "is_sky": True},
+    {"lcn": 305, "name": "Sky Cinema Action", "sky_id": 9050, "group": "Sky Cinema", "color": "#d32f2f", "is_sky": True},
+    {"lcn": 306, "name": "Sky Cinema Suspense", "sky_id": 10515, "group": "Sky Cinema", "color": "#37474f", "is_sky": True},
+    {"lcn": 307, "name": "Sky Cinema Comedy", "sky_id": 9039, "group": "Sky Cinema", "color": "#fbc02d", "is_sky": True},
+    {"lcn": 308, "name": "Sky Cinema Romance", "sky_id": 9055, "group": "Sky Cinema", "color": "#e91e63", "is_sky": True},
+    {"lcn": 309, "name": "Sky Cinema Drama", "sky_id": 10518, "group": "Sky Cinema", "color": "#5e35b1", "is_sky": True},
+    {"lcn": 310, "name": "Sky Cinema Uno +24", "sky_id": 9037, "group": "Sky Cinema", "color": "#b71c1c", "is_sky": True},
+]
+
+for _ch in DTT_CHANNELS:
+    _ch["is_sky"] = False
+
+ALL_CHANNELS: List[Dict] = DTT_CHANNELS + SKY_CHANNELS
+
+SKY_ID_TO_CHANNEL = {ch["sky_id"]: ch for ch in ALL_CHANNELS if "sky_id" in ch}
+LCN_TO_CHANNEL = {ch["lcn"]: ch for ch in ALL_CHANNELS}
 
 
 def normalize_title(text: str) -> str:
@@ -313,6 +342,7 @@ def _fetch_sky_batch(sky_ids: List[int], env: str, day_date: datetime.date) -> L
             "description": synopsis,
             "poster": poster_url,
             "source": "sky_gtv",
+            "is_sky": bool(ch_meta.get("is_sky", False)),
         })
     return results
 
@@ -389,6 +419,7 @@ def _fetch_raiplay_channel_day(ch_meta: Dict, day_date: datetime.date) -> List[D
             "description": (ev.get("description") or "").strip(),
             "poster": poster_url,
             "source": "raiplay",
+            "is_sky": False,
         })
     return results
 
@@ -445,28 +476,33 @@ def _fetch_sitv_channel(ch_meta: Dict, day_offset: int, day_date: datetime.date)
             "description": f"In onda su {ch_meta['name']} (Canale {ch_meta['lcn']}).",
             "poster": "",
             "source": "staseraintv",
+            "is_sky": False,
         })
     return results
 
 
 def fetch_7day_epg(start_date: Optional[datetime.date] = None, days: int = 7) -> List[Dict]:
     """
-    Fetch the complete 7-day EPG across all 50+ official DTT channels (LCN 1-70) in parallel.
+    Fetch the complete 7-day EPG across all 50+ official DTT channels (LCN 1-70)
+    plus the 20 official Sky Cinema & Sky Serie/Show channels (LCN 108-310) in parallel.
     """
     if start_date is None:
         start_date = datetime.date.today()
 
-    # Sky GTV separates channels into two compatible query tiers:
+    # Sky GTV separates channels into compatible query tiers:
     sky_tier2_set = {6885, 6460, 895, 9117, 10473, 12131, 462, 9833}
     tier1_ids = [ch["sky_id"] for ch in DTT_CHANNELS if "sky_id" in ch and ch["sky_id"] not in sky_tier2_set]
     tier2_ids = [ch["sky_id"] for ch in DTT_CHANNELS if "sky_id" in ch and ch["sky_id"] in sky_tier2_set]
+    sky_pay_ids = [ch["sky_id"] for ch in SKY_CHANNELS if "sky_id" in ch]
 
-    # Split tier1 into 3 batches of ~11 channels so 24h events never exceed the 250-event page cap
+    # Split into batches of ~10-11 channels so 24h events never exceed the page cap
     sky_batches = [
         tier1_ids[:11],
         tier1_ids[11:22],
         tier1_ids[22:],
         tier2_ids,
+        sky_pay_ids[:10],
+        sky_pay_ids[10:],
     ]
 
     # RaiPlay channels for rich series/movie metadata and Rai Gulp / Yoyo / Movie / Premium / 4

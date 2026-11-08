@@ -7,6 +7,11 @@ const state = {
   matchTimeSlot: "all",
   matchChannel: "",
   matchOnlyUnwatched: false,
+  includeSky: false,
+  streamStatusMode: "all", // 'all' | 'wishlist' | 'watching' | 'watched'
+  streamPlatforms: new Set(), // empty = all platforms
+  streamMediaType: "all", // 'all' | 'movie' | 'series'
+  streamOnlyUnwatched: false,
   libStatus: "all",
   libType: "all",
   libSort: "az", // 'az' | 'za' | 'year_desc' | 'year_asc'
@@ -72,13 +77,13 @@ const CLIENT_SAGAS = [
   { it: "Harry Potter e la camera dei segreti", orig: "Harry Potter and the Chamber of Secrets", type: "movie", year: "2002", saga: "harry_potter", rank: 2, aliases: ["harry potter 2", "camera dei segreti"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/b/b2/Harry_Potter_e_la_camera_dei_segreti.jpg/500px-Harry_Potter_e_la_camera_dei_segreti.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Harry Potter e il prigioniero di Azkaban", orig: "Harry Potter and the Prisoner of Azkaban", type: "movie", year: "2004", saga: "harry_potter", rank: 3, aliases: ["harry potter 3", "prigioniero di azkaban"], poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Prisoner_of_Azkaban_ARC.jpg/500px-Prisoner_of_Azkaban_ARC.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Harry Potter e il calice di fuoco", orig: "Harry Potter and the Goblet of Fire", type: "movie", year: "2005", saga: "harry_potter", rank: 4, aliases: ["harry potter 4", "calice di fuoco"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/1/17/Harry_Potter_e_il_calice_di_fuoco_%28film%29.jpg/500px-Harry_Potter_e_il_calice_di_fuoco_%28film%29.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "Harry Potter e l'Ordine della Fenice", orig: "Harry Potter and the Order of the Phoenix", type: "movie", year: "2007", saga: "harry_potter", rank: 5, aliases: ["harry potter 5", "ordine della fenice"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/72/Harry_Potter_e_l%27Ordine_della_Fenice.png/500px-Harry_Potter_e_l%27Ordine_della_Fenice.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Harry Potter e l'Ordine della Fenice", orig: "Harry Potter and the Order of the Phoenix", type: "movie", year: "2007", saga: "harry_potter", rank: 5, aliases: ["harry potter 5", "ordine della fenice"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/72/Harry_Potter_e_l%27Ordine_della_Fenice.png/500px-Harry_Potter_e_l%27Ordine_della_Fenice.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Harry Potter e il principe mezzosangue", orig: "Harry Potter and the Half-Blood Prince", type: "movie", year: "2009", saga: "harry_potter", rank: 6, aliases: ["harry potter 6", "principe mezzosangue"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/5/51/Harry_Potter_e_il_principe_mezzosangue_%28film%29.png/500px-Harry_Potter_e_il_principe_mezzosangue_%28film%29.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Harry Potter e i Doni della Morte - Parte 1", orig: "Harry Potter and the Deathly Hallows: Part 1", type: "movie", year: "2010", saga: "harry_potter", rank: 7, aliases: ["harry potter 7", "doni della morte 1", "doni della morte parte 1"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2e/Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg/500px-Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Harry Potter e i Doni della Morte - Parte 2", orig: "Harry Potter and the Deathly Hallows: Part 2", type: "movie", year: "2011", saga: "harry_potter", rank: 8, aliases: ["harry potter 8", "doni della morte 2", "doni della morte parte 2"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2e/Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg/500px-Harry_Potter_e_i_Doni_della_Morte_-_Parte_1_screenshot.jpeg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Fast and Furious", orig: "The Fast and the Furious", type: "movie", year: "2001", saga: "fast_furious", rank: 1, aliases: ["fast and furious 1", "fast & furious 1", "fast 1", "the fast and the furious", "the fast and the furious 1"], poster: "https://m.media-amazon.com/images/M/MV5BZGRiMDE1NTMtMThmZS00YjE4LWI1ODQtNjRkZGZlOTg2MGE1XkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "2 Fast 2 Furious", orig: "2 Fast 2 Furious", type: "movie", year: "2003", saga: "fast_furious", rank: 2, aliases: ["fast and furious 2", "fast & furious 2", "fast 2", "2fast2furious", "2 fast 2 furious"], poster: "https://m.media-amazon.com/images/M/MV5BOTQzYzEwNWMtOTAwYy00YWYwLWE1NTEtZTkxOGQxZTM0M2VhXkEyXkFqcGc@._V1_UX400_.jpg" },
-  { it: "The Fast and the Furious: Tokyo Drift", orig: "The Fast and the Furious: Tokyo Drift", type: "movie", year: "2006", saga: "fast_furious", rank: 3, aliases: ["fast and furious 3", "fast & furious 3", "fast 3", "tokyo drift"] , poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Tfatf-tokyodrift-logo.svg/500px-Tfatf-tokyodrift-logo.svg.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "The Fast and the Furious: Tokyo Drift", orig: "The Fast and the Furious: Tokyo Drift", type: "movie", year: "2006", saga: "fast_furious", rank: 3, aliases: ["fast and furious 3", "fast & furious 3", "fast 3", "tokyo drift"], poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Tfatf-tokyodrift-logo.svg/500px-Tfatf-tokyodrift-logo.svg.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Fast & Furious - Solo parti originali", orig: "Fast & Furious", type: "movie", year: "2009", saga: "fast_furious", rank: 4, aliases: ["fast and furious 4", "fast & furious 4", "fast 4", "solo parti originali"], poster: "https://m.media-amazon.com/images/M/MV5BM2Y1YzhkNzUtMzhmZC00OTFkLWJjZDktMWYzZmQ0Y2Y5ODcwXkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "Fast & Furious 5", orig: "Fast Five", type: "movie", year: "2011", saga: "fast_furious", rank: 5, aliases: ["fast and furious 5", "fast & furious 5", "fast 5", "fast five"], poster: "https://m.media-amazon.com/images/M/MV5BMTUxNTk5MTE0OF5BMl5BanBnXkFtZTcwMjA2NzY3NA@@._V1_UX400_.jpg" },
   { it: "Fast & Furious 6", orig: "Fast & Furious 6", type: "movie", year: "2013", saga: "fast_furious", rank: 6, aliases: ["fast and furious 6", "fast & furious 6", "fast 6"], poster: "https://m.media-amazon.com/images/M/MV5BMTM3NTg2NDQzOF5BMl5BanBnXkFtZTcwNjc2NzQzOQ@@._V1_UX400_.jpg" },
@@ -87,17 +92,17 @@ const CLIENT_SAGAS = [
   { it: "Fast & Furious - Hobbs & Shaw", orig: "Fast & Furious Presents: Hobbs & Shaw", type: "movie", year: "2019", saga: "fast_furious", rank: 9, aliases: ["fast and furious hobbs and shaw", "hobbs and shaw", "hobbs & shaw"], poster: "https://m.media-amazon.com/images/M/MV5BNmU4OTA5NGYtMTFjMS00MzgxLWFjNTMtYjdlMThlYzc4M2M4XkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "Fast & Furious 9 - The Fast Saga", orig: "F9: The Fast Saga", type: "movie", year: "2021", saga: "fast_furious", rank: 10, aliases: ["fast and furious 9", "fast & furious 9", "fast 9", "f9"], poster: "https://m.media-amazon.com/images/M/MV5BODJkMTQ5ZmQtNzQxYy00ZWNlLWI0ZGYtYjU1NzdiMjcyNDRmXkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "Fast X", orig: "Fast X", type: "movie", year: "2023", saga: "fast_furious", rank: 11, aliases: ["fast and furious 10", "fast & furious 10", "fast 10", "fast x"], poster: "https://m.media-amazon.com/images/M/MV5BYzEwZjczOTktYzU1OS00YjJlLTgyY2UtNWEzODBlN2RjZDEwXkEyXkFqcGc@._V1_UX400_.jpg" },
-  { it: "Il Signore degli Anelli - La Compagnia dell'Anello", orig: "The Lord of the Rings: The Fellowship of the Ring", type: "movie", year: "2001", saga: "lotr", rank: 1, aliases: ["signore degli anelli 1", "compagnia dell anello"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/1/1b/Il_Signore_degli_Anelli_060.JPG/500px-Il_Signore_degli_Anelli_060.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "Il Signore degli Anelli - Le due torri", orig: "The Lord of the Rings: The Two Towers", type: "movie", year: "2002", saga: "lotr", rank: 2, aliases: ["signore degli anelli 2", "due torri"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/5/5a/ISDA_Battaglia_del_Fosso_di_Helm.PNG/500px-ISDA_Battaglia_del_Fosso_di_Helm.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "Il Signore degli Anelli - Il ritorno del re", orig: "The Lord of the Rings: The Return of the King", type: "movie", year: "2003", saga: "lotr", rank: 3, aliases: ["signore degli anelli 3", "ritorno del re"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/22/ISDA_Ultima_Battaglia.PNG/500px-ISDA_Ultima_Battaglia.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "La maledizione della prima luna", orig: "Pirates of the Caribbean: The Curse of the Black Pearl", type: "movie", year: "2003", saga: "pirates", rank: 1, aliases: ["pirati dei caraibi 1", "prima luna"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/e/ee/Piratideicaraibi_lamaledizionedellaprimaluna.jpg/500px-Piratideicaraibi_lamaledizionedellaprimaluna.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Il Signore degli Anelli - La Compagnia dell'Anello", orig: "The Lord of the Rings: The Fellowship of the Ring", type: "movie", year: "2001", saga: "lotr", rank: 1, aliases: ["signore degli anelli 1", "compagnia dell anello"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/1/1b/Il_Signore_degli_Anelli_060.JPG/500px-Il_Signore_degli_Anelli_060.JPG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Il Signore degli Anelli - Le due torri", orig: "The Lord of the Rings: The Two Towers", type: "movie", year: "2002", saga: "lotr", rank: 2, aliases: ["signore degli anelli 2", "due torri"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/5/5a/ISDA_Battaglia_del_Fosso_di_Helm.PNG/500px-ISDA_Battaglia_del_Fosso_di_Helm.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Il Signore degli Anelli - Il ritorno del re", orig: "The Lord of the Rings: The Return of the King", type: "movie", year: "2003", saga: "lotr", rank: 3, aliases: ["signore degli anelli 3", "ritorno del re"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/22/ISDA_Ultima_Battaglia.PNG/500px-ISDA_Ultima_Battaglia.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "La maledizione della prima luna", orig: "Pirates of the Caribbean: The Curse of the Black Pearl", type: "movie", year: "2003", saga: "pirates", rank: 1, aliases: ["pirati dei caraibi 1", "prima luna"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/e/ee/Piratideicaraibi_lamaledizionedellaprimaluna.jpg/500px-Piratideicaraibi_lamaledizionedellaprimaluna.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Pirati dei Caraibi - La maledizione del forziere fantasma", orig: "Pirates of the Caribbean: Dead Man's Chest", type: "movie", year: "2006", saga: "pirates", rank: 2, aliases: ["pirati dei caraibi 2", "forziere fantasma"], poster: "https://m.media-amazon.com/images/M/MV5BMTcwODc1MTMxM15BMl5BanBnXkFtZTYwMDg1NzY3._V1_UX400_.jpg" },
   { it: "Pirati dei Caraibi - Ai confini del mondo", orig: "Pirates of the Caribbean: At World's End", type: "movie", year: "2007", saga: "pirates", rank: 3, aliases: ["pirati dei caraibi 3", "ai confini del mondo"], poster: "https://m.media-amazon.com/images/M/MV5BMjIyNjkxNzEyMl5BMl5BanBnXkFtZTYwMjc3MDE3._V1_UX400_.jpg" },
   { it: "Pirati dei Caraibi - Oltre i confini del mare", orig: "Pirates of the Caribbean: On Stranger Tides", type: "movie", year: "2011", saga: "pirates", rank: 4, aliases: ["pirati dei caraibi 4", "oltre i confini del mare"], poster: "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_UX400_.jpg" },
   { it: "Pirati dei Caraibi - La vendetta di Salazar", orig: "Pirates of the Caribbean: Dead Men Tell No Tales", type: "movie", year: "2017", saga: "pirates", rank: 5, aliases: ["pirati dei caraibi 5", "vendetta di salazar"], poster: "https://m.media-amazon.com/images/M/MV5BMTYyMTcxNzc5M15BMl5BanBnXkFtZTgwOTg2ODE2MTI@._V1_UX400_.jpg" },
-  { it: "Ritorno al futuro", orig: "Back to the Future", type: "movie", year: "1985", saga: "back_to_future", rank: 1, aliases: ["ritorno al futuro 1", "back to the future 1"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2d/Marty_e_DocEmmet.png/500px-Marty_e_DocEmmet.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "Ritorno al futuro - Parte II", orig: "Back to the Future Part II", type: "movie", year: "1989", saga: "back_to_future", rank: 2, aliases: ["ritorno al futuro 2", "back to the future 2"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/71/Ritorno_al_futuro_2.jpg/500px-Ritorno_al_futuro_2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
-  { it: "Ritorno al futuro - Parte III", orig: "Back to the Future Part III", type: "movie", year: "1990", saga: "back_to_future", rank: 3, aliases: ["ritorno al futuro 3", "back to the future 3"] , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/6/60/Ritorno_al_futuro_3.jpg/500px-Ritorno_al_futuro_3.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Ritorno al futuro", orig: "Back to the Future", type: "movie", year: "1985", saga: "back_to_future", rank: 1, aliases: ["ritorno al futuro 1", "back to the future 1"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/2/2d/Marty_e_DocEmmet.png/500px-Marty_e_DocEmmet.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Ritorno al futuro - Parte II", orig: "Back to the Future Part II", type: "movie", year: "1989", saga: "back_to_future", rank: 2, aliases: ["ritorno al futuro 2", "back to the future 2"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/71/Ritorno_al_futuro_2.jpg/500px-Ritorno_al_futuro_2.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Ritorno al futuro - Parte III", orig: "Back to the Future Part III", type: "movie", year: "1990", saga: "back_to_future", rank: 3, aliases: ["ritorno al futuro 3", "back to the future 3"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/6/60/Ritorno_al_futuro_3.jpg/500px-Ritorno_al_futuro_3.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Rocky", orig: "Rocky", type: "movie", year: "1976", saga: "rocky", rank: 1, aliases: ["rocky 1", "rocky i", "rocky balboa 1"], poster: "https://m.media-amazon.com/images/M/MV5BNTBkMjg2MjYtYTZjOS00YzQxLWEzZGQtZDAyNDAtZmZiAUY4Mzg2XkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "Rocky II", orig: "Rocky II", type: "movie", year: "1979", saga: "rocky", rank: 2, aliases: ["rocky 2", "rocky ii", "rocky balboa 2"], poster: "https://m.media-amazon.com/images/M/MV5BMjA4NjQ1MTkxN15BMl5BanBnXkFtZTgwNTU5NzM2MDE@._V1_UX400_.jpg" },
   { it: "Rocky III", orig: "Rocky III", type: "movie", year: "1982", saga: "rocky", rank: 3, aliases: ["rocky 3", "rocky iii", "rocky balboa 3"], poster: "https://m.media-amazon.com/images/M/MV5BMTY0MDgwODU1OV5BMl5BanBnXkFtZTgwNjU5NzM2MDE@._V1_UX400_.jpg" },
@@ -107,7 +112,7 @@ const CLIENT_SAGAS = [
   { it: "Creed - Nato per combattere", orig: "Creed", type: "movie", year: "2015", saga: "rocky", rank: 7, aliases: ["creed 1", "creed", "rocky 7", "rocky vii"], poster: "https://m.media-amazon.com/images/M/MV5BODg5NDM3ODUxN15BMl5BanBnXkFtZTgwNWQ0MzQ5NjE@._V1_UX400_.jpg" },
   { it: "Creed II", orig: "Creed II", type: "movie", year: "2018", saga: "rocky", rank: 8, aliases: ["creed 2", "creed ii", "rocky 8", "rocky viii"], poster: "https://m.media-amazon.com/images/M/MV5BYmEyNWZhNzctZTQzYS00NWVkLTg3MmQtZDU0NDZhY2VmNDRhXkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "Creed III", orig: "Creed III", type: "movie", year: "2023", saga: "rocky", rank: 9, aliases: ["creed 3", "creed iii", "rocky 9", "rocky ix"], poster: "https://m.media-amazon.com/images/M/MV5BYWY1ZDY4MmQtYjhiYS00N2QwLThkNGUtMmNiNmVhGFiZTk2XkEyXkFqcGc@._V1_UX400_.jpg" },
-  { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000" , poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Il_gladiatore.png/500px-Il_gladiatore.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000", poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Il_gladiatore.png/500px-Il_gladiatore.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024", poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/ad/Deadpool_%26_Wolverine.png/500px-Deadpool_%26_Wolverine.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4042.jpg" },
   { it: "Una mamma per amica", orig: "Gilmore Girls", type: "series", year: "2000", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/4/11417.jpg" },
@@ -116,7 +121,7 @@ const CLIENT_SAGAS = [
   { it: "La casa di carta", orig: "Money Heist", type: "series", year: "2017", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/249/624264.jpg" },
   { it: "Buffy l'ammazzavampiri", orig: "Buffy the Vampire Slayer", type: "series", year: "1997", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4445.jpg" },
   { it: "I Simpson", orig: "The Simpsons", type: "series", year: "1989", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/484/1211349.jpg" },
-  { it: "L'ispettore Barnaby", orig: "Midsomer Murders", type: "series", year: "1997" , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/0/01/L%27ispettore_Barnaby.png/500px-L%27ispettore_Barnaby.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "L'ispettore Barnaby", orig: "Midsomer Murders", type: "series", year: "1997", poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/0/01/L%27ispettore_Barnaby.png/500px-L%27ispettore_Barnaby.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Supernatural", orig: "Supernatural", type: "series", year: "2005", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/476/1191593.jpg" },
   { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4763.jpg" },
   { it: "Ken il guerriero", orig: "Fist of the North Star", type: "series", year: "1984", aliases: ["ken il guerriero", "hokuto no ken", "fist of the north star"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/43/109033.jpg" },
@@ -708,6 +713,59 @@ function updateHeaderSyncBadge() {
 
 // Global cached EPG events when running serverless on GitHub Pages
 let _staticEpgCache = null;
+let _staticStreamingCatalog = null;
+
+const STREAMING_PLATFORM_META = {
+  netflix: { id: "netflix", name: "Netflix", color: "#e50914", sub: "Abbonamento" },
+  prime: { id: "prime", name: "Prime Video", color: "#00a8e1", sub: "Incluso con Prime" },
+  disney: { id: "disney", name: "Disney+", color: "#113ccf", sub: "Abbonamento" },
+  now: { id: "now", name: "NOW / Sky", color: "#00d66c", sub: "Abbonamento" },
+  hbo: { id: "hbo", name: "HBO / Max", color: "#7b2cbf", sub: "Abbonamento" },
+  apple: { id: "apple", name: "Apple TV+", color: "#64748b", sub: "Abbonamento" },
+  paramount: { id: "paramount", name: "Paramount+", color: "#0064ff", sub: "Abbonamento" },
+  raiplay: { id: "raiplay", name: "RaiPlay", color: "#0046ad", sub: "Gratuito" },
+  mediaset: { id: "mediaset", name: "Mediaset Infinity", color: "#f39200", sub: "Incluso" },
+  crunchyroll: { id: "crunchyroll", name: "Crunchyroll", color: "#f47521", sub: "Anime" },
+  timvision: { id: "timvision", name: "TIMVISION", color: "#003399", sub: "Abbonamento" },
+};
+
+async function fetchStaticStreamingCatalog() {
+  if (_staticStreamingCatalog) return _staticStreamingCatalog;
+  try {
+    const res = await fetch(resolveAssetUrl("data/streaming_catalog.json"), { cache: "no-cache" });
+    if (res.ok) {
+      _staticStreamingCatalog = await res.json();
+      return _staticStreamingCatalog || {};
+    }
+  } catch (e) { }
+  _staticStreamingCatalog = {};
+  return _staticStreamingCatalog;
+}
+
+function resolveClientStreamingForItem(item, catalogMap) {
+  if (!item) return [];
+  if (Array.isArray(item.streaming_providers) && item.streaming_providers.length > 0) {
+    return item.streaming_providers;
+  }
+  const map = catalogMap || _staticStreamingCatalog || {};
+  const mtype = item.media_type === "series" ? "series" : "movie";
+  const cands = [
+    item.title_it,
+    item.title_original,
+    ...(Array.isArray(item.aliases) ? item.aliases : []),
+  ].filter(Boolean);
+
+  for (const raw of cands) {
+    const norm = normalizeTitleClient(raw);
+    if (!norm) continue;
+    if (Array.isArray(map[`${mtype}_${norm}`])) return map[`${mtype}_${norm}`];
+    const conj = stripConjunctionsClient(norm);
+    if (conj && Array.isArray(map[`${mtype}_${conj}`])) return map[`${mtype}_${conj}`];
+    const rom = convertRomanNumeralsClient(norm);
+    if (rom && Array.isArray(map[`${mtype}_${rom}`])) return map[`${mtype}_${rom}`];
+  }
+  return Array.isArray(item.streaming_providers) ? item.streaming_providers : [];
+}
 
 function resolveAssetUrl(relPath) {
   let base = window.location.pathname;
@@ -803,9 +861,15 @@ async function handleClientCloudGet(url) {
           defLib.forEach((x) => { defMap[normalizeTitleClient(x.title_it)] = x; });
           snap.library.forEach((x) => {
             const defItem = defMap[normalizeTitleClient(x.title_it)];
-            if (defItem && (!x.poster || x.poster === "") && defItem.poster) {
-              x.poster = defItem.poster;
-              updated = true;
+            if (defItem) {
+              if ((!x.poster || x.poster === "") && defItem.poster) {
+                x.poster = defItem.poster;
+                updated = true;
+              }
+              if ((!Array.isArray(x.streaming_providers) || x.streaming_providers.length === 0) && Array.isArray(defItem.streaming_providers) && defItem.streaming_providers.length > 0) {
+                x.streaming_providers = defItem.streaming_providers;
+                updated = true;
+              }
             }
           });
           if (updated) saveLocalSnapshot(snap);
@@ -850,8 +914,13 @@ async function handleClientCloudGet(url) {
     return { channels: state.channels || [] };
   }
 
-  if (path === "/api/library") {
-    return { items: snap.library || [] };
+  if (path === "/api/library" || path === "/api/streaming") {
+    const streamCat = await fetchStaticStreamingCatalog();
+    const lib = snap.library || [];
+    lib.forEach((it) => {
+      it.streaming_providers = resolveClientStreamingForItem(it, streamCat);
+    });
+    return { items: lib };
   }
 
   if (path === "/api/reminders") {
@@ -864,6 +933,7 @@ async function handleClientCloudGet(url) {
     const timeSlot = parsed.searchParams.get("time_slot") || "all";
     const lcnFilter = parsed.searchParams.get("lcn") || "";
     const onlyUnwatched = parsed.searchParams.get("only_unwatched") === "1";
+    const includeSky = parsed.searchParams.get("include_sky") === "1";
 
     const allEvents = await fetchStaticEpgEvents();
     const libItems = (snap.library && snap.library.length > 0) ? snap.library : state.libraryItems || [];
@@ -945,6 +1015,9 @@ async function handleClientCloudGet(url) {
     const matchedEvents = [];
 
     allEvents.forEach((ev) => {
+      const isSkyEv = Boolean(ev.is_sky || Number(ev.lcn || 0) >= 100);
+      if (!includeSky && isSkyEv) return;
+
       const lib = isMatch(ev);
       if (!lib) return;
 
@@ -1315,7 +1388,7 @@ async function directMobileSearch4G(query, libraryItems) {
   queueWdWb(rawTrimmed, 25);
 
   let epgEvents = [];
-  const epgJob = fetchStaticEpgEvents().then((evs) => { epgEvents = evs || []; }).catch(() => {});
+  const epgJob = fetchStaticEpgEvents().then((evs) => { epgEvents = evs || []; }).catch(() => { });
 
   await Promise.allSettled([...wdSearchJobs, ...extJobs, epgJob]);
 
@@ -1941,9 +2014,9 @@ async function initApp() {
     navigator.serviceWorker
       .register("./sw.js")
       .then((reg) => {
-        reg.update().catch(() => {});
+        reg.update().catch(() => { });
       })
-      .catch(() => {});
+      .catch(() => { });
 
     let refreshing = false;
     navigator.serviceWorker.addEventListener("controllerchange", () => {
@@ -2008,12 +2081,26 @@ async function initApp() {
 
 function populateChannelDropdowns() {
   const selMatch = document.getElementById("match-channel");
+  if (!selMatch) return;
+  const visibleChannels = (state.channels || []).filter(
+    (c) => state.includeSky || (!c.is_sky && Number(c.lcn || 0) < 100)
+  );
+  if (!state.includeSky && state.matchChannel && Number(state.matchChannel) >= 100) {
+    state.matchChannel = "";
+  }
+  const defaultLabel = state.includeSky
+    ? "📺 Tutti i canali (DTT LCN 1–70 + 🛰️ Sky)"
+    : "📺 Tutti i canali del DTT (LCN 1–70)";
   const html =
-    `<option value="">📺 Tutti i canali (LCN 1–70)</option>` +
-    state.channels
-      .map((c) => `<option value="${c.lcn}">Canale ${c.lcn} — ${escapeHtml(c.name)}</option>`)
+    `<option value="">${defaultLabel}</option>` +
+    visibleChannels
+      .map((c) => {
+        const isSkyCh = Boolean(c.is_sky || Number(c.lcn || 0) >= 100);
+        const prefix = isSkyCh ? `🛰️ Sky ${c.lcn}` : `Canale ${c.lcn}`;
+        return `<option value="${c.lcn}" ${String(state.matchChannel) === String(c.lcn) ? "selected" : ""}>${prefix} — ${escapeHtml(c.name)}</option>`;
+      })
       .join("");
-  if (selMatch) selMatch.innerHTML = html;
+  selMatch.innerHTML = html;
 }
 
 function renderDaysStrips() {
@@ -2039,7 +2126,7 @@ function renderDaysStrips() {
 }
 
 // ============================================================================
-// TAB 1: 7-DAY PALINSESTO MATCHER ("IN ONDA PER TE")
+// TAB 1: 7-DAY PALINSESTO MATCHER ("IN ONDA")
 // ============================================================================
 async function loadMatches(forceRefresh = false) {
   const container = document.getElementById("matches-results-container");
@@ -2058,6 +2145,7 @@ async function loadMatches(forceRefresh = false) {
     day: state.matchDay,
     time_slot: state.matchTimeSlot,
     only_unwatched: state.matchOnlyUnwatched ? "1" : "0",
+    include_sky: state.includeSky ? "1" : "0",
     lcn: state.matchChannel,
     refresh: forceRefresh ? "1" : "0",
   });
@@ -2071,8 +2159,9 @@ async function loadMatches(forceRefresh = false) {
   const cleanFetchedAt = (data.fetched_at || "ora")
     .replace(/\s*\(GitHub Actions.*?\)/gi, "")
     .replace(/\s*\(Ora Italiana\)/gi, "");
+  const skyStatusLabel = state.includeSky ? "DTT + 🛰️ Sky attivi" : "Canali DTT (LCN 1–70) attivi";
   document.getElementById("epg-header-status").textContent =
-    `${data.channels_polled || 52} canali del DTT attivi • ${data.total_epg_events || 0} programmi analizzati (7 giorni) • Palinsesti agg. ${cleanFetchedAt}`;
+    `${skyStatusLabel} • ${data.total_epg_events || 0} programmi analizzati (7 giorni) • Palinsesti agg. ${cleanFetchedAt}`;
 
   const counts = data.counts || {};
   document.getElementById("count-all").textContent = counts.all || 0;
@@ -2185,7 +2274,7 @@ function renderMatchCard(ev, matchIndex) {
       <div class="tv-body">
         <div class="tv-meta-top">
           <span class="lcn-badge" style="background:${ev.channel_color || "#334155"}">
-            CH ${ev.lcn} • ${escapeHtml(ev.channel_name)}
+            ${(ev.is_sky || Number(ev.lcn || 0) >= 100) ? "🛰️ SKY" : "CH"} ${ev.lcn} • ${escapeHtml(ev.channel_name)}
           </span>
           <span class="time-badge">
             🕒 ${ev.start_time}${ev.end_time ? " - " + ev.end_time : ""} (${ev.duration_min} min)
@@ -2287,11 +2376,246 @@ function bindMatchCardEvents(container) {
 }
 
 // ============================================================================
-// TAB 2: LE MIE LISTE 
+// TAB 2: IN STREAMING (PIATTAFORME STREAMING PER LE TUE LISTE)
+// ============================================================================
+async function loadStreamingTab() {
+  const container = document.getElementById("streaming-results-container");
+  if (!state.libraryItems || state.libraryItems.length === 0) {
+    if (container) {
+      container.innerHTML = `<div class="loading-state">Controllo disponibilità sulle piattaforme streaming...</div>`;
+    }
+    await loadLibrary();
+  } else {
+    const streamCat = await fetchStaticStreamingCatalog();
+    state.libraryItems.forEach((it) => {
+      it.streaming_providers = resolveClientStreamingForItem(it, streamCat);
+    });
+    renderStreamingTab();
+  }
+}
+
+function renderStreamingTab() {
+  const container = document.getElementById("streaming-results-container");
+  if (!container) return;
+
+  const allItems = state.libraryItems || [];
+  const selectedPlats = state.streamPlatforms; // Set of platform IDs, empty = all platforms
+
+  // Helper: get resolved streaming providers for a library item
+  const getProviders = (item) => {
+    return resolveClientStreamingForItem(item, _staticStreamingCatalog);
+  };
+
+  // Helper: check if item has at least one matching platform
+  const matchesSelectedPlatforms = (providers) => {
+    if (!Array.isArray(providers) || providers.length === 0) return false;
+    if (!selectedPlats || selectedPlats.size === 0) return true;
+    return providers.some((p) => selectedPlats.has(p.id));
+  };
+
+  // 1. Update Category Card Counts (based on selected platform(s), media type, and unwatched toggle)
+  const catCounts = { all: 0, wishlist: 0, watching: 0, watched: 0 };
+  allItems.forEach((it) => {
+    const provs = getProviders(it);
+    if (!matchesSelectedPlatforms(provs)) return;
+    const mtype = it.media_type || "movie";
+    const st = it.status || "wishlist";
+    if (state.streamMediaType !== "all" && mtype !== state.streamMediaType) return;
+    if (state.streamOnlyUnwatched && st === "watched") return;
+
+    catCounts.all++;
+    if (st === "wishlist") catCounts.wishlist++;
+    else if (st === "watching") catCounts.watching++;
+    else if (st === "watched") catCounts.watched++;
+  });
+
+  const elCntAll = document.getElementById("stream-count-all");
+  const elCntWish = document.getElementById("stream-count-wishlist");
+  const elCntWatch = document.getElementById("stream-count-watching");
+  const elCntDone = document.getElementById("stream-count-watched");
+  if (elCntAll) elCntAll.textContent = catCounts.all;
+  if (elCntWish) elCntWish.textContent = catCounts.wishlist;
+  if (elCntWatch) elCntWatch.textContent = catCounts.watching;
+  if (elCntDone) elCntDone.textContent = catCounts.watched;
+
+  // 2. Update Platform Pill Counts (based on selected category card, media type, and unwatched toggle)
+  const platCounts = {
+    all: 0,
+    netflix: 0,
+    prime: 0,
+    disney: 0,
+    now: 0,
+    hbo: 0,
+    apple: 0,
+    paramount: 0,
+    raiplay: 0,
+    mediaset: 0,
+    crunchyroll: 0,
+    timvision: 0,
+  };
+
+  const filteredItems = [];
+  allItems.forEach((it) => {
+    const provs = getProviders(it);
+    const mtype = it.media_type || "movie";
+    const st = it.status || "wishlist";
+
+    if (state.streamStatusMode === "wishlist" && st !== "wishlist") return;
+    if (state.streamStatusMode === "watching" && st !== "watching") return;
+    if (state.streamStatusMode === "watched" && st !== "watched") return;
+    if (state.streamMediaType !== "all" && mtype !== state.streamMediaType) return;
+    if (state.streamOnlyUnwatched && st === "watched") return;
+
+    if (provs && provs.length > 0) {
+      platCounts.all++;
+      provs.forEach((p) => {
+        if (platCounts[p.id] !== undefined) {
+          platCounts[p.id]++;
+        }
+      });
+    }
+
+    if (matchesSelectedPlatforms(provs)) {
+      filteredItems.push({ ...it, streaming_providers: provs });
+    }
+  });
+
+  Object.keys(platCounts).forEach((pid) => {
+    const badgeEl = document.getElementById(`plat-cnt-${pid}`);
+    if (badgeEl) badgeEl.textContent = platCounts[pid];
+  });
+
+  // Sync active state on platform pills
+  document.querySelectorAll("#streaming-platforms-bar .plat-pill").forEach((pill) => {
+    const pid = pill.dataset.plat;
+    if (pid === "all") {
+      pill.classList.toggle("active", !selectedPlats || selectedPlats.size === 0);
+    } else {
+      pill.classList.toggle("active", Boolean(selectedPlats && selectedPlats.has(pid)));
+    }
+  });
+
+  if (filteredItems.length === 0) {
+    const platNames =
+      selectedPlats && selectedPlats.size > 0
+        ? Array.from(selectedPlats)
+          .map((pid) => (STREAMING_PLATFORM_META[pid] ? STREAMING_PLATFORM_META[pid].name : pid))
+          .join(" + ")
+        : "piattaforme streaming in abbonamento";
+    container.innerHTML = `
+      <div class="empty-box">
+        <p>Nessun titolo delle tue liste trovato su <strong>${escapeHtml(platNames)}</strong> con i filtri attuali.</p>
+        <p style="margin-top:8px;font-size:0.8rem;">💡 Suggerimento: prova a cliccare su <strong>"🌐 Tutte"</strong> o seleziona <strong>"🌟 Tutto"</strong> per vedere tutti i film e le serie delle tue liste inclusi negli abbonamenti streaming.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Sort alphabetically A -> Z for clean browsing
+  filteredItems.sort((a, b) => (a.title_it || "").localeCompare(b.title_it || "", "it", { sensitivity: "base" }));
+
+  container.innerHTML = filteredItems.map((it) => renderStreamingCard(it)).join("");
+
+  // Bind card actions in streaming tab
+  container.querySelectorAll(".btn-stream-toggle-status").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.dataset.id);
+      const newStatus = btn.dataset.nextStatus;
+      await apiPost("/api/library/status", { id, status: newStatus });
+      showToast(newStatus === "watched" ? "✅ Segnato come Visto!" : "🎯 Riportato in Da Vedere (Wishlist).");
+      await loadLibrary();
+      await loadMatches(false);
+    });
+  });
+
+  container.querySelectorAll(".btn-stream-open-episodes").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      openSeriesTrackerModal(Number(btn.dataset.id));
+    });
+  });
+}
+
+function renderStreamingCard(item) {
+  const isMovie = item.media_type === "movie";
+  const st = item.status || "wishlist";
+  const provs = item.streaming_providers || [];
+  const selectedPlats = state.streamPlatforms;
+
+  let statusBadgeHtml = "";
+  if (st === "wishlist") {
+    statusBadgeHtml = `<span class="list-status-pill wishlist">🎯 Da Vedere</span>`;
+  } else if (st === "watching") {
+    statusBadgeHtml = `<span class="list-status-pill watching">▶️ Stai Seguendo (${item.watched_episodes_count || 0} ep.)</span>`;
+  } else {
+    statusBadgeHtml = `<span class="list-status-pill watched">✅ Visto</span>`;
+  }
+
+  const posterHtml = item.poster
+    ? `<img src="${escapeHtml(item.poster)}" alt="${escapeHtml(item.title_it)}" class="tv-poster" loading="lazy" onerror="this.outerHTML='<div class=\\'tv-poster\\'>${isMovie ? "🎬" : "📺"}</div>'" />`
+    : `<div class="tv-poster">${isMovie ? "🎬" : "📺"}</div>`;
+
+  const badgesHtml = provs
+    .map((p) => {
+      const meta = STREAMING_PLATFORM_META[p.id] || { name: p.name || p.id, color: "#334155", sub: "Streaming" };
+      const isHighlighted = selectedPlats && selectedPlats.size > 0 && selectedPlats.has(p.id);
+      const borderStyle = isHighlighted ? `border: 2px solid #fff; box-shadow: 0 0 8px ${meta.color};` : "";
+      const subText = p.id === "prime" ? "Incluso con Prime" : (p.monetization === "FREE" || p.monetization === "ADS" ? "Gratuito" : meta.sub);
+      const tagContent = `
+        <span class="plat-dot" style="background:#fff;"></span>
+        <span>${escapeHtml(meta.name)}</span>
+        <span class="plat-sub-tag">• ${escapeHtml(subText)}</span>
+      `;
+      if (p.url) {
+        return `<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener" class="stream-provider-badge" style="background:${meta.color};${borderStyle}" title="Apri su ${escapeHtml(meta.name)}">${tagContent}</a>`;
+      }
+      return `<span class="stream-provider-badge" style="background:${meta.color};${borderStyle}">${tagContent}</span>`;
+    })
+    .join("");
+
+  const nextStatus = st === "watched" ? "wishlist" : "watched";
+  const statusBtnLabel = st === "watched" ? "🎯 Riporta in Da Vedere" : "✅ Segna Visto";
+
+  return `
+    <article class="tv-card">
+      ${posterHtml}
+      <div class="tv-body">
+        <div class="tv-meta-top">
+          <span class="lcn-badge" style="background:#1e293b;">
+            ${isMovie ? "🎬 Film" : "📺 Serie TV"}${item.year ? " • " + escapeHtml(item.year) : ""}
+          </span>
+          ${statusBadgeHtml}
+        </div>
+        <h3 class="tv-title">${escapeHtml(item.title_it)}</h3>
+        <div class="streaming-badges-row">
+          ${badgesHtml}
+        </div>
+        <p class="tv-desc">${escapeHtml(item.description || "")}</p>
+        <div class="tv-actions">
+          <button type="button" class="btn-action btn-stream-toggle-status ${st === "watched" ? "active-watched" : ""}" data-id="${item.id}" data-next-status="${nextStatus}">
+            ${statusBtnLabel}
+          </button>
+          ${!isMovie
+      ? `<button type="button" class="btn-action btn-stream-open-episodes" data-id="${item.id}">📋 Episodi (${item.watched_episodes_count || 0} visti)</button>`
+      : ""
+    }
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+// ============================================================================
+// TAB 3: LE MIE LISTE 
 // ============================================================================
 async function loadLibrary() {
-  const data = await apiGet(`/api/library?start_date=${state.startDate}`);
+  const [data, streamCat] = await Promise.all([
+    apiGet(`/api/library?start_date=${state.startDate}&include_sky=${state.includeSky ? "1" : "0"}`),
+    fetchStaticStreamingCatalog(),
+  ]);
   const serverItems = data.items || [];
+  serverItems.forEach((it) => {
+    it.streaming_providers = resolveClientStreamingForItem(it, streamCat);
+  });
   if (!state.isCloudMode) {
     const snap = getLocalSnapshot();
     const serverKeySet = new Set(serverItems.map((x) => `${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`));
@@ -2313,6 +2637,7 @@ async function loadLibrary() {
     state.libraryItems = serverItems;
   }
   renderLibrary();
+  renderStreamingTab();
 }
 
 function askDeleteConfirmation(itemsToDelete) {
@@ -3735,6 +4060,8 @@ function setupNavigationAndEvents() {
       document.getElementById(targetId).classList.add("active");
       if (targetId === "tab-explore") {
         loadExploreEpg();
+      } else if (targetId === "tab-streaming") {
+        loadStreamingTab();
       } else if (targetId === "tab-library") {
         loadLibrary();
       } else if (targetId === "tab-matches") {
@@ -3764,6 +4091,69 @@ function setupNavigationAndEvents() {
     state.matchOnlyUnwatched = e.target.checked;
     loadMatches(false);
   });
+
+  const btnToggleSky = document.getElementById("btn-toggle-sky");
+  if (btnToggleSky) {
+    btnToggleSky.addEventListener("click", () => {
+      state.includeSky = !state.includeSky;
+      btnToggleSky.classList.toggle("active", state.includeSky);
+      const stateTextEl = document.getElementById("sky-toggle-state-text");
+      if (stateTextEl) {
+        stateTextEl.textContent = state.includeSky ? "ON" : "OFF";
+      }
+      populateChannelDropdowns();
+      loadMatches(false);
+      loadLibrary();
+      showToast(
+        state.includeSky
+          ? "🛰️ Palinsesto Sky ATTIVATO: ora vedi anche i programmi di Sky Cinema e Sky Serie!"
+          : "📡 Palinsesto Sky DISATTIVATO: ora vedi solo il Digitale Terrestre (LCN 1–70)."
+      );
+    });
+  }
+
+  // Tab "In Streaming" Filters (Category Cards, Multi-Platform Pills, Media Type, Unwatched)
+  document.querySelectorAll("#streaming-category-grid .cat-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      document.querySelectorAll("#streaming-category-grid .cat-card").forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
+      state.streamStatusMode = card.dataset.mode || "all";
+      renderStreamingTab();
+    });
+  });
+
+  document.querySelectorAll("#streaming-platforms-bar .plat-pill").forEach((pill) => {
+    pill.addEventListener("click", () => {
+      const pid = pill.dataset.plat;
+      if (pid === "all") {
+        state.streamPlatforms.clear();
+      } else {
+        if (state.streamPlatforms.has(pid)) {
+          state.streamPlatforms.delete(pid);
+        } else {
+          state.streamPlatforms.add(pid);
+        }
+      }
+      renderStreamingTab();
+    });
+  });
+
+  document.querySelectorAll("#stream-type-pills .mini-pill").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#stream-type-pills .mini-pill").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.streamMediaType = btn.dataset.type || "all";
+      renderStreamingTab();
+    });
+  });
+
+  const streamOnlyUnwatchedEl = document.getElementById("stream-only-unwatched");
+  if (streamOnlyUnwatchedEl) {
+    streamOnlyUnwatchedEl.addEventListener("change", (e) => {
+      state.streamOnlyUnwatched = e.target.checked;
+      renderStreamingTab();
+    });
+  }
 
   document.getElementById("btn-refresh-epg").addEventListener("click", () => {
     loadMatches(true);

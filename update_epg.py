@@ -17,7 +17,8 @@ try:
 except ImportError:
     from backports import zoneinfo  # type: ignore
 
-from epg_engine import DTT_CHANNELS, fetch_7day_epg
+from catalog_service import ITALIAN_ORIGINAL_ALIASES, enrich_items_with_streaming
+from epg_engine import ALL_CHANNELS, DTT_CHANNELS, SKY_CHANNELS, fetch_7day_epg
 
 
 def get_italian_today() -> datetime.date:
@@ -110,24 +111,25 @@ def main():
 
     print(f"Data corrente Italia (Europe/Rome): {today_it.isoformat()}")
     print(f"Finestra temporale: da {days_list[0]} a {days_list[-1]} ({days_count} giorni)")
-    print(f"Canali DTT configurati: {len(DTT_CHANNELS)}")
+    print(f"Canali configurati: {len(DTT_CHANNELS)} DTT + {len(SKY_CHANNELS)} Sky = {len(ALL_CHANNELS)} totali")
 
-    # Scarica gli eventi EPG per i 7 giorni
+    # Cartella di output
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+    os.makedirs(data_dir, exist_ok=True)
+
+    # Scarica gli eventi EPG per i 7 giorni (DTT + Sky)
     events = fetch_7day_epg(start_date=today_it, days=days_count)
     elapsed = time.time() - start_time
 
     movies = [e for e in events if e.get("media_type") == "movie"]
     series = [e for e in events if e.get("media_type") == "series"]
     active_lcns = {e.get("lcn") for e in events}
+    sky_events_cnt = sum(1 for e in events if e.get("is_sky"))
 
     print(f"Download completato in {elapsed:.2f} secondi!")
-    print(f"Totale programmi TV analizzati: {len(events)}")
+    print(f"Totale programmi TV analizzati: {len(events)} (di cui {sky_events_cnt} su Sky)")
     print(f"Film trovati: {len(movies)} | Episodi Serie TV: {len(series)}")
-    print(f"Canali attivi con palinsesto: {len(active_lcns)} su {len(DTT_CHANNELS)}")
-
-    # Cartella di output
-    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
-    os.makedirs(data_dir, exist_ok=True)
+    print(f"Canali attivi con palinsesto: {len(active_lcns)} su {len(ALL_CHANNELS)}")
 
     # 1. Salva data/epg_7days.json
     epg_path = os.path.join(data_dir, "epg_7days.json")
@@ -135,11 +137,58 @@ def main():
         json.dump(events, f, ensure_ascii=False, separators=(",", ":"))
     print(f"Salvati {len(events)} eventi in {epg_path} ({os.path.getsize(epg_path) / 1024:.1f} KB)")
 
-    # 2. Salva data/channels.json
+    # 2. Salva data/channels.json (DTT + Sky)
     channels_path = os.path.join(data_dir, "channels.json")
     with open(channels_path, "w", encoding="utf-8") as f:
-        json.dump({"channels": DTT_CHANNELS}, f, ensure_ascii=False, indent=2)
-    print(f"Salvati {len(DTT_CHANNELS)} canali in {channels_path}")
+        json.dump({"channels": ALL_CHANNELS}, f, ensure_ascii=False, indent=2)
+    print(f"Salvati {len(ALL_CHANNELS)} canali in {channels_path}")
+
+    # 2b. Aggiorna catalogo Piattaforme Streaming (JustWatch IT gratuito) per Le Mie Liste + Saghe
+    lib_path = os.path.join(data_dir, "library.json")
+    backup_path = os.path.join(data_dir, "library_backup.json")
+    streaming_cat_path = os.path.join(data_dir, "streaming_catalog.json")
+    lib_items = []
+    if os.path.isfile(lib_path):
+        try:
+            with open(lib_path, "r", encoding="utf-8") as f:
+                loaded = json.load(f)
+                if isinstance(loaded, list):
+                    lib_items = loaded
+        except Exception:
+            pass
+
+    alias_probe_items = [
+        {
+            "title_it": al["it"],
+            "title_original": al["orig"],
+            "media_type": al["type"],
+            "year": al.get("year") or "",
+            "aliases": al.get("aliases") or [],
+        }
+        for al in ITALIAN_ORIGINAL_ALIASES
+    ]
+    print(f"[Streaming] Verifica disponibilita' streaming IT (Netflix, Prime, Disney+, Sky/NOW, HBO, ecc.) per {len(lib_items)} titoli in lista + {len(alias_probe_items)} titoli catalogo...")
+    stream_map = {}
+    if os.path.isfile(streaming_cat_path):
+        try:
+            with open(streaming_cat_path, "r", encoding="utf-8") as f:
+                existing_map = json.load(f)
+                if isinstance(existing_map, dict):
+                    stream_map.update(existing_map)
+        except Exception:
+            pass
+
+    stream_map.update(enrich_items_with_streaming(alias_probe_items, max_workers=10))
+    if lib_items:
+        stream_map.update(enrich_items_with_streaming(lib_items, max_workers=8))
+        with open(lib_path, "w", encoding="utf-8") as f:
+            json.dump(lib_items, f, ensure_ascii=False, indent=2)
+        with open(backup_path, "w", encoding="utf-8") as f:
+            json.dump(lib_items, f, ensure_ascii=False, indent=2)
+
+    with open(streaming_cat_path, "w", encoding="utf-8") as f:
+        json.dump(stream_map, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"[Streaming] Salvata mappa streaming in {streaming_cat_path} ({len(stream_map)} chiavi)")
 
     # 3. Salva data/status.json
     status_path = os.path.join(data_dir, "status.json")
