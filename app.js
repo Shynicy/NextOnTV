@@ -111,9 +111,16 @@ const CLIENT_SAGAS = [
   { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024", poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/ad/Deadpool_%26_Wolverine.png/500px-Deadpool_%26_Wolverine.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4042.jpg" },
   { it: "Una mamma per amica", orig: "Gilmore Girls", type: "series", year: "2000", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/4/11417.jpg" },
+  { it: "E alla fine arriva mamma", orig: "How I Met Your Mother", type: "series", year: "2005", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/235/589999.jpg" },
+  { it: "Il Trono di Spade", orig: "Game of Thrones", type: "series", year: "2011", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/190/476117.jpg" },
+  { it: "La casa di carta", orig: "Money Heist", type: "series", year: "2017", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/249/624264.jpg" },
+  { it: "Buffy l'ammazzavampiri", orig: "Buffy the Vampire Slayer", type: "series", year: "1997", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4445.jpg" },
+  { it: "I Simpson", orig: "The Simpsons", type: "series", year: "1989", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/484/1211349.jpg" },
   { it: "L'ispettore Barnaby", orig: "Midsomer Murders", type: "series", year: "1997" , poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/0/01/L%27ispettore_Barnaby.png/500px-L%27ispettore_Barnaby.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Supernatural", orig: "Supernatural", type: "series", year: "2005", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/476/1191593.jpg" },
   { it: "NCIS - Unità anticrimine", orig: "NCIS", type: "series", year: "2003", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4763.jpg" },
+  { it: "Ken il guerriero", orig: "Fist of the North Star", type: "series", year: "1984", aliases: ["ken il guerriero", "hokuto no ken", "fist of the north star"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/43/109033.jpg" },
+  { it: "L'attacco dei giganti", orig: "Attack on Titan", type: "series", year: "2013", aliases: ["l attacco dei giganti", "attacco dei giganti", "shingeki no kyojin", "attack on titan"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/4/11919.jpg" },
   { it: "Lupin", orig: "Lupin", type: "series", year: "2021", aliases: ["lupin 2021", "lupin serie tv", "lupin netflix"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/646/1617244.jpg" },
   { it: "Lupin III", orig: "Lupin III", type: "series", year: "1971", aliases: ["lupin 3", "le avventure di lupin iii", "le avventure di lupin 3", "lupin prima serie"], poster: "https://static.tvmaze.com/uploads/images/medium_portrait/38/96191.jpg" },
   { it: "Le nuove avventure di Lupin III", orig: "Shin Rupan Sansei", type: "series", year: "1977", aliases: ["lupin giacca rossa", "lupin seconda serie"], poster: "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg" },
@@ -137,9 +144,10 @@ function getPosterQualityRank(url) {
   const u = url.toLowerCase();
   if (u.includes(".svg") || u.includes("logo_") || u.includes("flag_") || u.includes("icon_") || u.includes("symbol")) return 1;
   if (u.includes("screenshot")) return 2;
-  if (u.includes("thumb.wikimedia.org") || u.includes("commons.wikimedia.org")) return 3;
-  if (u.includes("static.tvmaze.com")) return 4;
-  if (u.includes("m.media-amazon.com") || u.includes("imdb")) return 5;
+  if (u.includes("special:filepath") || u.includes("/wikipedia/commons/")) return 3;
+  if (u.includes("/wikipedia/it/")) return 4;
+  if (u.includes("static.tvmaze.com") || u.includes("anilist.co")) return 5;
+  if (u.includes("m.media-amazon.com") || u.includes("imdb")) return 6;
   return 3;
 }
 
@@ -159,8 +167,25 @@ function convertRomanNumeralsClient(normStr) {
 
 const STOP_WORDS_CLIENT = new Set([
   "the", "il", "lo", "la", "l", "i", "gli", "le", "a", "an", "and", "e", "ed", "n",
-  "di", "dei", "del", "della", "delle", "of", "in", "on", "per", "con", "su"
+  "di", "dei", "del", "della", "delle", "dello", "degli", "da", "dal", "dalla",
+  "of", "in", "on", "per", "con", "su", "un", "uno", "una", "al", "alla", "ai", "agli", "alle"
 ]);
+
+function cleanSearchInputClient(q) {
+  return String(q || "")
+    .replace(/['’`\-:–—.,!?/\\()"*•·]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function coreSearchInputClient(q) {
+  const cleaned = cleanSearchInputClient(q);
+  const words = cleaned.split(" ").filter(Boolean).filter((w) => {
+    const plain = w.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return !STOP_WORDS_CLIENT.has(plain);
+  });
+  return words.length >= 2 ? words.join(" ") : cleaned;
+}
 
 function cleanTokensClient(text) {
   const norm = normalizeTitleClient(text);
@@ -173,7 +198,9 @@ function cleanTokensClient(text) {
 function wordMatchClient(qw, cw) {
   if (qw === cw) return true;
   if (qw.length >= 3 && cw.length >= 3) {
-    if (qw.includes(cw) || cw.includes(qw)) return true;
+    if ((qw.length >= 4 && cw.startsWith(qw)) || (cw.length >= 4 && qw.startsWith(cw))) return true;
+    if (Math.min(qw.length, cw.length) >= 5 && (qw.includes(cw) || cw.includes(qw))) return true;
+    if (cw === `${qw}s` || qw === `${cw}s`) return true;
     const minL = Math.min(qw.length, cw.length);
     const maxD = minL >= 6 ? 2 : (minL >= 4 ? 1 : 0);
     if (maxD > 0 && damerauLevenshteinClient(qw, cw, maxD) <= maxD) return true;
@@ -181,55 +208,39 @@ function wordMatchClient(qw, cw) {
   return false;
 }
 
-function computeRelevanceScoreClient(query, item) {
+function scoreCandidateListClient(query, primaryCands, aliasCands) {
   const { tokens: qTokens, core: qCore } = cleanTokensClient(query);
   const qStr = qTokens.join(" ");
   const qCoreStr = qCore.join(" ");
-
   if (!qStr && !qCoreStr) return 0;
 
-  const candidates = [item.title_it, item.title_original];
-  if (item.aliases && Array.isArray(item.aliases)) {
-    candidates.push(...item.aliases);
-  }
+  const entries = [
+    ...(primaryCands || []).map((c) => ({ isAlias: false, cand: c })),
+    ...(aliasCands || []).map((c) => ({ isAlias: true, cand: c })),
+  ];
 
   let bestScore = 0;
-  for (const cand of candidates) {
+  for (const { isAlias, cand } of entries) {
     if (!cand) continue;
     const { tokens: cTokens, core: cCore } = cleanTokensClient(cand);
     if (cTokens.length === 0) continue;
     const cStr = cTokens.join(" ");
     const cCoreStr = cCore.join(" ");
 
-    // 1. Punteggio Massimo Assoluto (1000 Punti): Corrispondenza Esatta sul titolo completo
+    let s = 0;
     if (qStr && qStr === cStr) {
-      bestScore = Math.max(bestScore, 1000);
-      continue;
-    }
-
-    // 2. Quasi Esatto (970 Punti): Corrispondenza Esatta sulle parole chiave (esclusi articoli)
-    if (qCoreStr && qCoreStr === cCoreStr) {
-      bestScore = Math.max(bestScore, 970);
-      continue;
-    }
-
-    // 3. Frase Esatta Contenuta (900-940 Punti): La sequenza esatta cercata è presente nel titolo
-    // (all'inizio, in mezzo o alla fine, es. "le profezie di nostradamus" in "Lupin e le profezie di Nostradamus")
-    const hasFullPhrase = (qStr && cStr.includes(qStr)) || (qCoreStr && cCoreStr.includes(qCoreStr));
-    if (hasFullPhrase) {
+      s = 1000;
+    } else if (qCoreStr && qCoreStr === cCoreStr) {
+      s = 970;
+    } else if ((qStr && cStr.includes(qStr)) || (qCoreStr && cCoreStr.includes(qCoreStr))) {
       const isStart = cStr.startsWith(qStr) || (qCoreStr && cCoreStr.startsWith(qCoreStr));
       const isEnd = cStr.endsWith(qStr) || (qCoreStr && cCoreStr.endsWith(qCoreStr));
-      let phraseScore = isStart ? 940 : isEnd ? 920 : 900;
+      const phraseScore = isStart ? 940 : isEnd ? 920 : 900;
       const extraWords = Math.abs(cCore.length - qCore.length);
-      phraseScore = Math.max(780, phraseScore - extraWords * 8);
-      bestScore = Math.max(bestScore, phraseScore);
-      continue;
-    }
-
-    // 4. Tutte le parole core cercate sono presenti nel titolo (anche in posizioni diverse o sparse)
-    if (qCore.length > 0) {
+      s = Math.max(780, phraseScore - extraWords * 8);
+    } else if (qCore.length > 0) {
       let matchedCount = 0;
-      let matchedIndices = [];
+      const matchedIndices = [];
       for (const qw of qCore) {
         let foundIdx = -1;
         for (let ci = 0; ci < cTokens.length; ci++) {
@@ -241,49 +252,60 @@ function computeRelevanceScoreClient(query, item) {
         }
         if (foundIdx !== -1) matchedIndices.push(foundIdx);
       }
-
-      const coverage = matchedCount / qCore.length;
-
-      // Se tutte le parole sono presenti (100% delle parole chiave nel titolo)
-      if (coverage === 1.0) {
-        let inOrder = true;
-        for (let i = 1; i < matchedIndices.length; i++) {
-          if (matchedIndices[i] < matchedIndices[i - 1]) {
-            inOrder = false;
-            break;
-          }
-        }
-        let orderScore = inOrder ? 840 : 760;
-        const extraWords = Math.abs(cCore.length - qCore.length);
-        orderScore = Math.max(650, orderScore - extraWords * 10);
-        bestScore = Math.max(bestScore, orderScore);
-        continue;
-      }
-
-      // Se almeno la metà delle parole cercate è presente (es. 2 su 3 o 3 su 4)
-      if (coverage >= 0.5) {
-        const extraWords = Math.abs(cCore.length - qCore.length);
-        let partialScore = Math.round(coverage * 600) - extraWords * 15;
-        bestScore = Math.max(bestScore, Math.max(200, partialScore));
-        continue;
-      }
-
-      // Se almeno una parola chiave è presente (mantiene titoli correlati/franchise senza scartarli!)
       if (matchedCount > 0) {
-        const extraWords = Math.abs(cCore.length - qCore.length);
-        let partialScore = Math.round(coverage * 500) - extraWords * 10;
-        bestScore = Math.max(bestScore, Math.max(100, partialScore));
-        continue;
+        const coverage = matchedCount / qCore.length;
+        if (coverage === 1.0) {
+          let inOrder = true;
+          for (let i = 1; i < matchedIndices.length; i++) {
+            if (matchedIndices[i] < matchedIndices[i - 1]) {
+              inOrder = false;
+              break;
+            }
+          }
+          const orderScore = inOrder ? 840 : 760;
+          const extraWords = Math.abs(cCore.length - qCore.length);
+          s = Math.max(650, orderScore - extraWords * 10);
+        } else if (coverage >= 0.5) {
+          const extraWords = Math.abs(cCore.length - qCore.length);
+          s = Math.max(200, Math.round(coverage * 600) - extraWords * 15);
+        } else {
+          const extraWords = Math.abs(cCore.length - qCore.length);
+          s = Math.max(100, Math.round(coverage * 500) - extraWords * 10);
+        }
+      }
+    }
+
+    if (s > 0 && isAlias) {
+      s = Math.max(90, s - 5);
+    }
+    if (s > bestScore) bestScore = s;
+  }
+  return bestScore;
+}
+
+function computeRelevanceScoreClient(query, item, bridgeQueries = [], suggestions = []) {
+  const primaries = [item.title_it, item.title_original];
+  const aliases = Array.isArray(item.aliases) ? item.aliases : [];
+  let bestScore = scoreCandidateListClient(query, primaries, aliases);
+
+  if (Array.isArray(suggestions) && suggestions.length > 0) {
+    for (const sug of suggestions) {
+      const sugScore = scoreCandidateListClient(sug, primaries, aliases);
+      if (sugScore > 0) {
+        bestScore = Math.max(bestScore, Math.max(120, sugScore - 40));
       }
     }
   }
 
-  // Base fallback score if candidate was explicitly found by OpenSearch, TVMaze, or Sagas
-  if (bestScore === 0) {
-    bestScore = 50;
+  if (bestScore === 0 && Array.isArray(bridgeQueries) && bridgeQueries.length > 0) {
+    for (const bq of bridgeQueries) {
+      const bs = scoreCandidateListClient(bq, primaries, aliases);
+      if (bs > 0) {
+        bestScore = Math.max(bestScore, Math.min(820, Math.max(120, bs - 180)));
+      }
+    }
   }
 
-  // Bonus Saghe
   if (item.is_saga) {
     const rank = Number(item.saga_rank || 1);
     if (bestScore >= 950) {
@@ -295,24 +317,26 @@ function computeRelevanceScoreClient(query, item) {
     }
   }
 
-  // Bonus Popolarità (dà una spinta ai titoli celebri senza mai superare la pertinenza delle parole cercate)
-  if (bestScore > 0) {
-    let popBonus = 0;
-    const sl = Number(item.sitelinks_count || 0);
-    if (sl >= 50) popBonus = Math.max(popBonus, 70);
-    else if (sl >= 25) popBonus = Math.max(popBonus, 45);
-    else if (sl >= 10) popBonus = Math.max(popBonus, 25);
-    else if (sl >= 4) popBonus = Math.max(popBonus, 10);
+  if (bestScore === 0) return 0;
 
-    const w = Number(item.tvmaze_weight || 0);
-    if (w >= 85) popBonus = Math.max(popBonus, 60);
-    else if (w >= 70) popBonus = Math.max(popBonus, 40);
-    else if (w >= 50) popBonus = Math.max(popBonus, 20);
+  let popBonus = 0;
+  const sl = Number(item.sitelinks_count || 0);
+  if (sl >= 50) popBonus = Math.max(popBonus, 70);
+  else if (sl >= 25) popBonus = Math.max(popBonus, 45);
+  else if (sl >= 10) popBonus = Math.max(popBonus, 25);
+  else if (sl >= 4) popBonus = Math.max(popBonus, 10);
 
-    bestScore += popBonus;
-  }
+  const apop = Number(item.anilist_popularity || 0);
+  if (apop >= 100000) popBonus = Math.max(popBonus, 65);
+  else if (apop >= 30000) popBonus = Math.max(popBonus, 40);
+  else if (apop >= 5000) popBonus = Math.max(popBonus, 20);
 
-  return bestScore;
+  const w = Number(item.tvmaze_weight || 0);
+  if (w >= 85) popBonus = Math.max(popBonus, 60);
+  else if (w >= 70) popBonus = Math.max(popBonus, 40);
+  else if (w >= 50) popBonus = Math.max(popBonus, 20);
+
+  return bestScore + popBonus;
 }
 
 function normalizeTitleClient(str) {
@@ -1056,62 +1080,161 @@ async function fetchSeriesEpisodesClient4G(titleIt, titleOriginal, tvmazeId) {
   return fallback;
 }
 
+const WD_SERIES_P31 = new Set([
+  "Q5398426", "Q63952888", "Q581714", "Q117467246", "Q1259759",
+  "Q15416", "Q1366112", "Q1107", "Q1047812", "Q526877"
+]);
+const WD_MOVIE_P31 = new Set([
+  "Q11424", "Q202866", "Q20650540", "Q29168811", "Q506240",
+  "Q220898", "Q24862", "Q17517379", "Q93204", "Q1261214", "Q21664088"
+]);
+const WD_MOVIE_EXPLICIT_P31 = new Set([
+  "Q11424", "Q202866", "Q20650540", "Q29168811", "Q506240",
+  "Q24862", "Q17517379", "Q93204", "Q1261214"
+]);
+const WD_ALL_MEDIA_P31 = new Set([...WD_SERIES_P31, ...WD_MOVIE_P31]);
+const WD_REJECT_P31 = new Set([
+  "Q7889", "Q7058673", "Q482994", "Q134556",
+  "Q3464665", "Q21191270", "Q1983062", "Q4167410"
+]);
+const WD_BRIDGE_P31 = new Set([
+  "Q21198342", "Q196600", "Q7725634", "Q8274", "Q1667921"
+]);
+const WD_STMT = "haswbstatement:" + Array.from(WD_ALL_MEDIA_P31).sort().map((q) => `P31=${q}`).join("|");
+
+async function fetchJsonSafeClient(url, options = null, timeoutMs = 7000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...(options || {}), signal: controller.signal });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchAniListAnimeClient(searchTerm) {
+  if (!searchTerm) return [];
+  const gql = "query ($search: String) { Page(page: 1, perPage: 25) { media(search: $search, type: ANIME) { id title { romaji english } synonyms format genres description(asHtml: false) startDate { year } popularity coverImage { large } } } }";
+  const data = await fetchJsonSafeClient("https://graphql.anilist.co", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify({ query: gql, variables: { search: searchTerm } }),
+  });
+  const list = data?.data?.Page?.media;
+  if (!Array.isArray(list)) return [];
+  return list.map((m) => {
+    const fmt = m.format || "TV";
+    if (fmt === "MUSIC") return null;
+    const mtype = ["MOVIE", "SPECIAL", "OVA"].includes(fmt) ? "movie" : "series";
+    const tEn = m.title?.english || m.title?.romaji || "";
+    const tRo = m.title?.romaji || tEn;
+    const year = m.startDate?.year ? String(m.startDate.year) : "";
+    const genres = Array.isArray(m.genres) && m.genres.length > 0 ? m.genres.slice(0, 3).join(", ") : (mtype === "series" ? "Anime / Serie" : "Anime / Film");
+    const descClean = String(m.description || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 220);
+    return {
+      external_id: `ani_${m.id}`,
+      imdb_id: "",
+      tvmaze_id: null,
+      media_type: mtype,
+      title_it: tEn,
+      title_original: tRo,
+      aliases: Array.isArray(m.synonyms) ? m.synonyms.filter(Boolean) : [],
+      year,
+      poster: m.coverImage?.large || "",
+      genre: genres,
+      description: descClean || `${mtype === "series" ? "Serie Anime" : "Film Anime"}${year ? ` (${year})` : ""}`,
+      anilist_popularity: Number(m.popularity || 0),
+      has_it_title: false,
+      src: "ANI",
+    };
+  }).filter((x) => x && x.title_it);
+}
+
+async function fetchTvMazeShowsClient(searchTerm) {
+  if (!searchTerm) return [];
+  const data = await fetchJsonSafeClient(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(searchTerm)}`);
+  if (!Array.isArray(data)) return [];
+  return data.slice(0, 12).map((row) => {
+    const show = row.show || {};
+    const year = (show.premiered || "").slice(0, 4);
+    const imgUrl = ((show.image || {}).medium || (show.image || {}).original || "").replace("http://", "https://");
+    return {
+      external_id: `tvmaze_${show.id}`,
+      imdb_id: show.externals?.imdb || "",
+      tvmaze_id: show.id || null,
+      media_type: "series",
+      title_it: show.name || "",
+      title_original: show.name || "",
+      aliases: [],
+      year,
+      poster: imgUrl,
+      genre: (show.genres || []).join(", ") || "Serie TV",
+      description: (show.summary || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 220),
+      tvmaze_weight: Number(show.weight || 0),
+      has_it_title: false,
+      src: "TVM",
+    };
+  }).filter((x) => x.title_it);
+}
+
 async function directMobileSearch4G(query, libraryItems) {
-  const cleanQ = query.replace(/[^a-zA-Z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
-  const qNorm = normalizeTitleClient(cleanQ || query);
+  const rawTrimmed = String(query || "").trim();
+  let cq = cleanSearchInputClient(rawTrimmed);
+  let ungluedQ = "";
+  if (!/\s/.test(rawTrimmed) && rawTrimmed.length >= 8) {
+    const ug = rawTrimmed.replace(/(.{3,})(and|end)(.{3,})/i, "$1 & $3");
+    if (ug !== rawTrimmed) ungluedQ = cleanSearchInputClient(ug);
+  }
+  const coreQ = coreSearchInputClient(rawTrimmed);
+  const qNorm = normalizeTitleClient(cq || rawTrimmed);
   if (!qNorm) return { results: [] };
+
   const results = [];
+  const bridgeQueries = [];
+  const suggestions = [];
 
   // Extract subtitle variant for franchises (e.g. "Lupin III - Il castello di Cagliostro" -> "Il castello di Cagliostro")
-  const mSub = query.match(/^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter)\s*[-:–]?\s*(.+)$/i);
-  const subTitle = (mSub && mSub[1] && mSub[1].trim().length >= 3) ? mSub[1].replace(/[^a-zA-Z0-9\s]/g, " ").replace(/\s+/g, " ").trim() : "";
+  const mSub = rawTrimmed.match(/^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter|detective\s+conan)\s*[-:–]?\s*(.+)$/i);
+  const subTitle = (mSub && mSub[1] && mSub[1].trim().length >= 3) ? cleanSearchInputClient(mSub[1]) : "";
 
-  // Check Wikipedia suggestion / spellcheck for typos (e.g. "cagliostor" -> "cagliostro", "nostradmus" -> "nostradamus")
-  let suggestion = "";
-  try {
-    const spellUrl = `https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQ)}&format=json&origin=*`;
-    const spellRes = await fetch(spellUrl);
-    const spellData = await spellRes.json();
-    const sug = spellData.query?.searchinfo?.suggestion;
-    if (sug && sug.toLowerCase() !== cleanQ.toLowerCase()) {
-      suggestion = sug;
-    }
-  } catch (e) { }
-
-  // 1. Check sagas (franchises like Fast & Furious, Harry Potter, Lupin, Rocky, etc.)
-  const { tokens: qTokens, core: qCore } = cleanTokensClient(cleanQ);
+  // 1. Check Curated Sagas & Italian Alias Overrides
+  const { tokens: qTokens, core: qCore } = cleanTokensClient(cq || rawTrimmed);
   const qStr = qTokens.join(" ");
   const qCoreStr = qCore.join(" ");
-
   const matchedSagaIds = new Set();
   SAGA_DEFINITIONS.forEach((sagaDef) => {
     const isMatch = sagaDef.names.some((sname) => {
       const { tokens: sTokens, core: sCore } = cleanTokensClient(sname);
-      return sTokens.join(" ") === qStr || (sCore.length > 0 && sCore.join(" ") === qCoreStr) || (suggestion && sname.toLowerCase() === suggestion.toLowerCase());
+      return sTokens.join(" ") === qStr || (sCore.length > 0 && sCore.join(" ") === qCoreStr);
     });
     if (isMatch) matchedSagaIds.add(sagaDef.id);
   });
 
   CLIENT_SAGAS.forEach((al) => {
-    const isSagaMatch = al.saga && matchedSagaIds.has(al.saga);
+    const isSagaMatch = Boolean(al.saga && matchedSagaIds.has(al.saga));
     const normIt = normalizeTitleClient(al.it);
     const normOrig = normalizeTitleClient(al.orig);
     const isDirectMatch =
-      fuzzyMatchTitleClient(cleanQ, al.it) ||
-      fuzzyMatchTitleClient(cleanQ, al.orig) ||
+      fuzzyMatchTitleClient(cq, al.it) ||
+      fuzzyMatchTitleClient(cq, al.orig) ||
+      (ungluedQ && (fuzzyMatchTitleClient(ungluedQ, al.it) || fuzzyMatchTitleClient(ungluedQ, al.orig))) ||
       (subTitle && (fuzzyMatchTitleClient(subTitle, al.it) || fuzzyMatchTitleClient(subTitle, al.orig))) ||
-      (suggestion && (fuzzyMatchTitleClient(suggestion, al.it) || fuzzyMatchTitleClient(suggestion, al.orig))) ||
       (qStr && (normIt.includes(qStr) || normOrig.includes(qStr))) ||
       (al.aliases && al.aliases.some((a) =>
-        fuzzyMatchTitleClient(cleanQ, a) ||
+        fuzzyMatchTitleClient(cq, a) ||
         (subTitle && fuzzyMatchTitleClient(subTitle, a)) ||
-        (suggestion && fuzzyMatchTitleClient(suggestion, a)) ||
         (qStr && normalizeTitleClient(a).includes(qStr))
       ));
 
     if (isSagaMatch || isDirectMatch) {
       results.push({
-        external_id: "saga_" + normalizeTitleClient(al.orig).replace(/\s+/g, "_"),
+        external_id: "saga_" + normOrig.replace(/\s+/g, "_"),
+        imdb_id: "",
+        tvmaze_id: null,
         media_type: al.type,
         title_it: al.it,
         title_original: al.orig,
@@ -1119,269 +1242,419 @@ async function directMobileSearch4G(query, libraryItems) {
         poster: al.poster || "",
         genre: al.type === "series" ? "Serie TV" : "Film",
         description: `${al.type === "series" ? "Serie TV" : "Film"} (${al.year}) • Titolo orig.: ${al.orig}`,
-        is_saga: true,
+        is_saga: Boolean(al.saga),
         saga_rank: al.rank || 1,
         aliases: al.aliases || [],
+        has_it_title: true,
+        src: "SAGA",
       });
     }
   });
 
-  // 2. Query TVMaze directly over HTTPS (CORS-enabled on 4G/5G!)
-  const tvmazeQueries = [cleanQ];
-  if (subTitle && !tvmazeQueries.includes(subTitle)) tvmazeQueries.push(subTitle);
-  if (suggestion && !tvmazeQueries.includes(suggestion)) tvmazeQueries.push(suggestion);
-
-  for (const tmQ of tvmazeQueries) {
-    try {
-      const mazeRes = await fetch(`https://api.tvmaze.com/search/shows?q=${encodeURIComponent(tmQ)}`);
-      const mazeData = await mazeRes.json();
-      if (Array.isArray(mazeData)) {
-        mazeData.forEach((row) => {
-          const show = row.show || {};
-          results.push({
-            external_id: `tvmaze_${show.id}`,
-            tvmaze_id: show.id,
-            media_type: "series",
-            title_it: show.name || "",
-            title_original: show.name || "",
-            year: (show.premiered || "").slice(0, 4),
-            poster: ((show.image || {}).medium || "").replace("http://", "https://"),
-            genre: (show.genres || []).join(", ") || "Serie TV",
-            description: (show.summary || "").replace(/<[^>]+>/g, "").slice(0, 240),
-            tvmaze_weight: show.weight || 0,
-          });
-        });
+  // 2. Phase 1 Parallel Queries: Wikidata structured media + TVMaze + AniList + static EPG
+  const wdQids = [];
+  const wdQidSet = new Set();
+  const addQids = (arr) => {
+    (arr || []).forEach((q) => {
+      if (q && /^Q\d+$/.test(q) && !wdQidSet.has(q)) {
+        wdQidSet.add(q);
+        wdQids.push(q);
       }
-    } catch (e) { }
+    });
+  };
+
+  const extTermsSearched = new Set();
+  const extJobs = [];
+  const queueExt = (term) => {
+    const k = String(term || "").trim().toLowerCase();
+    if (!k || extTermsSearched.has(k)) return;
+    extTermsSearched.add(k);
+    extJobs.push(fetchTvMazeShowsClient(term).then((arr) => results.push(...arr)));
+    extJobs.push(fetchAniListAnimeClient(term).then((arr) => results.push(...arr)));
+  };
+  queueExt(cq || rawTrimmed);
+  if (ungluedQ) queueExt(ungluedQ);
+  if (subTitle && subTitle.toLowerCase() !== cq.toLowerCase()) queueExt(subTitle);
+
+  const wdSearchJobs = [];
+  const queueWdSr = (sr, limit = 35) => {
+    wdSearchJobs.push(
+      fetchJsonSafeClient(`https://www.wikidata.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(`${sr} ${WD_STMT}`)}&srlimit=${limit}&format=json&origin=*`)
+        .then((d) => addQids((d?.query?.search || []).map((h) => h.title)))
+    );
+  };
+  const queueWdWb = (term, limit = 25) => {
+    wdSearchJobs.push(
+      fetchJsonSafeClient(`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(term)}&language=it&uselang=it&limit=${limit}&format=json&origin=*`)
+        .then((d) => addQids((d?.search || []).map((h) => h.id)))
+    );
+  };
+
+  queueWdSr(cq || rawTrimmed, 35);
+  if (coreQ && coreQ.toLowerCase() !== cq.toLowerCase()) queueWdSr(coreQ, 25);
+  if (subTitle) {
+    queueWdSr(subTitle, 25);
+    queueWdWb(subTitle, 20);
+  }
+  if (ungluedQ) {
+    queueWdSr(ungluedQ, 20);
+    queueWdWb(ungluedQ, 15);
+  }
+  if (qNorm === "lupin") queueWdSr("Lupin III", 35);
+  queueWdWb(rawTrimmed, 25);
+
+  let epgEvents = [];
+  const epgJob = fetchStaticEpgEvents().then((evs) => { epgEvents = evs || []; }).catch(() => {});
+
+  await Promise.allSettled([...wdSearchJobs, ...extJobs, epgJob]);
+
+  // 3. Typo / Low-Recall Fallback (~2 fuzzy Wikidata + itwiki/enwiki spellcheck)
+  if (wdQidSet.size < 8 && cq.length >= 4) {
+    const fuzTokens = cq.split(" ").map((w) => (w.length >= 4 ? `${w}~2` : w)).join(" ");
+    const spellJobs = [
+      fetchJsonSafeClient(`https://www.wikidata.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(`${fuzTokens} ${WD_STMT}`)}&srlimit=25&format=json&origin=*`)
+        .then((d) => addQids((d?.query?.search || []).map((h) => h.title))),
+      fetchJsonSafeClient(`https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cq)}&srlimit=1&format=json&origin=*`)
+        .then((d) => {
+          const sug = (d?.query?.searchinfo?.suggestion || "").replace(/<[^>]+>/g, "").trim();
+          if (sug && normalizeTitleClient(sug) !== qNorm && !suggestions.includes(sug)) suggestions.push(sug);
+        }),
+      fetchJsonSafeClient(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cq)}&srlimit=1&format=json&origin=*`)
+        .then((d) => {
+          const sug = (d?.query?.searchinfo?.suggestion || "").replace(/<[^>]+>/g, "").trim();
+          if (sug && normalizeTitleClient(sug) !== qNorm && !suggestions.includes(sug)) suggestions.push(sug);
+        }),
+    ];
+    await Promise.allSettled(spellJobs);
+
+    if (suggestions.length > 0) {
+      const sug = suggestions[0];
+      const followJobs = [
+        fetchJsonSafeClient(`https://www.wikidata.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(`${sug} ${WD_STMT}`)}&srlimit=25&format=json&origin=*`)
+          .then((d) => addQids((d?.query?.search || []).map((h) => h.title))),
+        fetchJsonSafeClient(`https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(sug)}&language=it&uselang=it&limit=15&format=json&origin=*`)
+          .then((d) => addQids((d?.search || []).map((h) => h.id))),
+      ];
+      if (!extTermsSearched.has(sug.toLowerCase())) {
+        extTermsSearched.add(sug.toLowerCase());
+        followJobs.push(fetchTvMazeShowsClient(sug).then((arr) => results.push(...arr)));
+        followJobs.push(fetchAniListAnimeClient(sug).then((arr) => results.push(...arr)));
+      }
+      await Promise.allSettled(followJobs);
+    }
   }
 
-  // 3. Query Italian Wikipedia OpenSearch, Full-Text Search, and Prefix Search
-  const wikiQueries = [cleanQ];
-  if (subTitle && !wikiQueries.includes(subTitle)) wikiQueries.push(subTitle);
-  if (suggestion && !wikiQueries.includes(suggestion)) wikiQueries.push(suggestion);
-
-  try {
-    const wikiPromises = [];
-    const osTitles = [];
-    for (const wq of wikiQueries) {
-      wikiPromises.push(
-        fetch(`https://it.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(wq)}&limit=15&namespace=0&format=json&origin=*`)
-          .then(r => r.json())
-          .then(data => {
-            if (Array.isArray(data) && Array.isArray(data[1])) {
-              osTitles.push(...data[1]);
-            }
-          })
-          .catch(() => null)
-      );
-      wikiPromises.push(
-        fetch(`https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(wq)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`).then(r => r.json()).catch(() => null)
-      );
-      wikiPromises.push(
-        fetch(`https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch=${encodeURIComponent(wq)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`).then(r => r.json()).catch(() => null)
-      );
+  // 4. Hydrate Wikidata Entities (strict P31 filtering, Italian labels & aliases, bridge extraction)
+  const qidToFetch = wdQids.slice(0, 80);
+  const itwikiMap = {};
+  if (qidToFetch.length > 0) {
+    const chunks = [];
+    for (let i = 0; i < qidToFetch.length; i += 40) {
+      chunks.push(qidToFetch.slice(i, i + 40));
     }
-    const wikiSettled = await Promise.allSettled(wikiPromises);
-    const pagesMap = {};
-    for (const res of wikiSettled) {
-      if (res.status === "fulfilled" && res.value?.query?.pages) {
-        Object.assign(pagesMap, res.value.query.pages);
-      }
-    }
+    const entityResponses = await Promise.all(
+      chunks.map((ch) =>
+        fetchJsonSafeClient(
+          `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${ch.join("%7C")}&props=labels|aliases|descriptions|claims|sitelinks&languages=it|mul|en&format=json&origin=*`
+        )
+      )
+    );
+    const ents = {};
+    entityResponses.forEach((resp) => {
+      if (resp && resp.entities) Object.assign(ents, resp.entities);
+    });
 
-    // Fetch batch details for OpenSearch titles if not already in pagesMap
-    const missingOs = osTitles.filter((t) => !Object.values(pagesMap).some((p) => p.title === t));
-    if (missingOs.length > 0) {
-      try {
-        const osFetchRes = await fetch(`https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(missingOs.slice(0, 20).join("|"))}&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json&origin=*`);
-        const osFetchData = await osFetchRes.json();
-        if (osFetchData.query?.pages) {
-          Object.assign(pagesMap, osFetchData.query.pages);
-        }
-      } catch (e) { }
-    }
+    for (const qid of qidToFetch) {
+      const e = ents[qid];
+      if (!e || e.missing) continue;
+      const claims = e.claims || {};
+      const p31s = (claims.P31 || [])
+        .map((c) => c?.mainsnak?.datavalue?.value?.id)
+        .filter(Boolean);
 
-    const ignoredPrefixes = ["episodi d", "personaggi d", "capitoli d", "colonn", "musich", "doppiatori", "pubblicazioni", "videogiochi d"];
+      if (p31s.some((p) => WD_REJECT_P31.has(p))) continue;
 
-    for (const pid of Object.keys(pagesMap)) {
-      const page = pagesMap[pid];
-      const rawTitle = page.title || "";
-      const tl = rawTitle.toLowerCase();
+      const lbls = e.labels || {};
+      const itLbl = (lbls.it && lbls.it.value) || "";
+      const mulLbl = (lbls.mul && lbls.mul.value) || "";
+      const enLbl = (lbls.en && lbls.en.value) || mulLbl || "";
+      const itw = (e.sitelinks?.itwiki?.title) || "";
+      const enw = (e.sitelinks?.enwiki?.title) || "";
+      const itwClean = itw.replace(/\s*\([^)]*\)\s*$/, "").trim();
+      const enwClean = enw.replace(/\s*\([^)]*\)\s*$/, "").trim();
 
-      if (ignoredPrefixes.some(pre => tl.startsWith(pre))) continue;
-      if (tl.includes("(videogioco)") || tl.includes("(singolo)") || tl.includes("(album)") || tl.includes("(manga)")) continue;
-
-      const extract = (page.extract || "").toLowerCase();
-      const firstSentence = extract.slice(0, 250);
-
-      // Only discard as person if first sentence defines the subject as a person!
-      const isPersonBio = /\b(è un|è una|fu un|fu una)\s+(?:attore|attrice|doppiatore|doppiatrice|regista|cantante|cantautore|politico|calciatore|cestista|sportivo|sceneggiatore|conduttore|giornalista|scrittore|modello|modella)\b/i.test(firstSentence);
-      if (isPersonBio && !(tl.includes("(film") || tl.includes("(serie"))) continue;
-
-      // Check if article describes a film, anime, or series
-      const isMovie = tl.includes("(film") || tl.includes("(anime") || tl.includes("(cortometraggio") || tl.includes("(lungometraggio") || /\b(film|pellicola|lungometraggio|cortometraggio|mediometraggio|cartone animato|anime|oav|special|speciale|regia di|diretto da)\b/i.test(extract);
-      const isSeries = tl.includes("(serie") || tl.includes("(miniserie") || tl.includes("(fiction") || /\b(serie televisiva|serie tv|serie anime|telefilm|fiction|miniserie|sitcom|soap opera|telenovela|programma televisivo|show)\b/i.test(extract);
-
-      if (!isMovie && !isSeries && !osTitles.includes(rawTitle)) continue;
-
-      // Clean Wikipedia disambiguation suffixes e.g. " (film)", " (serie televisiva)"
-      const cleanTitle = rawTitle.replace(/\s*\((?:film|serie\s+televisiva|miniserie|telefilm|anime|movie|franchise).*?\)\s*$/i, "").trim();
-      const yearMatch = (page.extract || "").match(/\b(19\d\d|20\d\d)\b/);
-
-      results.push({
-        external_id: `wiki_${page.pageprops?.wikibase_item || page.pageid}`,
-        media_type: isSeries && !isMovie ? "series" : "movie",
-        title_it: cleanTitle,
-        title_original: cleanTitle,
-        year: yearMatch ? yearMatch[1] : "",
-        poster: page.thumbnail?.source || "",
-        genre: isSeries && !isMovie ? "Serie TV" : "Film",
-        description: (page.extract || "").slice(0, 240),
-        sitelinks_count: 20, // Wikipedia presence
-      });
-    }
-  } catch (e) { }
-
-  // 4. Query Wikidata Italian entities directly over HTTPS (CORS-enabled on 4G/5G!)
-  try {
-    const wdQueries = [cleanQ];
-    if (subTitle && !wdQueries.includes(subTitle)) wdQueries.push(subTitle);
-    if (suggestion && !wdQueries.includes(suggestion)) wdQueries.push(suggestion);
-    if (qNorm === "lupin" || cleanQ.toLowerCase().startsWith("lupin")) {
-      if (!wdQueries.includes("Lupin III")) wdQueries.push("Lupin III");
-    }
-    
-    for (const wdQ of wdQueries) {
-      const wdUrl = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(wdQ)}&language=it&uselang=it&format=json&origin=*&limit=50`;
-      const wdRes = await fetch(wdUrl);
-      const wdData = await wdRes.json();
-      const qids = [];
-      const matchedWd = [];
-      (wdData.search || []).forEach((item) => {
-        const desc = (item.description || "").toLowerCase();
-        if (desc.includes("pianta") || desc.includes("specie") || desc.includes("comune") || desc.includes("proteina") || desc.includes("cognome") || desc.includes("azienda") || desc.includes("gene") || desc.includes("singolo") || desc.includes("album")) return;
-        const isMovie = desc.includes("film") || desc.includes("pellicola") || desc.includes("lungometraggio") || desc.includes("cinematograf") || desc.includes("anime");
-        const isSeries = desc.includes("serie") || desc.includes("telefilm") || desc.includes("fiction") || desc.includes("miniserie");
-        if (!isMovie && !isSeries) return;
-        qids.push(item.id);
-        matchedWd.push({ item, isSeries, desc });
-      });
-
-      // Bulk query for sitelinks count and posters (Wikipedia articles + Wikimedia Commons images)
-      const sitelinksMap = {};
-      const wdPosterMap = {};
-      if (qids.length > 0) {
-        try {
-          const slUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qids.slice(0, 30).join("%7C")}&props=sitelinks|claims&format=json&origin=*`;
-          const slRes = await fetch(slUrl);
-          const slData = await slRes.json();
-          const ents = slData.entities || {};
-          const itWikiTitles = [];
-          const qidToItWiki = {};
-          for (const qid of qids) {
-            const ent = ents[qid];
-            if (!ent) continue;
-            if (ent.sitelinks) {
-              sitelinksMap[qid] = Object.keys(ent.sitelinks).length;
-              if (ent.sitelinks.itwiki && ent.sitelinks.itwiki.title) {
-                const itTitle = ent.sitelinks.itwiki.title;
-                itWikiTitles.push(itTitle);
-                qidToItWiki[qid] = itTitle;
-              }
-            }
-            const p18 = ent.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-            if (p18) {
-              wdPosterMap[qid] = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(p18)}?width=400`;
-            }
-          }
-          if (itWikiTitles.length > 0) {
-            try {
-              const piUrl = `https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(itWikiTitles.slice(0, 30).join("|"))}&prop=pageimages&pithumbsize=400&format=json&origin=*`;
-              const piRes = await fetch(piUrl);
-              const piData = await piRes.json();
-              const pages = piData.query?.pages || {};
-              const titleToThumb = {};
-              for (const pid of Object.keys(pages)) {
-                const p = pages[pid];
-                if (p.title && p.thumbnail?.source) {
-                  titleToThumb[p.title] = p.thumbnail.source;
-                }
-              }
-              for (const qid of qids) {
-                const itT = qidToItWiki[qid];
-                if (itT && titleToThumb[itT]) {
-                  wdPosterMap[qid] = titleToThumb[itT];
-                }
-              }
-            } catch (e) { }
-          }
-        } catch (e) { }
-      }
-
-      matchedWd.forEach(({ item, isSeries, desc }) => {
-        const yearMatch = desc.match(/\b(19\d\d|20\d\d)\b/);
-        results.push({
-          external_id: `wd_${item.id}`,
-          media_type: isSeries ? "series" : "movie",
-          title_it: item.label || query,
-          title_original: item.label || query,
-          year: yearMatch ? yearMatch[1] : "",
-          poster: wdPosterMap[item.id] || "",
-          genre: isSeries ? "Serie TV" : "Film",
-          description: item.description || "",
-          sitelinks_count: sitelinksMap[item.id] || 0,
+      const aliasSet = new Set();
+      ["it", "en", "mul"].forEach((lang) => {
+        (e.aliases?.[lang] || []).forEach((a) => {
+          if (a?.value) aliasSet.add(a.value);
         });
       });
-    }
-  } catch (e) { }
+      [itLbl, itwClean, enLbl, enwClean, mulLbl].forEach((t) => {
+        if (t) aliasSet.add(t);
+      });
+      const aliases = Array.from(aliasSet);
 
-  // 4. Score every result using smart relevance & popularity scoring
+      if (!p31s.some((p) => WD_ALL_MEDIA_P31.has(p))) {
+        if (p31s.some((p) => WD_BRIDGE_P31.has(p)) && enLbl) {
+          const normEn = normalizeTitleClient(enLbl);
+          if (
+            normEn &&
+            normEn !== qNorm &&
+            !qNorm.includes(normEn) &&
+            scoreCandidateListClient(rawTrimmed, [itLbl, itwClean], aliases) >= 750 &&
+            !bridgeQueries.includes(enLbl) &&
+            bridgeQueries.length < 2
+          ) {
+            bridgeQueries.push(enLbl);
+          }
+        }
+        continue;
+      }
+
+      const hasSeries = p31s.some((p) => WD_SERIES_P31.has(p));
+      const hasExplicitFilm = p31s.some((p) => WD_MOVIE_EXPLICIT_P31.has(p));
+      const mtype = hasSeries && !hasExplicitFilm ? "series" : "movie";
+
+      let titleIt = "";
+      if (!itLbl || (enLbl && itLbl.toLowerCase() === enLbl.toLowerCase() && itwClean && itwClean.toLowerCase() !== enLbl.toLowerCase())) {
+        titleIt = itwClean || itLbl || mulLbl || enLbl || enwClean;
+      } else {
+        titleIt = itLbl || mulLbl || itwClean || enLbl || enwClean;
+      }
+      const titleOrig = enLbl || enwClean || titleIt;
+      if (!titleIt) continue;
+      const hasItTitle = Boolean(itLbl || itwClean);
+
+      let year = "";
+      for (const pid of ["P577", "P580"]) {
+        const tv = claims[pid]?.[0]?.mainsnak?.datavalue?.value?.time || "";
+        const ym = tv.match(/^[+-]?(\d{4})/);
+        if (ym) {
+          year = ym[1];
+          break;
+        }
+      }
+
+      const imdbId = claims.P345?.[0]?.mainsnak?.datavalue?.value || "";
+      const p18 = claims.P18?.[0]?.mainsnak?.datavalue?.value || "";
+      let poster = "";
+      if (p18 && ![".svg", "logo", "wordmark", "map_", "flag_"].some((b) => p18.toLowerCase().includes(b))) {
+        poster = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(p18)}?width=400`;
+      }
+
+      const descVal = (e.descriptions?.it?.value || e.descriptions?.en?.value || "").trim();
+      const descNice = descVal ? descVal.charAt(0).toUpperCase() + descVal.slice(1) : (mtype === "series" ? "Serie TV" : "Film");
+      const sl = Object.keys(e.sitelinks || {}).length;
+
+      const item = {
+        external_id: `wd_${qid}`,
+        imdb_id: typeof imdbId === "string" ? imdbId : "",
+        tvmaze_id: null,
+        media_type: mtype,
+        title_it: titleIt,
+        title_original: titleOrig,
+        aliases,
+        year,
+        poster,
+        genre: mtype === "series" ? "Serie TV" : "Film",
+        description: `${descNice}${year ? ` (${year})` : ""}`,
+        sitelinks_count: sl,
+        has_it_title: hasItTitle,
+        src: "WD",
+      };
+
+      const matchScore = scoreCandidateListClient(rawTrimmed, [titleIt, itwClean, enLbl], aliases);
+      const sugMatch = suggestions.some((s) => scoreCandidateListClient(s, [titleIt, titleOrig], aliases) > 0);
+      if (matchScore > 0 || sugMatch) {
+        if (itw) itwikiMap[itw] = item;
+        if (matchScore >= 750 && enLbl) {
+          const normEn = normalizeTitleClient(enLbl);
+          if (normEn && normEn !== qNorm && !qNorm.includes(normEn) && !bridgeQueries.includes(enLbl) && bridgeQueries.length < 2) {
+            bridgeQueries.push(enLbl);
+          }
+        }
+      }
+      results.push(item);
+    }
+  }
+
+  // 5. Phase 2 In Parallel: Batch itwiki pageimages posters + Validated Bridge Query on TVMaze & AniList
+  const phase2Jobs = [];
+  const itwikiTitles = Object.keys(itwikiMap).slice(0, 70);
+  if (itwikiTitles.length > 0) {
+    for (let i = 0; i < itwikiTitles.length; i += 35) {
+      const batch = itwikiTitles.slice(i, i + 35);
+      phase2Jobs.push(
+        fetchJsonSafeClient(
+          `https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(batch.join("|"))}&prop=pageimages&pithumbsize=500&format=json&origin=*`
+        ).then((piData) => {
+          const pages = piData?.query?.pages || {};
+          Object.values(pages).forEach((p) => {
+            const t = p?.title;
+            const src = p?.thumbnail?.source || "";
+            const target = t && itwikiMap[t];
+            if (target && src && getPosterQualityRank(src) > getPosterQualityRank(target.poster)) {
+              target.poster = src;
+            }
+          });
+        })
+      );
+    }
+  }
+
+  if (bridgeQueries.length > 0) {
+    const bq = bridgeQueries[0];
+    if (!extTermsSearched.has(bq.toLowerCase())) {
+      extTermsSearched.add(bq.toLowerCase());
+      phase2Jobs.push(fetchTvMazeShowsClient(bq).then((arr) => results.push(...arr)));
+      phase2Jobs.push(fetchAniListAnimeClient(bq).then((arr) => results.push(...arr)));
+    }
+  }
+  if (phase2Jobs.length > 0) {
+    await Promise.allSettled(phase2Jobs);
+  }
+
+  // 6. Include Live 7-day DTT EPG Events matching query (strictly movie/series)
+  if (Array.isArray(epgEvents) && epgEvents.length > 0) {
+    const seenEpg = new Set();
+    for (const ev of epgEvents) {
+      if (ev.media_type !== "movie" && ev.media_type !== "series") continue;
+      const evNorm = ev.norm_title || normalizeTitleClient(ev.title || "");
+      if (!evNorm || seenEpg.has(evNorm)) continue;
+      if (fuzzyMatchTitleClient(rawTrimmed, ev.title || evNorm)) {
+        seenEpg.add(evNorm);
+        results.push({
+          external_id: `epg_${evNorm.replace(/\s+/g, "_")}`,
+          imdb_id: "",
+          tvmaze_id: null,
+          media_type: ev.media_type,
+          title_it: ev.title,
+          title_original: ev.title,
+          aliases: [],
+          year: "",
+          poster: ev.poster || "",
+          genre: ev.genre || (ev.media_type === "series" ? "Serie TV" : "Film"),
+          description: `📡 In onda su ${ev.channel_name} (Canale ${ev.lcn}) • ${ev.description || ""}`.slice(0, 220),
+          has_it_title: true,
+          src: "EPG",
+        });
+      }
+    }
+  }
+
+  // 7. Honest Scoring (> 0 ONLY, no junk fallback) & Prominence Sort
   results.forEach((r) => {
-    let score = computeRelevanceScoreClient(query, r);
-    if (suggestion) {
-      const sugScore = computeRelevanceScoreClient(suggestion, r) - 40;
-      if (sugScore > score) score = sugScore;
-    }
-    r.relevance_score = score;
+    r.relevance_score = computeRelevanceScoreClient(rawTrimmed, r, bridgeQueries, suggestions);
   });
 
-  // Keep all items with score > 0 (preserves exact matches, phrase matches, and niche/anime cult titles!)
   const relevantResults = results.filter((r) => (r.relevance_score || 0) > 0);
-
-  // Sort descending by relevance score (exact matches and famous titles first!)
-  relevantResults.sort((a, b) => b.relevance_score - a.relevance_score);
-
-  const libMap = {};
-  libraryItems.forEach((it) => {
-    libMap[normalizeTitleClient(it.title_it)] = it;
+  relevantResults.sort((a, b) => {
+    if (b.relevance_score !== a.relevance_score) return b.relevance_score - a.relevance_score;
+    return getPosterQualityRank(b.poster) - getPosterQualityRank(a.poster);
   });
+
+  // 8. Year-Guarded Cross-Language Deduplication & Library Status Sync
+  const libMap = {};
+  (libraryItems || []).forEach((it) => {
+    const m = it.media_type || "movie";
+    const addKey = (t) => {
+      const n = normalizeTitleClient(t);
+      if (n) {
+        libMap[`${m}_${n}`] = it;
+        const sc = stripConjunctionsClient(n);
+        if (sc) libMap[`${m}_${sc}`] = it;
+      }
+    };
+    addKey(it.title_it);
+    addKey(it.title_original);
+    if (Array.isArray(it.aliases)) it.aliases.forEach(addKey);
+  });
+
+  const buildItemKeys = (item) => {
+    const keys = new Set();
+    const pushK = (v, minLen = 1) => {
+      const n = normalizeTitleClient(v);
+      if (n && n.length >= minLen) {
+        keys.add(n);
+        const sc = stripConjunctionsClient(n);
+        if (sc && sc.length >= minLen) keys.add(sc);
+      }
+    };
+    pushK(item.title_it, 1);
+    pushK(item.title_original, 1);
+    (item.aliases || []).slice(0, 12).forEach((a) => pushK(a, 4));
+    return keys;
+  };
 
   const dedup = [];
-  const seen = new Set();
-  relevantResults.forEach((r) => {
-    const norm = normalizeTitleClient(r.title_it);
-    const k = `${r.media_type}_${norm}`;
-    if (seen.has(k)) {
-      const existing = dedup.find((x) => `${x.media_type}_${normalizeTitleClient(x.title_it)}` === k);
-      if (existing) {
-        if (getPosterQualityRank(r.poster) > getPosterQualityRank(existing.poster)) {
-          existing.poster = r.poster;
-        }
-        if (!existing.year && r.year) existing.year = r.year;
-        if (!existing.tvmaze_id && r.tvmaze_id) existing.tvmaze_id = r.tvmaze_id;
-        if (r.relevance_score > existing.relevance_score) existing.relevance_score = r.relevance_score;
-      }
-      return;
-    }
-    seen.add(k);
-    const ex = libMap[norm];
-    r.in_library_status = ex ? ex.status : null;
-    r.in_library_id = ex ? ex.id : null;
-    r.watched_episodes_count = ex ? (ex.watched_episodes_count || (ex.watched_episodes ? ex.watched_episodes.length : 0)) : 0;
-    dedup.push(r);
-  });
+  for (const r of relevantResults) {
+    const rKeys = buildItemKeys(r);
+    const rYear = /^\d{4}$/.test(String(r.year || "").trim()) ? parseInt(r.year, 10) : 0;
+    const rImdb = String(r.imdb_id || "").trim();
 
-  return { results: dedup };
+    let matchedEx = null;
+    for (const ex of dedup) {
+      if (ex.media_type !== r.media_type) continue;
+      const exYear = /^\d{4}$/.test(String(ex.year || "").trim()) ? parseInt(ex.year, 10) : 0;
+      if (exYear && rYear && Math.abs(exYear - rYear) > 3) continue;
+
+      if (rImdb && String(ex.imdb_id || "").trim() === rImdb) {
+        matchedEx = ex;
+        break;
+      }
+
+      const exKeys = buildItemKeys(ex);
+      let sharesKey = false;
+      for (const k of rKeys) {
+        if (exKeys.has(k)) {
+          sharesKey = true;
+          break;
+        }
+      }
+      if (sharesKey) {
+        matchedEx = ex;
+        break;
+      }
+    }
+
+    if (matchedEx) {
+      if (getPosterQualityRank(r.poster) > getPosterQualityRank(matchedEx.poster)) {
+        matchedEx.poster = r.poster;
+      }
+      if (!matchedEx.year && r.year) matchedEx.year = r.year;
+      if (!matchedEx.tvmaze_id && r.tvmaze_id) matchedEx.tvmaze_id = r.tvmaze_id;
+      if (!matchedEx.imdb_id && r.imdb_id) matchedEx.imdb_id = r.imdb_id;
+      if ((r.description || "").length > (matchedEx.description || "").length) {
+        matchedEx.description = r.description;
+      }
+      if (!matchedEx.has_it_title && r.has_it_title) {
+        matchedEx.title_it = r.title_it;
+        matchedEx.has_it_title = true;
+      }
+      if (r.relevance_score > matchedEx.relevance_score) {
+        matchedEx.relevance_score = r.relevance_score;
+      }
+      if (Array.isArray(r.aliases) && r.aliases.length > 0) {
+        const mergedAl = new Set([...(matchedEx.aliases || []), ...r.aliases]);
+        matchedEx.aliases = Array.from(mergedAl);
+      }
+    } else {
+      const m = r.media_type || "movie";
+      const nIt = normalizeTitleClient(r.title_it);
+      const nOr = normalizeTitleClient(r.title_original);
+      const exLib =
+        libMap[`${m}_${nIt}`] ||
+        libMap[`${m}_${nOr}`] ||
+        libMap[`${m}_${stripConjunctionsClient(nIt)}`] ||
+        libMap[`${m}_${stripConjunctionsClient(nOr)}`];
+      r.in_library_status = exLib ? exLib.status : null;
+      r.in_library_id = exLib ? exLib.id : null;
+      r.watched_episodes_count = exLib ? (exLib.watched_episodes_count || (exLib.watched_episodes ? exLib.watched_episodes.length : 0)) : 0;
+      dedup.push(r);
+    }
+  }
+
+  return { results: dedup.slice(0, 100) };
 }
 
 async function handleClientCloudPost(url, body) {

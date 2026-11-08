@@ -3,6 +3,7 @@ import html
 import json
 import re
 import ssl
+import unicodedata
 import urllib.parse
 import urllib.request
 from typing import Dict, List, Optional, Tuple
@@ -10,19 +11,28 @@ from typing import Dict, List, Optional, Tuple
 from epg_engine import normalize_title, strip_conjunctions, strip_leading_article
 
 SSL_CTX = ssl._create_unverified_context()
-USER_AGENT = "NextOnTV/1.0 (https://localhost; contact@localhost)"
+USER_AGENT = "NextOnTV/1.0 (https://shynicy.github.io/NextOnTV/; contact@nextontv.example)"
+
+SAGA_GROUPS: List[Dict] = [
+    {"id": "fast_furious", "names": ["fast and furious", "fast & furious", "the fast and the furious", "fast furious", "f&f"]},
+    {"id": "harry_potter", "names": ["harry potter", "harry poter", "potter"]},
+    {"id": "lotr", "names": ["il signore degli anelli", "signore degli anelli", "lord of the rings", "lotr"]},
+    {"id": "pirates", "names": ["pirati dei caraibi", "pirates of the caribbean", "la maledizione della prima luna"]},
+    {"id": "back_to_future", "names": ["ritorno al futuro", "back to the future"]},
+    {"id": "rocky", "names": ["rocky", "rocky balboa", "creed"]},
+]
 
 # Comprehensive bilingual alias & saga catalog (Italian broadcast title <-> Original title)
-ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
+ITALIAN_ORIGINAL_ALIASES: List[Dict] = [
     # Harry Potter Complete 8-Movie Saga
-    {"it": "Harry Potter e la pietra filosofale", "orig": "Harry Potter and the Sorcerer's Stone", "type": "movie", "year": "2001"},
-    {"it": "Harry Potter e la camera dei segreti", "orig": "Harry Potter and the Chamber of Secrets", "type": "movie", "year": "2002"},
-    {"it": "Harry Potter e il prigioniero di Azkaban", "orig": "Harry Potter and the Prisoner of Azkaban", "type": "movie", "year": "2004"},
-    {"it": "Harry Potter e il calice di fuoco", "orig": "Harry Potter and the Goblet of Fire", "type": "movie", "year": "2005"},
-    {"it": "Harry Potter e l'Ordine della Fenice", "orig": "Harry Potter and the Order of the Phoenix", "type": "movie", "year": "2007"},
-    {"it": "Harry Potter e il principe mezzosangue", "orig": "Harry Potter and the Half-Blood Prince", "type": "movie", "year": "2009"},
-    {"it": "Harry Potter e i Doni della Morte - Parte 1", "orig": "Harry Potter and the Deathly Hallows: Part 1", "type": "movie", "year": "2010"},
-    {"it": "Harry Potter e i Doni della Morte - Parte 2", "orig": "Harry Potter and the Deathly Hallows: Part 2", "type": "movie", "year": "2011"},
+    {"it": "Harry Potter e la pietra filosofale", "orig": "Harry Potter and the Sorcerer's Stone", "type": "movie", "year": "2001", "aliases": ["harry potter 1", "pietra filosofale"], "saga_group": "harry_potter", "saga_rank": 1},
+    {"it": "Harry Potter e la camera dei segreti", "orig": "Harry Potter and the Chamber of Secrets", "type": "movie", "year": "2002", "aliases": ["harry potter 2", "camera dei segreti"], "saga_group": "harry_potter", "saga_rank": 2},
+    {"it": "Harry Potter e il prigioniero di Azkaban", "orig": "Harry Potter and the Prisoner of Azkaban", "type": "movie", "year": "2004", "aliases": ["harry potter 3", "prigioniero di azkaban"], "saga_group": "harry_potter", "saga_rank": 3},
+    {"it": "Harry Potter e il calice di fuoco", "orig": "Harry Potter and the Goblet of Fire", "type": "movie", "year": "2005", "aliases": ["harry potter 4", "calice di fuoco"], "saga_group": "harry_potter", "saga_rank": 4},
+    {"it": "Harry Potter e l'Ordine della Fenice", "orig": "Harry Potter and the Order of the Phoenix", "type": "movie", "year": "2007", "aliases": ["harry potter 5", "ordine della fenice"], "saga_group": "harry_potter", "saga_rank": 5},
+    {"it": "Harry Potter e il principe mezzosangue", "orig": "Harry Potter and the Half-Blood Prince", "type": "movie", "year": "2009", "aliases": ["harry potter 6", "principe mezzosangue"], "saga_group": "harry_potter", "saga_rank": 6},
+    {"it": "Harry Potter e i Doni della Morte - Parte 1", "orig": "Harry Potter and the Deathly Hallows: Part 1", "type": "movie", "year": "2010", "aliases": ["harry potter 7", "doni della morte 1", "doni della morte parte 1"], "saga_group": "harry_potter", "saga_rank": 7},
+    {"it": "Harry Potter e i Doni della Morte - Parte 2", "orig": "Harry Potter and the Deathly Hallows: Part 2", "type": "movie", "year": "2011", "aliases": ["harry potter 8", "doni della morte 2", "doni della morte parte 2"], "saga_group": "harry_potter", "saga_rank": 8},
     # Fast & Furious Complete 11-Movie Saga
     {"it": "Fast and Furious", "orig": "The Fast and the Furious", "type": "movie", "year": "2001", "aliases": ["fast & furious 1", "fast and furious 1", "fast 1", "the fast and the furious", "the fast and the furious 1"], "saga_group": "fast_furious", "saga_rank": 1},
     {"it": "2 Fast 2 Furious", "orig": "2 Fast 2 Furious", "type": "movie", "year": "2003", "aliases": ["fast & furious 2", "fast and furious 2", "fast 2", "2fast2furious", "2 fast 2 furious"], "saga_group": "fast_furious", "saga_rank": 2},
@@ -40,16 +50,16 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
     {"it": "Animali fantastici - I crimini di Grindelwald", "orig": "Fantastic Beasts: The Crimes of Grindelwald", "type": "movie", "year": "2018"},
     {"it": "Animali fantastici - I segreti di Silente", "orig": "Fantastic Beasts: The Secrets of Dumbledore", "type": "movie", "year": "2022"},
     # Il Signore degli Anelli & Lo Hobbit
-    {"it": "Il Signore degli Anelli - La Compagnia dell'Anello", "orig": "The Lord of the Rings: The Fellowship of the Ring", "type": "movie", "year": "2001"},
-    {"it": "Il Signore degli Anelli - Le due torri", "orig": "The Lord of the Rings: The Two Towers", "type": "movie", "year": "2002"},
-    {"it": "Il Signore degli Anelli - Il ritorno del re", "orig": "The Lord of the Rings: The Return of the King", "type": "movie", "year": "2003"},
+    {"it": "Il Signore degli Anelli - La Compagnia dell'Anello", "orig": "The Lord of the Rings: The Fellowship of the Ring", "type": "movie", "year": "2001", "aliases": ["signore degli anelli 1", "compagnia dell anello"], "saga_group": "lotr", "saga_rank": 1},
+    {"it": "Il Signore degli Anelli - Le due torri", "orig": "The Lord of the Rings: The Two Towers", "type": "movie", "year": "2002", "aliases": ["signore degli anelli 2", "due torri"], "saga_group": "lotr", "saga_rank": 2},
+    {"it": "Il Signore degli Anelli - Il ritorno del re", "orig": "The Lord of the Rings: The Return of the King", "type": "movie", "year": "2003", "aliases": ["signore degli anelli 3", "ritorno del re"], "saga_group": "lotr", "saga_rank": 3},
     {"it": "Lo Hobbit - Un viaggio inaspettato", "orig": "The Hobbit: An Unexpected Journey", "type": "movie", "year": "2012"},
     {"it": "Lo Hobbit - La desolazione di Smaug", "orig": "The Hobbit: The Desolation of Smaug", "type": "movie", "year": "2013"},
     {"it": "Lo Hobbit - La battaglia delle cinque armate", "orig": "The Hobbit: The Battle of the Five Armies", "type": "movie", "year": "2014"},
     # Ritorno al futuro
-    {"it": "Ritorno al futuro", "orig": "Back to the Future", "type": "movie", "year": "1985"},
-    {"it": "Ritorno al futuro - Parte II", "orig": "Back to the Future Part II", "type": "movie", "year": "1989"},
-    {"it": "Ritorno al futuro - Parte III", "orig": "Back to the Future Part III", "type": "movie", "year": "1990"},
+    {"it": "Ritorno al futuro", "orig": "Back to the Future", "type": "movie", "year": "1985", "aliases": ["ritorno al futuro 1", "back to the future 1"], "saga_group": "back_to_future", "saga_rank": 1},
+    {"it": "Ritorno al futuro - Parte II", "orig": "Back to the Future Part II", "type": "movie", "year": "1989", "aliases": ["ritorno al futuro 2", "back to the future 2"], "saga_group": "back_to_future", "saga_rank": 2},
+    {"it": "Ritorno al futuro - Parte III", "orig": "Back to the Future Part III", "type": "movie", "year": "1990", "aliases": ["ritorno al futuro 3", "back to the future 3"], "saga_group": "back_to_future", "saga_rank": 3},
     # Rocky & Creed Complete 9-Movie Saga
     {"it": "Rocky", "orig": "Rocky", "type": "movie", "year": "1976", "aliases": ["rocky 1", "rocky i", "rocky balboa 1"], "saga_group": "rocky", "saga_rank": 1},
     {"it": "Rocky II", "orig": "Rocky II", "type": "movie", "year": "1979", "aliases": ["rocky 2", "rocky ii", "rocky balboa 2"], "saga_group": "rocky", "saga_rank": 2},
@@ -61,12 +71,12 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
     {"it": "Creed II", "orig": "Creed II", "type": "movie", "year": "2018", "aliases": ["creed 2", "creed ii", "rocky 8", "rocky viii"], "saga_group": "rocky", "saga_rank": 8},
     {"it": "Creed III", "orig": "Creed III", "type": "movie", "year": "2023", "aliases": ["creed 3", "creed iii", "rocky 9", "rocky ix"], "saga_group": "rocky", "saga_rank": 9},
     # Pirati dei Caraibi
-    {"it": "La maledizione della prima luna", "orig": "Pirates of the Caribbean: The Curse of the Black Pearl", "type": "movie", "year": "2003", "keywords": "pirati dei caraibi 1"},
-    {"it": "Pirati dei Caraibi - La maledizione del forziere fantasma", "orig": "Pirates of the Caribbean: Dead Man's Chest", "type": "movie", "year": "2006"},
-    {"it": "Pirati dei Caraibi - Ai confini del mondo", "orig": "Pirates of the Caribbean: At World's End", "type": "movie", "year": "2007"},
-    {"it": "Pirati dei Caraibi - Oltre i confini del mare", "orig": "Pirates of the Caribbean: On Stranger Tides", "type": "movie", "year": "2011"},
-    {"it": "Pirati dei Caraibi - La vendetta di Salazar", "orig": "Pirates of the Caribbean: Dead Men Tell No Tales", "type": "movie", "year": "2017"},
-    # Altri Film Celebri (inclusi titoli con & / and / e)
+    {"it": "La maledizione della prima luna", "orig": "Pirates of the Caribbean: The Curse of the Black Pearl", "type": "movie", "year": "2003", "aliases": ["pirati dei caraibi 1", "prima luna"], "saga_group": "pirates", "saga_rank": 1},
+    {"it": "Pirati dei Caraibi - La maledizione del forziere fantasma", "orig": "Pirates of the Caribbean: Dead Man's Chest", "type": "movie", "year": "2006", "aliases": ["pirati dei caraibi 2", "forziere fantasma"], "saga_group": "pirates", "saga_rank": 2},
+    {"it": "Pirati dei Caraibi - Ai confini del mondo", "orig": "Pirates of the Caribbean: At World's End", "type": "movie", "year": "2007", "aliases": ["pirati dei caraibi 3", "ai confini del mondo"], "saga_group": "pirates", "saga_rank": 3},
+    {"it": "Pirati dei Caraibi - Oltre i confini del mare", "orig": "Pirates of the Caribbean: On Stranger Tides", "type": "movie", "year": "2011", "aliases": ["pirati dei caraibi 4", "oltre i confini del mare"], "saga_group": "pirates", "saga_rank": 4},
+    {"it": "Pirati dei Caraibi - La vendetta di Salazar", "orig": "Pirates of the Caribbean: Dead Men Tell No Tales", "type": "movie", "year": "2017", "aliases": ["pirati dei caraibi 5", "vendetta di salazar"], "saga_group": "pirates", "saga_rank": 5},
+    # Altri Film Celebri & Anime Bridge
     {"it": "Deadpool & Wolverine", "orig": "Deadpool & Wolverine", "type": "movie", "year": "2024"},
     {"it": "Mr. & Mrs. Smith", "orig": "Mr. & Mrs. Smith", "type": "movie", "year": "2005"},
     {"it": "Thelma & Louise", "orig": "Thelma & Louise", "type": "movie", "year": "1991"},
@@ -87,6 +97,8 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict[str, str]] = [
     {"it": "Rush Hour - Due mine vaganti", "orig": "Rush Hour", "type": "movie", "year": "1998"},
     {"it": "Colpo grosso al drago rosso - Rush Hour 2", "orig": "Rush Hour 2", "type": "movie", "year": "2001"},
     {"it": "Rush Hour 3 - Missione Parigi", "orig": "Rush Hour 3", "type": "movie", "year": "2007"},
+    {"it": "Ken il guerriero", "orig": "Fist of the North Star", "type": "series", "year": "1984", "aliases": ["ken il guerriero", "hokuto no ken", "fist of the north star"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/43/109033.jpg"},
+    {"it": "L'attacco dei giganti", "orig": "Attack on Titan", "type": "series", "year": "2013", "aliases": ["l attacco dei giganti", "attacco dei giganti", "shingeki no kyojin", "attack on titan"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/4/11919.jpg"},
     # Lupin III Film e Serie Celebri
     {"it": "Lupin", "orig": "Lupin", "type": "series", "year": "2021", "aliases": ["lupin 2021", "lupin serie tv", "lupin netflix"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/646/1617244.jpg"},
     {"it": "Lupin III", "orig": "Lupin III", "type": "series", "year": "1971", "aliases": ["lupin 3", "le avventure di lupin iii", "le avventure di lupin 3", "lupin prima serie"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/38/96191.jpg"},
@@ -385,6 +397,22 @@ def _http_get_json(url: str, timeout: int = 7) -> object:
         return json.loads(resp.read().decode("utf-8", errors="ignore"))
 
 
+def _http_post_json(url: str, payload: Dict, timeout: int = 7) -> object:
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        method="POST",
+        headers={
+            "User-Agent": USER_AGENT,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=timeout, context=SSL_CTX) as resp:
+        return json.loads(resp.read().decode("utf-8", errors="ignore"))
+
+
 def _resolve_italian_titles_wikidata(imdb_ids: List[str]) -> Dict[str, Tuple[str, str]]:
     """
     Given a list of IMDb IDs (e.g. ['tt0241527', ...]), query Wikidata SPARQL
@@ -570,7 +598,7 @@ def _search_imdb_with_italian_labels(query: str, extra_queries: Optional[List[st
         except Exception:
             continue
         for item in (data or {}).get("d", []):
-            if (item.get("qid") or "") not in ("movie", "tvSeries", "tvMiniSeries", "tvMovie"):
+            if (item.get("qid") or "") not in ("movie", "tvSeries", "tvMiniSeries", "tvMovie", "tvSpecial"):
                 continue
             iid = item.get("id")
             if iid and iid not in seen_imdb:
@@ -594,13 +622,16 @@ def _search_imdb_with_italian_labels(query: str, extra_queries: Optional[List[st
 
         title_it = title_orig
         it_desc = ""
+        has_it = False
         if imdb_id in it_lookup:
             title_it, it_desc = it_lookup[imdb_id]
+            has_it = True
         else:
             norm_o = strip_conjunctions(normalize_title(title_orig))
             for al in ITALIAN_ORIGINAL_ALIASES:
                 if strip_conjunctions(normalize_title(al["orig"])) == norm_o:
                     title_it = al["it"]
+                    has_it = True
                     break
 
         desc_parts = []
@@ -618,12 +649,14 @@ def _search_imdb_with_italian_labels(query: str, extra_queries: Optional[List[st
             "media_type": media_type,
             "title_it": title_it,
             "title_original": title_orig,
+            "aliases": [title_it, title_orig] if title_it != title_orig else [],
             "year": year,
             "poster": poster,
             "genre": "Serie TV" if media_type == "series" else "Film",
             "description": " • ".join(desc_parts),
             "source": "imdb",
             "popularity_rank": item.get("rank"),
+            "has_it_title": has_it,
         })
     return results
 
@@ -656,7 +689,7 @@ def _search_tvmaze(query: str, extra_queries: Optional[List[str]] = None) -> Lis
         if not isinstance(data, list):
             continue
 
-        for row in data[:8]:
+        for row in data[:12]:
             show = row.get("show") or {}
             maze_id = show.get("id")
             if not maze_id or maze_id in seen_ids:
@@ -665,10 +698,12 @@ def _search_tvmaze(query: str, extra_queries: Optional[List[str]] = None) -> Lis
 
             name_orig = (show.get("name") or "").strip()
             name_it = name_orig
+            has_it = False
             norm_o = strip_conjunctions(normalize_title(name_orig))
             for al in ITALIAN_ORIGINAL_ALIASES:
                 if strip_conjunctions(normalize_title(al["orig"])) == norm_o:
                     name_it = al["it"]
+                    has_it = True
                     break
 
             premiered = (show.get("premiered") or "")[:4]
@@ -684,12 +719,14 @@ def _search_tvmaze(query: str, extra_queries: Optional[List[str]] = None) -> Lis
                 "media_type": "series",
                 "title_it": name_it,
                 "title_original": name_orig,
+                "aliases": [name_it, name_orig] if name_it != name_orig else [],
                 "year": premiered,
                 "poster": poster,
                 "genre": genres,
-                "description": summary[:320] + ("..." if len(summary) > 320 else ""),
+                "description": summary[:220] + ("..." if len(summary) > 220 else ""),
                 "source": "tvmaze",
                 "popularity_weight": show.get("weight") or 0,
+                "has_it_title": has_it,
             })
     return results
 
@@ -702,141 +739,137 @@ def _poster_quality_rank(url: str) -> int:
         return 1
     if "screenshot" in u:
         return 2
-    if "thumb.wikimedia.org" in u or "commons.wikimedia.org" in u:
+    if "special:filepath" in u or "/wikipedia/commons/" in u or "commons.wikimedia.org" in u:
         return 3
-    if "static.tvmaze.com" in u:
+    if "/wikipedia/it/" in u:
         return 4
-    if "m.media-amazon.com" in u or "imdb" in u:
+    if "static.tvmaze.com" in u or "anilist.co" in u:
         return 5
+    if "m.media-amazon.com" in u or "imdb" in u:
+        return 6
     return 3
 
 
-def _search_wikipedia_generator(query: str) -> List[Dict]:
-    """
-    Query Italian Wikipedia Search Generator to find movie/series/anime titles
-    where keywords appear in ANY position (beginning, middle, or end),
-    combining OpenSearch, full-text search, and prefixsearch to capture full franchises.
-    """
-    all_pages = {}
-    os_titles = []
-    clean_q = re.sub(r"[^\w\s]", " ", query).strip()
-    urls = [
-        f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(clean_q)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json",
-        f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(clean_q)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
-    ]
-    # Check OpenSearch instant suggestions
-    try:
-        os_url = f"https://it.wikipedia.org/w/api.php?action=opensearch&search={urllib.parse.quote(clean_q)}&limit=15&namespace=0&format=json"
-        os_data = _http_get_json(os_url, timeout=3)
-        if isinstance(os_data, list) and len(os_data) > 1 and isinstance(os_data[1], list):
-            os_titles = os_data[1]
-    except Exception:
-        pass
+def _search_anilist(query: str, extra_queries: Optional[List[str]] = None) -> List[Dict]:
+    """Query AniList GraphQL API (strictly type=ANIME, zero manga/books/games) for anime TV series, films, OVAs, and specials."""
+    terms: List[str] = []
+    for q in ([query] + (extra_queries or [])):
+        q_c = (q or "").strip()
+        if q_c and q_c.lower() not in [t.lower() for t in terms]:
+            terms.append(q_c)
+    if not terms:
+        return []
 
-    # Check if subtitle variant exists (e.g. 'Lupin III - Il castello di Cagliostro' -> 'Il castello di Cagliostro')
-    m_sub = re.match(r"^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter)\s*[-:–]?\s*(.+)$", query, flags=re.IGNORECASE)
-    if m_sub and m_sub.group(1).strip() and len(m_sub.group(1).strip()) >= 3:
-        sub_t = re.sub(r"[^\w\s]", " ", m_sub.group(1)).strip()
-        urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(sub_t)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
-        urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(sub_t)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
-    # Check Wikipedia spellchecker suggestion for typos
-    try:
-        spell_url = f"https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(clean_q)}&format=json"
-        sdata = _http_get_json(spell_url, timeout=3)
-        sug = ((sdata.get("query") or {}).get("searchinfo") or {}).get("suggestion")
-        if sug and sug.lower() != clean_q.lower():
-            urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(sug)}&gsrlimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
-            urls.append(f"https://it.wikipedia.org/w/api.php?action=query&generator=prefixsearch&gpssearch={urllib.parse.quote(sug)}&gpslimit=50&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json")
-    except Exception:
-        pass
-    for url in urls:
-        try:
-            data = _http_get_json(url, timeout=5)
-            pages = (data.get("query") or {}).get("pages") or {}
-            all_pages.update(pages)
-        except Exception:
-            pass
-
-    # Batch fetch details for missing OpenSearch titles
-    missing_os = [t for t in os_titles if not any(p.get("title") == t for p in all_pages.values())]
-    if missing_os:
-        try:
-            os_batch_url = f"https://it.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote('|'.join(missing_os[:20]))}&prop=pageprops|pageimages|extracts&exintro=1&explaintext=1&pithumbsize=400&format=json"
-            bdata = _http_get_json(os_batch_url, timeout=4)
-            bpages = (bdata.get("query") or {}).get("pages") or {}
-            all_pages.update(bpages)
-        except Exception:
-            pass
-
-    ignored_prefixes = ("episodi d", "personaggi d", "capitoli d", "colonn", "musich", "doppiatori", "pubblicazioni", "videogiochi d")
-    person_bio_regex = re.compile(
-        r"\b(è un|è una|fu un|fu una)\s+(?:attore|attrice|doppiatore|doppiatrice|regista|cantante|cantautore|politico|calciatore|cestista|sportivo|sceneggiatore|conduttore|giornalista|scrittore|modello|modella)\b",
-        re.IGNORECASE
+    gql = (
+        "query ($search: String) { Page(page: 1, perPage: 25) { "
+        "media(search: $search, type: ANIME) { "
+        "id title { romaji english } synonyms format genres description(asHtml: false) "
+        "startDate { year } popularity coverImage { large } "
+        "} } }"
     )
-    results = []
-    for p in all_pages.values():
-        raw_t = p.get("title") or ""
-        tl = raw_t.lower()
-        if any(tl.startswith(pre) for pre in ignored_prefixes):
+    results: List[Dict] = []
+    seen_ani = set()
+    for term in terms[:2]:
+        try:
+            data = _http_post_json("https://graphql.anilist.co", {"query": gql, "variables": {"search": term}}, timeout=6)
+        except Exception:
             continue
-        if any(k in tl for k in ["(videogioco)", "(singolo)", "(album)", "(manga)"]):
-            continue
-
-        extract = (p.get("extract") or "").lower()
-        first_sentence = extract[:250]
-
-        # Only discard as person if first sentence explicitly defines subject as person
-        if person_bio_regex.search(first_sentence) and not ("(film" in tl or "(serie" in tl):
-            continue
-
-        is_movie = any(k in extract for k in ["film", "pellicola", "lungometraggio", "cortometraggio", "mediometraggio", "cartone animato", "anime", "oav", "special", "speciale", "regia di", "diretto da"]) or "(film" in tl or "(anime" in tl
-        is_series = any(k in extract for k in ["serie televisiva", "serie tv", "serie anime", "telefilm", "fiction", "miniserie", "sitcom", "soap opera", "telenovela", "programma televisivo", "show"]) or "(serie" in tl or "(fiction" in tl
-        if not is_movie and not is_series and raw_t not in os_titles:
-            continue
-
-        clean_t = re.sub(
-            r"\s*\((?:film|serie\s+televisiva|miniserie|telefilm|anime|movie|franchise).*?\)\s*$",
-            "",
-            raw_t,
-            flags=re.IGNORECASE,
-        ).strip()
-        y_match = re.search(r"\b(19\d\d|20\d\d)\b", p.get("extract") or "")
-        thumb = (p.get("thumbnail") or {}).get("source") or ""
-        qid = (p.get("pageprops") or {}).get("wikibase_item") or ""
-        m_type = "series" if (is_series and not is_movie) else "movie"
-        results.append({
-            "external_id": f"wiki_{qid or p.get('pageid')}",
-            "imdb_id": "",
-            "tvmaze_id": None,
-            "media_type": m_type,
-            "title_it": clean_t,
-            "title_original": clean_t,
-            "year": y_match.group(1) if y_match else "",
-            "poster": thumb,
-            "genre": "Serie TV" if m_type == "series" else "Film",
-            "description": (p.get("extract") or "")[:240],
-            "source": "wikipedia_it",
-            "popularity_rank": 50000,
-        })
+        media_list = (((data or {}).get("data") or {}).get("Page") or {}).get("media") or []
+        for m in media_list:
+            aid = m.get("id")
+            if not aid or aid in seen_ani:
+                continue
+            fmt = m.get("format") or "TV"
+            if fmt == "MUSIC":
+                continue
+            seen_ani.add(aid)
+            mtype = "movie" if fmt in ("MOVIE", "SPECIAL", "OVA") else "series"
+            t_obj = m.get("title") or {}
+            t_en = (t_obj.get("english") or t_obj.get("romaji") or "").strip()
+            t_ro = (t_obj.get("romaji") or t_en).strip()
+            if not t_en:
+                continue
+            year = str((m.get("startDate") or {}).get("year") or "")
+            genres = ", ".join((m.get("genres") or [])[:3]) or ("Anime / Serie" if mtype == "series" else "Anime / Film")
+            desc_clean = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.get("description") or "")).strip()[:220]
+            results.append({
+                "external_id": f"ani_{aid}",
+                "imdb_id": "",
+                "tvmaze_id": None,
+                "media_type": mtype,
+                "title_it": t_en,
+                "title_original": t_ro,
+                "aliases": [s for s in (m.get("synonyms") or []) if s],
+                "year": year,
+                "poster": (m.get("coverImage") or {}).get("large") or "",
+                "genre": genres,
+                "description": desc_clean or f"{'Serie Anime' if mtype == 'series' else 'Film Anime'}{f' ({year})' if year else ''}",
+                "source": "anilist",
+                "anilist_popularity": int(m.get("popularity") or 0),
+                "has_it_title": False,
+            })
     return results
 
 
+WD_SERIES_P31 = {
+    "Q5398426", "Q63952888", "Q581714", "Q117467246", "Q1259759",
+    "Q15416", "Q1366112", "Q1107", "Q1047812", "Q526877",
+}
+WD_MOVIE_P31 = {
+    "Q11424", "Q202866", "Q20650540", "Q29168811", "Q506240",
+    "Q220898", "Q24862", "Q17517379", "Q93204", "Q1261214", "Q21664088",
+}
+WD_MOVIE_EXPLICIT_P31 = {
+    "Q11424", "Q202866", "Q20650540", "Q29168811", "Q506240",
+    "Q24862", "Q17517379", "Q93204", "Q1261214",
+}
+WD_ALL_MEDIA_P31 = WD_SERIES_P31 | WD_MOVIE_P31
+WD_REJECT_P31 = {
+    "Q7889", "Q7058673", "Q482994", "Q134556",
+    "Q3464665", "Q21191270", "Q1983062", "Q4167410",
+}
+WD_BRIDGE_P31 = {"Q21198342", "Q196600", "Q7725634", "Q8274", "Q1667921"}
+WD_STMT = "haswbstatement:" + "|".join(f"P31={q}" for q in sorted(WD_ALL_MEDIA_P31))
+
 STOP_WORDS_SCORING = {
     "the", "il", "lo", "la", "l", "i", "gli", "le", "a", "an", "and", "e", "ed", "n",
-    "di", "dei", "del", "della", "delle", "of", "in", "on", "per", "con", "su"
+    "di", "dei", "del", "della", "delle", "dello", "degli", "da", "dal", "dalla",
+    "of", "in", "on", "per", "con", "su", "un", "uno", "una", "al", "alla", "ai", "agli", "alle",
 }
 
+
+def _strip_accents(s: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", s or "") if unicodedata.category(c) != "Mn")
+
+
+def _clean_search_input(q: str) -> str:
+    s = re.sub(r"['’`\-:–—.,!?/\\()\"*•·]+", " ", q or "")
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _core_search_input(q: str) -> str:
+    cleaned = _clean_search_input(q)
+    words = [w for w in cleaned.split() if _strip_accents(w).lower() not in STOP_WORDS_SCORING]
+    return " ".join(words) if len(words) >= 2 else cleaned
+
+
 def _clean_tokens_scoring(text: str) -> Tuple[List[str], List[str]]:
-    cleaned = re.sub(r"[^a-zA-Z0-9\s]", " ", (text or "").lower())
-    tokens = [t for t in cleaned.split() if t]
+    norm = _strip_accents((text or "").lower())
+    cleaned = re.sub(r"[^a-z0-9\s]", " ", norm)
+    tokens = [ROMAN_NUMERALS_MAP.get(t, t) for t in cleaned.split() if t]
     core = [t for t in tokens if t not in STOP_WORDS_SCORING]
     return tokens, core
+
 
 def _word_match_scoring(qw: str, cw: str) -> bool:
     if qw == cw:
         return True
     if len(qw) >= 3 and len(cw) >= 3:
-        if qw in cw or cw in qw:
+        if (len(qw) >= 4 and cw.startswith(qw)) or (len(cw) >= 4 and qw.startswith(cw)):
+            return True
+        if min(len(qw), len(cw)) >= 5 and (qw in cw or cw in qw):
+            return True
+        if cw == f"{qw}s" or qw == f"{cw}s":
             return True
         min_l = min(len(qw), len(cw))
         max_d = 2 if min_l >= 6 else (1 if min_l >= 4 else 0)
@@ -844,19 +877,16 @@ def _word_match_scoring(qw: str, cw: str) -> bool:
             return True
     return False
 
-def compute_relevance_score(query: str, item: Dict) -> int:
+
+def _score_candidate_list(query: str, primary_cands: List[str], alias_cands: List[str]) -> int:
     q_tokens, q_core = _clean_tokens_scoring(query)
     q_str = " ".join(q_tokens)
     q_core_str = " ".join(q_core)
-
-    candidates = [item.get("title_it", ""), item.get("title_original", "")]
-    if item.get("keywords"):
-        candidates.extend(str(item["keywords"]).split())
-    if item.get("aliases"):
-        candidates.extend(item["aliases"])
+    if not q_str and not q_core_str:
+        return 0
 
     best_score = 0
-    for cand in candidates:
+    for is_alias, cand in [(False, c) for c in (primary_cands or [])] + [(True, c) for c in (alias_cands or [])]:
         if not cand:
             continue
         c_tokens, c_core = _clean_tokens_scoring(cand)
@@ -865,30 +895,18 @@ def compute_relevance_score(query: str, item: Dict) -> int:
         c_str = " ".join(c_tokens)
         c_core_str = " ".join(c_core)
 
-        # 1. Punteggio Massimo Assoluto (1000 Punti): Corrispondenza Esatta sul titolo completo
+        s = 0
         if q_str and q_str == c_str:
-            best_score = max(best_score, 1000)
-            continue
-
-        # 2. Quasi Esatto (970 Punti): Corrispondenza Esatta sulle parole chiave (esclusi articoli)
-        if q_core_str and q_core_str == c_core_str:
-            best_score = max(best_score, 970)
-            continue
-
-        # 3. Frase Esatta Contenuta (900-940 Punti): La sequenza esatta cercata è presente nel titolo
-        # (all'inizio, in mezzo o alla fine, es. "le profezie di nostradamus" in "Lupin e le profezie di Nostradamus")
-        has_full_phrase = (q_str and q_str in c_str) or (q_core_str and q_core_str in c_core_str)
-        if has_full_phrase:
+            s = 1000
+        elif q_core_str and q_core_str == c_core_str:
+            s = 970
+        elif (q_str and q_str in c_str) or (q_core_str and q_core_str in c_core_str):
             is_start = c_str.startswith(q_str) or (q_core_str and c_core_str.startswith(q_core_str))
             is_end = c_str.endswith(q_str) or (q_core_str and c_core_str.endswith(q_core_str))
             phrase_score = 940 if is_start else (920 if is_end else 900)
             extra_words = abs(len(c_core) - len(q_core))
-            phrase_score = max(780, phrase_score - extra_words * 8)
-            best_score = max(best_score, phrase_score)
-            continue
-
-        # 4. Tutte le parole core cercate sono presenti nel titolo (anche sparse)
-        if q_core:
+            s = max(780, phrase_score - extra_words * 8)
+        elif q_core:
             matched_indices = []
             matched_count = 0
             for qw in q_core:
@@ -901,81 +919,386 @@ def compute_relevance_score(query: str, item: Dict) -> int:
                 if found_idx != -1:
                     matched_indices.append(found_idx)
 
-            coverage = matched_count / len(q_core)
-
-            # Se tutte le parole sono presenti (100% delle parole chiave nel titolo)
-            if coverage == 1.0:
-                in_order = all(matched_indices[i] > matched_indices[i - 1] for i in range(1, len(matched_indices)))
-                order_score = 840 if in_order else 760
-                extra_words = abs(len(c_core) - len(q_core))
-                order_score = max(650, order_score - extra_words * 10)
-                best_score = max(best_score, order_score)
-                continue
-
-            # Se almeno la metà delle parole cercate è presente
-            if coverage >= 0.5:
-                extra_words = abs(len(c_core) - len(q_core))
-                partial_score = round(coverage * 600) - extra_words * 15
-                best_score = max(best_score, max(200, partial_score))
-                continue
-
-            # Se almeno 1 parola cercata è presente (preserva titoli correlati / franchise)
             if matched_count > 0:
-                extra_words = abs(len(c_core) - len(q_core))
-                partial_score = round(coverage * 500) - extra_words * 10
-                best_score = max(best_score, max(100, partial_score))
-                continue
+                coverage = matched_count / len(q_core)
+                if coverage == 1.0:
+                    in_order = all(matched_indices[i] >= matched_indices[i - 1] for i in range(1, len(matched_indices)))
+                    order_score = 840 if in_order else 760
+                    extra_words = abs(len(c_core) - len(q_core))
+                    s = max(650, order_score - extra_words * 10)
+                elif coverage >= 0.5:
+                    extra_words = abs(len(c_core) - len(q_core))
+                    s = max(200, round(coverage * 600) - extra_words * 15)
+                else:
+                    extra_words = abs(len(c_core) - len(q_core))
+                    s = max(100, round(coverage * 500) - extra_words * 10)
 
-    if best_score == 0:
-        best_score = 50
+        if s > 0 and is_alias:
+            s = max(90, s - 5)
+        best_score = max(best_score, s)
+    return best_score
+
+
+def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None) -> Tuple[List[Dict], List[str], List[str]]:
+    """
+    Search Wikidata using structured P31 media statements (`film`, `series`, `anime`, `OVA`, `miniseries`, `special`),
+    resolving official Italian & English titles, release years, IMDb IDs, aliases, Italian Wikipedia posters,
+    typographic spellcheck fallbacks, and cross-language bridge queries.
+    """
+    raw_trimmed = (query or "").strip()
+    cq = _clean_search_input(raw_trimmed)
+    core_q = _core_search_input(raw_trimmed)
+    q_norm = normalize_title(cq or raw_trimmed)
+    if not q_norm:
+        return [], [], []
+
+    wd_qids: List[str] = []
+    seen_qids = set()
+    suggestions: List[str] = []
+    bridge_queries: List[str] = []
+
+    m_sub = re.match(
+        r"^(?:lupin(?:\s+(?:iii|3|terzo))?|star\s+wars|dragon\s+ball(?:\s+(?:z|super|gt))?|rocky(?:\s+\d+)?|harry\s+potter|detective\s+conan)\s*[-:–]?\s*(.+)$",
+        raw_trimmed,
+        flags=re.IGNORECASE,
+    )
+    sub_title = _clean_search_input(m_sub.group(1)) if (m_sub and m_sub.group(1).strip() and len(m_sub.group(1).strip()) >= 3) else ""
+
+    sr_tasks: List[Tuple[str, int]] = [(cq or raw_trimmed, 35)]
+    if core_q and core_q.lower() != cq.lower():
+        sr_tasks.append((core_q, 25))
+    if sub_title and sub_title.lower() != cq.lower():
+        sr_tasks.append((sub_title, 25))
+    for eq in (extra_queries or []):
+        ec = _clean_search_input(eq)
+        if ec and ec.lower() not in [t[0].lower() for t in sr_tasks]:
+            sr_tasks.append((ec, 20))
+    if q_norm == "lupin":
+        sr_tasks.append(("Lupin III", 35))
+
+    wb_tasks: List[Tuple[str, int]] = [(raw_trimmed, 25)]
+    if sub_title:
+        wb_tasks.append((sub_title, 20))
+
+    def _run_sr(term: str, lim: int) -> List[str]:
+        url = f"https://www.wikidata.org/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(term + ' ' + WD_STMT)}&srlimit={lim}&format=json"
+        d = _http_get_json(url, timeout=6)
+        return [h.get("title") for h in ((d or {}).get("query") or {}).get("search") or [] if h.get("title")]
+
+    def _run_wb(term: str, lim: int) -> List[str]:
+        url = f"https://www.wikidata.org/w/api.php?action=wbsearchentities&search={urllib.parse.quote(term)}&language=it&uselang=it&limit={lim}&format=json"
+        d = _http_get_json(url, timeout=6)
+        return [h.get("id") for h in ((d or {}).get("search") or []) if h.get("id")]
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as ex:
+        futs = [ex.submit(_run_sr, t, lim) for t, lim in sr_tasks] + [ex.submit(_run_wb, t, lim) for t, lim in wb_tasks]
+        for fut in futs:
+            try:
+                for qid in fut.result():
+                    if re.match(r"^Q\d+$", qid) and qid not in seen_qids:
+                        seen_qids.add(qid)
+                        wd_qids.append(qid)
+            except Exception:
+                pass
+
+    # Typo / Low-recall fallback: Wikidata ~2 fuzzy search + it/en Wikipedia suggestion
+    if len(seen_qids) < 8 and len(cq) >= 4:
+        fuz_q = " ".join(f"{w}~2" if len(w) >= 4 else w for w in cq.split())
+
+        def _wiki_sug(host: str) -> str:
+            u = f"https://{host}/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(cq)}&srlimit=1&format=json"
+            d = _http_get_json(u, timeout=4)
+            sug = (((d or {}).get("query") or {}).get("searchinfo") or {}).get("suggestion") or ""
+            return re.sub(r"<[^>]+>", "", sug).strip()
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ex:
+            f_fuz = ex.submit(_run_sr, fuz_q, 25)
+            f_it = ex.submit(_wiki_sug, "it.wikipedia.org")
+            f_en = ex.submit(_wiki_sug, "en.wikipedia.org")
+            try:
+                for qid in f_fuz.result():
+                    if re.match(r"^Q\d+$", qid) and qid not in seen_qids:
+                        seen_qids.add(qid)
+                        wd_qids.append(qid)
+            except Exception:
+                pass
+            for f_sug in (f_it, f_en):
+                try:
+                    sug = f_sug.result()
+                    if sug and normalize_title(sug) != q_norm and sug not in suggestions:
+                        suggestions.append(sug)
+                except Exception:
+                    pass
+
+        if suggestions:
+            sug = suggestions[0]
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
+                fs1 = ex.submit(_run_sr, sug, 25)
+                fs2 = ex.submit(_run_wb, sug, 15)
+                for fut in (fs1, fs2):
+                    try:
+                        for qid in fut.result():
+                            if re.match(r"^Q\d+$", qid) and qid not in seen_qids:
+                                seen_qids.add(qid)
+                                wd_qids.append(qid)
+                    except Exception:
+                        pass
+
+    if not wd_qids:
+        return [], [], suggestions
+
+    # Batch hydrate up to 80 entities in parallel chunks of 40
+    qid_to_fetch = wd_qids[:80]
+    chunks = [qid_to_fetch[i : i + 40] for i in range(0, len(qid_to_fetch), 40)]
+
+    def _fetch_ents(chunk: List[str]) -> Dict:
+        url = (
+            f"https://www.wikidata.org/w/api.php?action=wbgetentities&ids={'|'.join(chunk)}"
+            "&props=labels|aliases|descriptions|claims|sitelinks&languages=it|mul|en&format=json"
+        )
+        return ((_http_get_json(url, timeout=7) or {}).get("entities")) or {}
+
+    ents: Dict = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(chunks)) as ex:
+        for fut in [ex.submit(_fetch_ents, c) for c in chunks]:
+            try:
+                ents.update(fut.result())
+            except Exception:
+                pass
+
+    results: List[Dict] = []
+    itwiki_map: Dict[str, Dict] = {}
+
+    for qid in qid_to_fetch:
+        e = ents.get(qid)
+        if not e or e.get("missing"):
+            continue
+        claims = e.get("claims") or {}
+        p31s = [
+            ((c.get("mainsnak") or {}).get("datavalue") or {}).get("value", {}).get("id")
+            for c in claims.get("P31", [])
+            if isinstance(((c.get("mainsnak") or {}).get("datavalue") or {}).get("value"), dict)
+        ]
+        if any(p in WD_REJECT_P31 for p in p31s):
+            continue
+
+        lbls = e.get("labels") or {}
+        it_lbl = (lbls.get("it") or {}).get("value") or ""
+        mul_lbl = (lbls.get("mul") or {}).get("value") or ""
+        en_lbl = (lbls.get("en") or {}).get("value") or mul_lbl or ""
+        itw = ((e.get("sitelinks") or {}).get("itwiki") or {}).get("title") or ""
+        enw = ((e.get("sitelinks") or {}).get("enwiki") or {}).get("title") or ""
+        itw_clean = re.sub(r"\s*\([^)]*\)\s*$", "", itw).strip()
+        enw_clean = re.sub(r"\s*\([^)]*\)\s*$", "", enw).strip()
+
+        alias_set = set()
+        for lang in ("it", "en", "mul"):
+            for a in (e.get("aliases") or {}).get(lang, []):
+                if a.get("value"):
+                    alias_set.add(a["value"])
+        for t in (it_lbl, itw_clean, en_lbl, enw_clean, mul_lbl):
+            if t:
+                alias_set.add(t)
+        aliases = list(alias_set)
+
+        if not any(p in WD_ALL_MEDIA_P31 for p in p31s):
+            if any(p in WD_BRIDGE_P31 for p in p31s) and en_lbl:
+                norm_en = normalize_title(en_lbl)
+                if (
+                    norm_en
+                    and norm_en != q_norm
+                    and norm_en not in q_norm
+                    and _score_candidate_list(raw_trimmed, [it_lbl, itw_clean], aliases) >= 750
+                    and en_lbl not in bridge_queries
+                    and len(bridge_queries) < 2
+                ):
+                    bridge_queries.append(en_lbl)
+            continue
+
+        has_series = any(p in WD_SERIES_P31 for p in p31s)
+        has_explicit_film = any(p in WD_MOVIE_EXPLICIT_P31 for p in p31s)
+        mtype = "series" if (has_series and not has_explicit_film) else "movie"
+
+        if not it_lbl or (en_lbl and it_lbl.lower() == en_lbl.lower() and itw_clean and itw_clean.lower() != en_lbl.lower()):
+            title_it = itw_clean or it_lbl or mul_lbl or en_lbl or enw_clean
+        else:
+            title_it = it_lbl or mul_lbl or itw_clean or en_lbl or enw_clean
+        title_orig = en_lbl or enw_clean or title_it
+        if not title_it:
+            continue
+        has_it = bool(it_lbl or itw_clean)
+
+        year = ""
+        for pid in ("P577", "P580"):
+            cl = claims.get(pid, [])
+            if cl and isinstance(((cl[0].get("mainsnak") or {}).get("datavalue") or {}).get("value"), dict):
+                tv = (((cl[0].get("mainsnak") or {}).get("datavalue") or {}).get("value") or {}).get("time") or ""
+                ym = re.match(r"^[+-]?(\d{4})", tv)
+                if ym:
+                    year = ym.group(1)
+                    break
+
+        imdb_val = (((claims.get("P345") or [{}])[0].get("mainsnak") or {}).get("datavalue") or {}).get("value") or ""
+        imdb_id = imdb_val if isinstance(imdb_val, str) else ""
+
+        p18_val = (((claims.get("P18") or [{}])[0].get("mainsnak") or {}).get("datavalue") or {}).get("value") or ""
+        poster = ""
+        if isinstance(p18_val, str) and p18_val and not any(b in p18_val.lower() for b in (".svg", "logo", "wordmark", "map_", "flag_")):
+            poster = f"https://commons.wikimedia.org/wiki/Special:FilePath/{urllib.parse.quote(p18_val)}?width=400"
+
+        descs = e.get("descriptions") or {}
+        desc_val = ((descs.get("it") or {}).get("value") or (descs.get("en") or {}).get("value") or "").strip()
+        desc_nice = (desc_val[0].upper() + desc_val[1:]) if desc_val else ("Serie TV" if mtype == "series" else "Film")
+        sl = len(e.get("sitelinks") or {})
+
+        item = {
+            "external_id": f"wd_{qid}",
+            "imdb_id": imdb_id,
+            "tvmaze_id": None,
+            "media_type": mtype,
+            "title_it": title_it,
+            "title_original": title_orig,
+            "aliases": aliases,
+            "year": year,
+            "poster": poster,
+            "genre": "Serie TV" if mtype == "series" else "Film",
+            "description": f"{desc_nice}{f' ({year})' if year else ''}",
+            "source": "wikidata",
+            "sitelinks_count": sl,
+            "has_it_title": has_it,
+        }
+
+        match_sc = _score_candidate_list(raw_trimmed, [title_it, itw_clean, en_lbl], aliases)
+        sug_match = any(_score_candidate_list(s, [title_it, title_orig], aliases) > 0 for s in suggestions)
+        if match_sc > 0 or sug_match:
+            if itw:
+                itwiki_map[itw] = item
+            if match_sc >= 750 and en_lbl:
+                norm_en = normalize_title(en_lbl)
+                if norm_en and norm_en != q_norm and norm_en not in q_norm and en_lbl not in bridge_queries and len(bridge_queries) < 2:
+                    bridge_queries.append(en_lbl)
+
+        results.append(item)
+
+    # Batch resolve Italian Wikipedia pageimages posters for matching items
+    itwiki_titles = list(itwiki_map.keys())[:70]
+    if itwiki_titles:
+        pi_batches = [itwiki_titles[i : i + 35] for i in range(0, len(itwiki_titles), 35)]
+
+        def _fetch_pi(tbatch: List[str]) -> None:
+            url = f"https://it.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote('|'.join(tbatch))}&prop=pageimages&pithumbsize=500&format=json"
+            pi_data = _http_get_json(url, timeout=5)
+            pages = ((pi_data or {}).get("query") or {}).get("pages") or {}
+            for p in pages.values():
+                t = p.get("title")
+                src = (p.get("thumbnail") or {}).get("source") or ""
+                target = t and itwiki_map.get(t)
+                if target and src and _poster_quality_rank(src) > _poster_quality_rank(target.get("poster", "")):
+                    target["poster"] = src
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(pi_batches)) as ex:
+            for fut in [ex.submit(_fetch_pi, b) for b in pi_batches]:
+                try:
+                    fut.result()
+                except Exception:
+                    pass
+
+    return results, bridge_queries, suggestions
+
+
+def compute_relevance_score(
+    query: str,
+    item: Dict,
+    bridge_queries: Optional[List[str]] = None,
+    suggestions: Optional[List[str]] = None,
+) -> int:
+    primaries = [item.get("title_it", ""), item.get("title_original", "")]
+    aliases: List[str] = []
+    if item.get("keywords"):
+        aliases.extend(str(item["keywords"]).split())
+    if item.get("aliases"):
+        aliases.extend(item["aliases"])
+
+    best_score = _score_candidate_list(query, primaries, aliases)
+
+    if suggestions:
+        for sug in suggestions:
+            sug_score = _score_candidate_list(sug, primaries, aliases)
+            if sug_score > 0:
+                best_score = max(best_score, max(120, sug_score - 40))
+
+    if best_score == 0 and bridge_queries:
+        for bq in bridge_queries:
+            bs = _score_candidate_list(bq, primaries, aliases)
+            if bs > 0:
+                best_score = max(best_score, min(820, max(120, bs - 180)))
 
     if item.get("is_saga"):
         rank = item.get("saga_rank", 1)
         if best_score >= 950:
-            pass  # Keep 1000 or 970
+            pass
         elif best_score > 0:
             best_score = max(best_score, 900 - rank * 8)
         else:
             best_score = max(best_score, 850 - rank * 8)
 
-    # Popularity & Prominence Bonus (dà una spinta ai titoli celebri senza mai superare la pertinenza delle parole cercate)
-    if best_score > 0:
-        pop_bonus = 0
-        imdb_rank = item.get("popularity_rank")
-        if imdb_rank is not None and isinstance(imdb_rank, (int, float)) and imdb_rank > 0:
-            if imdb_rank <= 2500:
-                pop_bonus = max(pop_bonus, 70)
-            elif imdb_rank <= 15000:
-                pop_bonus = max(pop_bonus, 45)
-            elif imdb_rank <= 60000:
-                pop_bonus = max(pop_bonus, 25)
-            elif imdb_rank <= 150000:
-                pop_bonus = max(pop_bonus, 10)
+    if best_score == 0:
+        return 0
 
-        tv_weight = item.get("popularity_weight")
-        if tv_weight is not None and isinstance(tv_weight, (int, float)):
-            if tv_weight >= 85:
-                pop_bonus = max(pop_bonus, 60)
-            elif tv_weight >= 70:
-                pop_bonus = max(pop_bonus, 40)
-            elif tv_weight >= 50:
-                pop_bonus = max(pop_bonus, 20)
+    pop_bonus = 0
+    sl = item.get("sitelinks_count") or 0
+    if isinstance(sl, (int, float)):
+        if sl >= 50:
+            pop_bonus = max(pop_bonus, 70)
+        elif sl >= 25:
+            pop_bonus = max(pop_bonus, 45)
+        elif sl >= 10:
+            pop_bonus = max(pop_bonus, 25)
+        elif sl >= 4:
+            pop_bonus = max(pop_bonus, 10)
 
-        best_score += pop_bonus
+    apop = item.get("anilist_popularity") or 0
+    if isinstance(apop, (int, float)):
+        if apop >= 100000:
+            pop_bonus = max(pop_bonus, 65)
+        elif apop >= 30000:
+            pop_bonus = max(pop_bonus, 40)
+        elif apop >= 5000:
+            pop_bonus = max(pop_bonus, 20)
 
-    return best_score
+    imdb_rank = item.get("popularity_rank")
+    if imdb_rank is not None and isinstance(imdb_rank, (int, float)) and imdb_rank > 0:
+        if imdb_rank <= 2500:
+            pop_bonus = max(pop_bonus, 70)
+        elif imdb_rank <= 15000:
+            pop_bonus = max(pop_bonus, 45)
+        elif imdb_rank <= 60000:
+            pop_bonus = max(pop_bonus, 25)
+        elif imdb_rank <= 150000:
+            pop_bonus = max(pop_bonus, 10)
+
+    tv_weight = item.get("popularity_weight")
+    if tv_weight is not None and isinstance(tv_weight, (int, float)):
+        if tv_weight >= 85:
+            pop_bonus = max(pop_bonus, 60)
+        elif tv_weight >= 70:
+            pop_bonus = max(pop_bonus, 40)
+        elif tv_weight >= 50:
+            pop_bonus = max(pop_bonus, 20)
+
+    return best_score + pop_bonus
 
 
 def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[Dict]:
     """
-    Search Movies & TV Series with 2-letter typo tolerance, space insensitivity,
-    and '&' / 'and' / 'end' / 'e' equivalence across:
-      1. Built-in Italian Sagas & Aliases (Harry Potter, Fast & Furious, LOTR, Pirates, etc.)
-      2. Live 7-day Italian DTT EPG (exact & fuzzy titles airing on TV)
-      3. IMDb + Wikidata Italian Title Resolver (all movies & series in Italian)
-      4. TVMaze (TV series with full episode lists)
-      5. Wikipedia/MediaWiki fuzzy spellchecker fallback for arbitrary titles with typos
-    Ranked with smart relevance scoring prioritizing exact & near-exact matches.
+    Search strictly visual media (Movies, TV Series, Anime, OVAs, Specials) with:
+      1. Built-in Italian Sagas & Aliases (Harry Potter, Fast & Furious, LOTR, Pirates, Rocky, Anime)
+      2. Structured Wikidata Media Search (P31-verified film/series/anime only, zero games/books/music)
+      3. AniList GraphQL Anime Search (TV, Movie, OVA, ONA, Special)
+      4. IMDb + Wikidata Italian Label Resolver (Amazon posters & prominence)
+      5. TVMaze TV Series Search (episodes & seasons)
+      6. Live 7-day Italian DTT EPG
+    Ranked cleanly by exact match -> phrase match -> word coverage -> prominence/popularity.
     """
     q_norm = normalize_title(query)
     if not q_norm:
@@ -987,9 +1310,21 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
 
     combined: List[Dict] = []
 
-    # 1. Check built-in bilingual sagas/aliases using fuzzy_match_title (<= 2 letters, no spaces, &/and/end/e)
+    # 1. Check Curated Sagas & Bilingual Aliases
+    q_tokens, q_core = _clean_tokens_scoring(query)
+    q_str = " ".join(q_tokens)
+    q_core_str = " ".join(q_core)
+    matched_saga_ids = set()
+    for sg in SAGA_GROUPS:
+        for sname in sg["names"]:
+            st, sc = _clean_tokens_scoring(sname)
+            if " ".join(st) == q_str or (sc and " ".join(sc) == q_core_str):
+                matched_saga_ids.add(sg["id"])
+                break
+
     matched_sagas: List[Tuple[int, Dict]] = []
     for al in ITALIAN_ORIGINAL_ALIASES:
+        is_saga_group = bool(al.get("saga_group") and al["saga_group"] in matched_saga_ids)
         ok_it, d_it = fuzzy_match_title(query, al["it"])
         ok_or, d_or = fuzzy_match_title(query, al["orig"])
         ok_kw = False
@@ -1003,8 +1338,8 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
         elif al.get("keywords"):
             ok_kw, d_kw = fuzzy_match_title(query, al["keywords"])
 
-        if ok_it or ok_or or ok_kw:
-            best_d = min(d_it if ok_it else 99, d_or if ok_or else 99, d_kw if ok_kw else 99)
+        if is_saga_group or ok_it or ok_or or ok_kw:
+            best_d = 0 if is_saga_group else min(d_it if ok_it else 99, d_or if ok_or else 99, d_kw if ok_kw else 99)
             matched_sagas.append((best_d, {
                 "external_id": f"alias_{normalize_title(al['orig']).replace(' ', '_')}",
                 "imdb_id": "",
@@ -1017,51 +1352,55 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
                 "genre": "Serie TV" if al["type"] == "series" else "Film",
                 "description": f"{'Serie TV' if al['type'] == 'series' else 'Film'}{' (' + al['year'] + ')' if al.get('year') else ''} • Titolo orig.: {al['orig']}",
                 "source": "catalog_it",
-                "is_saga": True,
+                "is_saga": bool(al.get("saga_group")),
                 "saga_rank": al.get("saga_rank", 1),
                 "aliases": al.get("aliases") or [],
+                "has_it_title": True,
             }))
 
-    # Add matched sagas at the TOP so they are preserved and prioritized during deduplication
     matched_sagas.sort(key=lambda x: x[0])
     combined.extend(item for _, item in matched_sagas)
 
-    # 2. Query IMDb+Wikidata, TVMaze, and Wikipedia in parallel (using expanded & typo-corrected queries)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ex:
+    # 2. Phase 1 Parallel Queries: Wikidata structured media + IMDb + TVMaze + AniList
+    wd_items: List[Dict] = []
+    bridge_queries: List[str] = []
+    suggestions: List[str] = []
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+        f_wd = ex.submit(_search_wikidata_media, query, extra_qs)
         f_imdb = ex.submit(_search_imdb_with_italian_labels, primary_q, extra_qs)
         f_maze = ex.submit(_search_tvmaze, primary_q, extra_qs)
-        f_wiki = ex.submit(_search_wikipedia_generator, query)
+        f_ani = ex.submit(_search_anilist, primary_q, extra_qs)
         try:
-            combined.extend(f_imdb.result())
+            wd_items, bridge_queries, suggestions = f_wd.result()
+            combined.extend(wd_items)
         except Exception:
             pass
-        try:
-            combined.extend(f_maze.result())
-        except Exception:
-            pass
-        try:
-            combined.extend(f_wiki.result())
-        except Exception:
-            pass
+        for fut in (f_imdb, f_maze, f_ani):
+            try:
+                combined.extend(fut.result())
+            except Exception:
+                pass
 
-    # If external results are empty or didn't match well (e.g. typo on a non-saga title like 'interstelar' or 'stranger tings'),
-    # run Wikipedia fuzzy spellcheck (~2) and query IMDb/TVMaze with the corrected title
-    if not combined and not matched_sagas:
-        wiki_corrections = _spellcheck_via_wikipedia(query)
-        if wiki_corrections:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
-                f_imdb2 = ex.submit(_search_imdb_with_italian_labels, wiki_corrections[0], wiki_corrections[1:])
-                f_maze2 = ex.submit(_search_tvmaze, wiki_corrections[0], wiki_corrections[1:])
+    # 3. Phase 2 Conditional Follow-up for verified bridge_queries & spellcheck suggestions
+    searched_lower = {q_item.strip().lower() for q_item in ([query, primary_q] + extra_qs) if q_item}
+    follow_terms: List[str] = []
+    for t in (suggestions[:1] + bridge_queries[:1]):
+        if t and t.strip().lower() not in searched_lower and t.strip().lower() not in [f.lower() for f in follow_terms]:
+            follow_terms.append(t.strip())
+
+    if follow_terms:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ex:
+            f_imdb2 = ex.submit(_search_imdb_with_italian_labels, follow_terms[0], follow_terms[1:])
+            f_maze2 = ex.submit(_search_tvmaze, follow_terms[0], follow_terms[1:])
+            f_ani2 = ex.submit(_search_anilist, follow_terms[0], follow_terms[1:])
+            for fut in (f_imdb2, f_maze2, f_ani2):
                 try:
-                    combined.extend(f_imdb2.result())
+                    combined.extend(fut.result())
                 except Exception:
                     pass
-                try:
-                    combined.extend(f_maze2.result())
-                except Exception:
-                    pass
 
-    # 3. Search live 7-day Italian DTT EPG for titles currently airing on TV (exact + fuzzy <= 2 letters)
+    # 4. Search live 7-day Italian DTT EPG for titles currently airing on TV
     if epg_events:
         seen_epg = set()
         for ev in epg_events:
@@ -1080,77 +1419,95 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
                     "media_type": ev["media_type"],
                     "title_it": ev["title"],
                     "title_original": ev["title"],
+                    "aliases": [],
                     "year": "",
                     "poster": ev.get("poster") or "",
                     "genre": ev.get("genre") or ("Serie TV" if ev["media_type"] == "series" else "Film"),
                     "description": f"📡 In onda questa settimana su {ev['channel_name']} (Canale {ev['lcn']}) • " + (ev.get("description") or ""),
                     "source": "epg_dtt",
+                    "has_it_title": True,
                 })
 
-    # Merge/deduplicate by (media_type, conjunction-stripped normalized title_it or title_original)
-    merged: Dict[str, Dict] = {}
-    key_aliases: Dict[str, str] = {}
+    # 5. Honest Scoring (> 0 ONLY) & Sort Descending before Dedup so highest-relevance/authority leads
+    scored_pre: List[Tuple[int, Dict]] = []
     for item in combined:
-        norm_it = strip_conjunctions(normalize_title(item["title_it"])) or normalize_title(item["title_it"])
-        norm_or = strip_conjunctions(normalize_title(item["title_original"])) or normalize_title(item["title_original"])
-        
-        # Sagas are uniquely identified by their distinct chapter title and release year
-        if item.get("is_saga"):
-            primary_key = f"saga_{item['media_type']}_{norm_it}_{item.get('year', '')}"
-        else:
-            k_it = f"{item['media_type']}_{norm_it}"
-            k_or = f"{item['media_type']}_{norm_or}"
-            primary_key = key_aliases.get(k_it) or key_aliases.get(k_or)
+        sc = compute_relevance_score(query, item, bridge_queries=bridge_queries, suggestions=suggestions)
+        if sc > 0:
+            item["relevance_score"] = sc
+            scored_pre.append((sc, item))
 
-            # Do not merge completely different movies with the same name if released in different decades (e.g. 1954 vs 2001)
-            if primary_key and primary_key in merged:
-                ex_year = str(merged[primary_key].get("year") or "").strip()
-                item_year = str(item.get("year") or "").strip()
-                if ex_year.isdigit() and item_year.isdigit() and abs(int(ex_year) - int(item_year)) > 10:
-                    primary_key = f"{primary_key}_{item_year}"
+    scored_pre.sort(key=lambda x: (-x[0], -_poster_quality_rank(x[1].get("poster", ""))))
 
-        if not primary_key or primary_key not in merged:
-            primary_key = primary_key or f"{item['media_type']}_{norm_it}"
-            merged[primary_key] = item
-            key_aliases[f"{item['media_type']}_{norm_it}"] = primary_key
-            key_aliases[f"{item['media_type']}_{norm_or}"] = primary_key
-        else:
-            existing = merged[primary_key]
-            # Prefer Italian title over English title
-            if existing["title_it"] == existing["title_original"] and item["title_it"] != item["title_original"]:
-                existing["title_it"] = item["title_it"]
-            if _poster_quality_rank(item.get("poster", "")) > _poster_quality_rank(existing.get("poster", "")):
-                existing["poster"] = item["poster"]
-            elif not existing.get("poster") and item.get("poster"):
-                existing["poster"] = item["poster"]
-            if not existing.get("tvmaze_id") and item.get("tvmaze_id"):
-                existing["tvmaze_id"] = item["tvmaze_id"]
-            if not existing.get("imdb_id") and item.get("imdb_id"):
-                existing["imdb_id"] = item["imdb_id"]
-            if not existing.get("year") and item.get("year"):
-                existing["year"] = item["year"]
-            if len(item.get("description") or "") > len(existing.get("description") or ""):
-                existing["description"] = item["description"]
+    # 6. Year-Guarded Cross-Language & IMDb-ID Deduplication
+    def _build_item_keys(it: Dict) -> set:
+        ks = set()
+        for field in (it.get("title_it"), it.get("title_original")):
+            n = normalize_title(field or "")
+            if n:
+                ks.add(n)
+                sc = strip_conjunctions(n)
+                if sc:
+                    ks.add(sc)
+        for a in (it.get("aliases") or [])[:12]:
+            na = normalize_title(a)
+            if len(na) >= 4:
+                ks.add(na)
+        return ks
+
+    dedup: List[Dict] = []
+    for _, item in scored_pre:
+        it_keys = _build_item_keys(item)
+        it_year_s = str(item.get("year") or "").strip()
+        it_year = int(it_year_s) if it_year_s.isdigit() else 0
+        it_imdb = (item.get("imdb_id") or "").strip()
+
+        matched_ex = None
+        for ex in dedup:
+            if ex["media_type"] != item["media_type"]:
+                continue
+            ex_year_s = str(ex.get("year") or "").strip()
+            ex_year = int(ex_year_s) if ex_year_s.isdigit() else 0
+            if ex_year and it_year and abs(ex_year - it_year) > 3:
+                continue
+
+            if it_imdb and (ex.get("imdb_id") or "").strip() == it_imdb:
+                matched_ex = ex
+                break
+
+            ex_keys = _build_item_keys(ex)
+            if it_keys & ex_keys:
+                matched_ex = ex
+                break
+
+        if matched_ex:
+            if _poster_quality_rank(item.get("poster", "")) > _poster_quality_rank(matched_ex.get("poster", "")):
+                matched_ex["poster"] = item["poster"]
+            elif not matched_ex.get("poster") and item.get("poster"):
+                matched_ex["poster"] = item["poster"]
+            if not matched_ex.get("year") and item.get("year"):
+                matched_ex["year"] = item["year"]
+            if not matched_ex.get("tvmaze_id") and item.get("tvmaze_id"):
+                matched_ex["tvmaze_id"] = item["tvmaze_id"]
+            if not matched_ex.get("imdb_id") and item.get("imdb_id"):
+                matched_ex["imdb_id"] = item["imdb_id"]
+            if len(item.get("description") or "") > len(matched_ex.get("description") or ""):
+                matched_ex["description"] = item["description"]
+            if not matched_ex.get("has_it_title") and item.get("has_it_title"):
+                matched_ex["title_it"] = item["title_it"]
+                matched_ex["has_it_title"] = True
+            if item.get("relevance_score", 0) > matched_ex.get("relevance_score", 0):
+                matched_ex["relevance_score"] = item["relevance_score"]
             if item.get("is_saga"):
-                existing["is_saga"] = True
-                existing["saga_rank"] = item.get("saga_rank", 1)
-            if not existing.get("popularity_rank") and item.get("popularity_rank"):
-                existing["popularity_rank"] = item["popularity_rank"]
-            if not existing.get("popularity_weight") and item.get("popularity_weight"):
-                existing["popularity_weight"] = item["popularity_weight"]
+                matched_ex["is_saga"] = True
+                matched_ex["saga_rank"] = item.get("saga_rank", 1)
+            if item.get("aliases"):
+                existing_al = set(matched_ex.get("aliases") or [])
+                existing_al.update(item["aliases"])
+                matched_ex["aliases"] = list(existing_al)
+        else:
+            dedup.append(item)
 
-    # 4. Score every merged result by relevance against user query
-    scored_results: List[Tuple[int, Dict]] = []
-    for item in merged.values():
-        score = compute_relevance_score(query, item)
-        # Keep all items with score > 0 (preserves exact matches, phrase matches, and niche/anime cult titles!)
-        if score > 0:
-            scored_results.append((score, item))
-
-    # Sort descending by relevance score (exact/near-exact matches first!)
-    scored_results.sort(key=lambda x: -x[0])
-
-    return [item for _, item in scored_results][:100]
+    return dedup[:100]
 
 
 def fetch_series_episodes(tvmaze_id: Optional[int] = None, title_original: str = "", title_it: str = "", epg_events: Optional[List[Dict]] = None) -> List[Dict]:

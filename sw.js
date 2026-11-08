@@ -1,4 +1,4 @@
-const CACHE_NAME = "nextontv-v28";
+const CACHE_NAME = "nextontv-v29";
 const STATIC_ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -17,8 +17,20 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") {
+    return;
+  }
   const url = event.request.url;
-  if (url.includes("/api/") || url.includes("/data/") || url.includes("ntfy.sh") || url.includes("bytebin.lucko.me") || url.includes("tvmaze.com") || url.includes("wikidata.org")) {
+  if (
+    url.includes("/api/") ||
+    url.includes("/data/") ||
+    url.includes("ntfy.sh") ||
+    url.includes("bytebin.lucko.me") ||
+    url.includes("tvmaze.com") ||
+    url.includes("wikidata.org") ||
+    url.includes("wikipedia.org") ||
+    url.includes("anilist.co")
+  ) {
     return;
   }
   event.respondWith(
