@@ -841,8 +841,23 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 epg_events=events,
             )
             watched_set = {(wr["season"], wr["episode"]) for wr in watched_rows}
-            for ep in episodes:
-                ep["watched"] = (ep["season"], ep["episode"]) in watched_set
+            is_completed = bool(row and row["status"] == "watched")
+            if is_completed and episodes:
+                now_iso = datetime.datetime.now().isoformat()
+                with _DB_LOCK:
+                    conn = get_db()
+                    for ep in episodes:
+                        conn.execute(
+                            "INSERT OR IGNORE INTO watched_episodes (series_id, season, episode, watched_at) VALUES (?, ?, ?, ?)",
+                            (series_id, int(ep["season"]), int(ep["episode"]), now_iso),
+                        )
+                    conn.commit()
+                    conn.close()
+                for ep in episodes:
+                    ep["watched"] = True
+            else:
+                for ep in episodes:
+                    ep["watched"] = (ep["season"], ep["episode"]) in watched_set
 
             return self._send_json({
                 "series_id": series_id,
@@ -1065,6 +1080,15 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
             if action not in ("wishlist", "watching", "watched", "delete", "restore") or not isinstance(items, list):
                 return self._send_json({"error": "Parametri batch non validi"}, 400)
 
+            if action == "restore":
+                with _DB_LOCK:
+                    conn = get_db()
+                    conn.execute("DELETE FROM library")
+                    conn.execute("DELETE FROM watched_episodes")
+                    conn.execute("DELETE FROM deleted_items")
+                    conn.commit()
+                    conn.close()
+
             now_iso = datetime.datetime.now().isoformat()
             _, events_cached, _ = get_7day_epg_cached()
             processed = 0
@@ -1098,7 +1122,8 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                             processed += 1
                     else:
                         conn.execute("DELETE FROM deleted_items WHERE norm_key = ?", (d_key,))
-                        if matched_id:
+                        item_status = it.get("status") or "wishlist" if action == "restore" else action
+                        if matched_id and action != "restore":
                             conn.execute("UPDATE library SET status = ? WHERE id = ?", (action, matched_id))
                             target_series_id = matched_id
                             processed += 1
@@ -1116,7 +1141,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                                 (
                                     ext_id,
                                     media_type,
-                                    action,
+                                    item_status,
                                     title_it,
                                     title_orig,
                                     json.dumps(aliases, ensure_ascii=False),
@@ -1126,9 +1151,9 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                                     it.get("description") or "",
                                     it.get("tvmaze_id"),
                                     it.get("imdb_id") or "",
-                                    0,
-                                    "",
-                                    now_iso,
+                                    int(it.get("rating") or 0),
+                                    it.get("notes") or "",
+                                    it.get("created_at") or now_iso,
                                 ),
                             )
                             target_series_id = cur.lastrowid
@@ -1136,9 +1161,17 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                             processed += 1
 
                         if media_type == "series" and target_series_id:
-                            if action == "wishlist":
+                            if action == "restore" and it.get("watched_episodes"):
+                                for ep_code in it.get("watched_episodes", []):
+                                    m_code = re.match(r"S(\d+)E(\d+)", str(ep_code), re.I)
+                                    if m_code:
+                                        conn.execute(
+                                            "INSERT OR IGNORE INTO watched_episodes (series_id, season, episode, watched_at) VALUES (?, ?, ?, ?)",
+                                            (target_series_id, int(m_code.group(1)), int(m_code.group(2)), now_iso),
+                                        )
+                            elif item_status == "wishlist":
                                 conn.execute("DELETE FROM watched_episodes WHERE series_id = ?", (target_series_id,))
-                            elif action == "watched":
+                            elif item_status == "watched":
                                 eps_all = fetch_series_episodes(
                                     tvmaze_id=it.get("tvmaze_id"),
                                     title_original=title_orig,
@@ -1332,6 +1365,85 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 else:
                     new_st = "watching"
                     conn.execute("UPDATE library SET status = ? WHERE id = ?", (new_st, series_id))
+                conn.commit()
+                conn.close()
+
+            trigger_async_cloud_push()
+            return self._send_json({"ok": True, "series_id": series_id, "status": new_st, "watched_count": ep_cnt})
+
+        if path == "/api/episodes/mark_all":
+            series_id = int(body.get("series_id") or 0)
+            watched = bool(body.get("watched", True))
+            total_episodes = int(body.get("total_episodes") or 0)
+            series_meta = body.get("series_meta") or {}
+            created_from_search = bool(body.get("created_from_search", False))
+            now_iso = datetime.datetime.now().isoformat()
+            with _DB_LOCK:
+                conn = get_db()
+                if series_id <= 0 and series_meta:
+                    title_it = (series_meta.get("title_it") or series_meta.get("title") or "").strip()
+                    title_orig = (series_meta.get("title_original") or title_it).strip()
+                    n_target = normalize_title(title_it)
+                    conn.execute("DELETE FROM deleted_items WHERE norm_key = ?", (f"series_{n_target}",))
+                    row = conn.execute("SELECT id FROM library WHERE media_type = 'series' AND title_it = ?", (title_it,)).fetchone()
+                    if row:
+                        series_id = row["id"]
+                    else:
+                        ext_id = series_meta.get("external_id") or f"custom_series_{n_target.replace(' ', '_')}"
+                        aliases = get_aliases_for_titles(title_it, title_orig)
+                        cur = conn.execute(
+                            """
+                            INSERT OR REPLACE INTO library (
+                                external_id, media_type, status, title_it, title_original,
+                                aliases_json, year, poster, genre, description,
+                                tvmaze_id, imdb_id, rating, notes, created_at
+                            ) VALUES (?, 'series', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, '', ?)
+                            """,
+                            (
+                                ext_id,
+                                "watched" if watched else "wishlist",
+                                title_it,
+                                title_orig,
+                                json.dumps(aliases, ensure_ascii=False),
+                                str(series_meta.get("year") or ""),
+                                series_meta.get("poster") or "",
+                                series_meta.get("genre") or "Serie TV",
+                                series_meta.get("description") or "",
+                                series_meta.get("tvmaze_id"),
+                                series_meta.get("imdb_id") or "",
+                                now_iso,
+                            ),
+                        )
+                        series_id = cur.lastrowid
+
+                if watched:
+                    _, events_cached, _ = get_7day_epg_cached()
+                    r_meta = conn.execute("SELECT * FROM library WHERE id = ?", (series_id,)).fetchone()
+                    all_eps = fetch_series_episodes(
+                        tvmaze_id=r_meta["tvmaze_id"] if r_meta else None,
+                        title_original=r_meta["title_original"] if r_meta else "",
+                        title_it=r_meta["title_it"] if r_meta else "",
+                        epg_events=events_cached,
+                    )
+                    for ep in all_eps:
+                        conn.execute(
+                            "INSERT OR REPLACE INTO watched_episodes (series_id, season, episode, watched_at) VALUES (?, ?, ?, ?)",
+                            (series_id, int(ep["season"]), int(ep["episode"]), now_iso),
+                        )
+                    conn.execute("UPDATE library SET status = 'watched' WHERE id = ?", (series_id,))
+                    new_st = "watched"
+                    ep_cnt = len(all_eps)
+                else:
+                    conn.execute("DELETE FROM watched_episodes WHERE series_id = ?", (series_id,))
+                    if created_from_search:
+                        conn.execute("DELETE FROM library WHERE id = ?", (series_id,))
+                        series_id = 0
+                        new_st = None
+                        ep_cnt = 0
+                    else:
+                        new_st = "wishlist"
+                        conn.execute("UPDATE library SET status = 'wishlist' WHERE id = ?", (series_id,))
+                        ep_cnt = 0
                 conn.commit()
                 conn.close()
 

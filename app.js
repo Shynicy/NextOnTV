@@ -529,6 +529,11 @@ function mergeSnapshotsClient(localSnap, cloudSnap) {
   if (!cloudSnap || !Array.isArray(cloudSnap.library)) return localSnap;
   if (!localSnap || !Array.isArray(localSnap.library)) return cloudSnap;
 
+  // If localSnap was explicitly restored/updated more recently than cloud, do not revive old cloud items!
+  if ((localSnap.updated_at || 0) > (cloudSnap.updated_at || 0) + 2) {
+    return localSnap;
+  }
+
   const mergedLib = [...(localSnap.library || [])];
   const deletedKeys = new Set([
     ...(localSnap.deleted_keys || []),
@@ -1024,11 +1029,17 @@ async function handleClientCloudGet(url) {
     const titleIt = (libItem ? libItem.title_it : parsed.searchParams.get("title_it")) || "";
     const titleOrig = (libItem ? libItem.title_original : parsed.searchParams.get("title_original")) || titleIt;
     const tvmazeId = (libItem ? libItem.tvmaze_id : Number(parsed.searchParams.get("tvmaze_id") || "0")) || null;
+    const isCompleted = Boolean(libItem && libItem.status === "watched");
     const watchedSet = new Set(libItem && Array.isArray(libItem.watched_episodes) ? libItem.watched_episodes : []);
     const eps = await fetchSeriesEpisodesClient4G(titleIt, titleOrig, tvmazeId);
     eps.forEach((ep) => {
-      ep.watched = watchedSet.has(`S${ep.season}E${ep.episode}`);
+      ep.watched = isCompleted || watchedSet.has(`S${ep.season}E${ep.episode}`);
     });
+    if (isCompleted && libItem && eps.length > 0 && (!libItem.watched_episodes || libItem.watched_episodes.length < eps.length)) {
+      libItem.watched_episodes = eps.map((ep) => `S${ep.season}E${ep.episode}`);
+      libItem.watched_episodes_count = eps.length;
+      saveLocalSnapshot(snap);
+    }
     return {
       series_id: libItem ? libItem.id : 0,
       title_it: titleIt,
@@ -1753,6 +1764,8 @@ async function handleClientCloudPost(url, body) {
     const items = body.items || [];
     if (action === "restore" && Array.isArray(items) && items.length > 0) {
       snap.library = items;
+      snap.deleted_keys = [];
+      snap.updated_at = Date.now() / 1000;
     } else {
       for (const it of items) {
         const title_it = (it.title_it || it.title || "").trim();
@@ -1808,7 +1821,7 @@ async function handleClientCloudPost(url, body) {
     return { ok: true, action };
   }
 
-  if (url === "/api/episodes/toggle" || url === "/api/episodes/mark_season") {
+  if (url === "/api/episodes/toggle" || url === "/api/episodes/mark_season" || url === "/api/episodes/mark_all") {
     let seriesId = Number(body.series_id || 0);
     const meta = body.series_meta || {};
     const createdFromSearch = Boolean(body.created_from_search);
@@ -1840,6 +1853,34 @@ async function handleClientCloudPost(url, body) {
       }
     }
     if (!item) return { ok: true, status: null, series_id: 0, watched_count: 0 };
+
+    if (url === "/api/episodes/mark_all") {
+      if (body.watched) {
+        let allEps = (state.activeSeriesModal && state.activeSeriesModal.episodes && state.activeSeriesModal.episodes.length > 0)
+          ? state.activeSeriesModal.episodes
+          : await fetchSeriesEpisodesClient4G(item.title_it, item.title_original, item.tvmaze_id);
+        item.watched_episodes = (allEps || []).map((e) => `S${e.season}E${e.episode}`);
+        item.watched_episodes_count = item.watched_episodes.length;
+        item.status = "watched";
+      } else {
+        item.watched_episodes = [];
+        item.watched_episodes_count = 0;
+        if (createdFromSearch) {
+          const idx = snap.library.findIndex((x) => Number(x.id) === Number(item.id));
+          if (idx !== -1) snap.library.splice(idx, 1);
+          await pushCloudSnapshotClient(state.syncCode, snap);
+          return { ok: true, status: null, series_id: 0, watched_count: 0 };
+        }
+        item.status = "wishlist";
+      }
+      await pushCloudSnapshotClient(state.syncCode, snap);
+      return {
+        ok: true,
+        status: item.status,
+        series_id: item.id,
+        watched_count: item.watched_episodes_count,
+      };
+    }
 
     const watchedSet = new Set(Array.isArray(item.watched_episodes) ? item.watched_episodes : []);
     if (url === "/api/episodes/toggle") {
@@ -2574,7 +2615,7 @@ function renderLibrary() {
             </div>
             <div class="lib-compact-right">
               ${!isMovie
-            ? `<button type="button" class="btn-primary btn-sm btn-open-ep-modal" data-id="${itemId}" style="padding:2px 7px;font-size:0.7rem;">📋 ${it.watched_episodes_count || 0} ep.</button>`
+            ? `<button type="button" class="btn-primary btn-sm btn-open-ep-modal" data-id="${itemId}" style="padding:2px 7px;font-size:0.7rem;">📋 ${it.status === "watched" ? (it.watched_episodes_count || "Tutti") : (it.watched_episodes_count || 0)} ep.</button>`
             : ""
           }
               <span class="list-status-pill ${statusClass}" style="font-size:0.68rem;padding:2px 6px;">
@@ -2649,7 +2690,7 @@ function renderLibrary() {
             <p class="tv-desc">${escapeHtml(it.description || "")}</p>
             <div class="tv-actions">
               ${!isMovie
-          ? `<button type="button" class="btn-primary btn-sm btn-open-ep-modal" data-id="${itemId}">📋 Episodi (${it.watched_episodes_count || 0})</button>`
+          ? `<button type="button" class="btn-primary btn-sm btn-open-ep-modal" data-id="${itemId}">📋 Episodi (${it.status === "watched" ? (it.watched_episodes_count || "Tutti") : (it.watched_episodes_count || 0)})</button>`
           : ""
         }
               ${!isMovie && !isWatching
@@ -3207,6 +3248,7 @@ function renderSeriesTrackerModalBody() {
   const watchedCount = episodes.filter((e) => e.watched).length;
   const pct = Math.min(100, Math.round((watchedCount / total) * 100));
   const nextEp = episodes.find((e) => !e.watched);
+  const allSeriesWatched = episodes.length > 0 && watchedCount === episodes.length;
 
   let statusHint = state.activeSeriesModal.createdFromSearch && watchedCount === 0
     ? "Spunta gli episodi visti per aggiungerla a ▶️ Stai Seguendo"
@@ -3235,9 +3277,19 @@ function renderSeriesTrackerModalBody() {
       ${nextEp
       ? `<div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
                <span style="font-size:0.82rem;color:#fcd34d;">▶️ Prossimo da vedere: <strong>S${nextEp.season}E${nextEp.episode} — ${escapeHtml(nextEp.title)}</strong></span>
-               <button type="button" class="btn-primary btn-sm" id="btn-mark-next-ep" data-s="${nextEp.season}" data-e="${nextEp.episode}">✓ Segna Visto</button>
+               <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                 <button type="button" class="btn-primary btn-sm" id="btn-mark-next-ep" data-s="${nextEp.season}" data-e="${nextEp.episode}">✓ Segna Visto</button>
+                 <button type="button" class="btn-action btn-sm" id="btn-toggle-all-series" style="background:${allSeriesWatched ? "rgba(239, 68, 68, 0.15)" : "rgba(52, 211, 153, 0.15)"};color:${allSeriesWatched ? "#f87171" : "#34d399"};border:1px solid ${allSeriesWatched ? "rgba(239, 68, 68, 0.4)" : "rgba(52, 211, 153, 0.4)"};font-weight:600;">
+                   ${allSeriesWatched ? "✕ Deseleziona tutta la Serie" : "✓ Spunta tutta la Serie"}
+                 </button>
+               </div>
              </div>`
-      : `<div style="margin-top:8px;font-size:0.82rem;color:#34d399;">🎉 Hai visto tutti gli episodi disponibili!</div>`
+      : `<div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+               <span style="font-size:0.82rem;color:#34d399;">🎉 Hai visto tutti gli episodi disponibili!</span>
+               <button type="button" class="btn-action btn-sm" id="btn-toggle-all-series" style="background:rgba(239, 68, 68, 0.15);color:#f87171;border:1px solid rgba(239, 68, 68, 0.4);font-weight:600;">
+                 ✕ Deseleziona tutta la Serie
+               </button>
+             </div>`
     }
     </div>
   `;
@@ -3370,6 +3422,28 @@ function renderSeriesTrackerModalBody() {
       applyEpisodeApiResponse(res);
     });
   });
+
+  const allSeriesBtn = body.querySelector("#btn-toggle-all-series");
+  if (allSeriesBtn) {
+    allSeriesBtn.addEventListener("click", async () => {
+      const newWatchedState = !allSeriesWatched;
+      episodes.forEach((ep) => {
+        ep.watched = newWatchedState;
+      });
+      state.activeSeriesModal.dirty = true;
+      renderSeriesTrackerModalBody();
+
+      const res = await apiPost("/api/episodes/mark_all", {
+        series_id: state.activeSeriesModal.seriesId || 0,
+        watched: newWatchedState,
+        total_episodes: episodes.length,
+        series_meta: state.activeSeriesModal.searchItemMeta || { title_it: state.activeSeriesModal.title_it },
+        created_from_search: Boolean(state.activeSeriesModal.createdFromSearch),
+      });
+      applyEpisodeApiResponse(res);
+      showToast(newWatchedState ? `✅ Tutta la serie segnata come completata!` : `🎯 Tutta la serie segnata come da vedere!`);
+    });
+  }
 }
 
 function closeSeriesTrackerModal() {
@@ -3741,24 +3815,16 @@ function setupNavigationAndEvents() {
     btnExportBackup.addEventListener("click", () => {
       const snap = getLocalSnapshot();
       const lib = (snap.library && snap.library.length > 0) ? snap.library : state.libraryItems;
-      const backupObj = {
-        app: "NextOnTV",
-        version: "2.0",
-        created_at: new Date().toISOString(),
-        total_items: lib.length,
-        library: lib,
-      };
-      const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(lib, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      const dateStr = new Date().toISOString().slice(0, 10);
       a.href = url;
-      a.download = `NextOnTV_Backup_${dateStr}.json`;
+      a.download = "library.json";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast(`💾 Backup salvato con successo! (${lib.length} titoli scaricati in NextOnTV_Backup_${dateStr}.json)`);
+      showToast(`💾 File "library.json" scaricato con successo (${lib.length} titoli)! Pronto da caricare nella cartella data/ su GitHub.`);
     });
   }
 
@@ -3785,6 +3851,8 @@ function setupNavigationAndEvents() {
 
           const snap = getLocalSnapshot();
           snap.library = items;
+          snap.deleted_keys = [];
+          snap.updated_at = Date.now() / 1000;
           saveLocalSnapshot(snap);
           state.libraryItems = items;
 
