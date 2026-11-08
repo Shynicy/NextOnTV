@@ -545,6 +545,14 @@ function mergeSnapshotsClient(localSnap, cloudSnap) {
     ...(cloudSnap.deleted_keys || []),
   ]);
 
+  // CRITICAL: Any title actively present in local library takes precedence over old tombstones!
+  (localSnap.library || []).forEach((it) => {
+    if (!it || !it.title_it) return;
+    const k = `${it.media_type || "movie"}_${normalizeTitleClient(it.title_it)}`;
+    deletedKeys.delete(k);
+    deletedKeys.delete(normalizeTitleClient(it.title_it));
+  });
+
   const localKeySet = new Set(
     mergedLib.map((x) => `${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`)
   );
@@ -575,12 +583,19 @@ function mergeSnapshotsClient(localSnap, cloudSnap) {
     }
   });
 
-  const filteredLib = mergedLib.filter((x) => !deletedKeys.has(`${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`));
+  const filteredLib = mergedLib.filter((x) => {
+    const k = `${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`;
+    return !deletedKeys.has(k);
+  });
+
+  // Never keep an active item's key inside deleted_keys!
+  const finalKeySet = new Set(filteredLib.map((x) => `${x.media_type || "movie"}_${normalizeTitleClient(x.title_it)}`));
+  const cleanDeletedKeys = Array.from(deletedKeys).filter((k) => !finalKeySet.has(k));
 
   return {
     ...localSnap,
     library: filteredLib,
-    deleted_keys: Array.from(deletedKeys),
+    deleted_keys: cleanDeletedKeys,
     reminders: (cloudSnap.reminders && cloudSnap.reminders.length >= (localSnap.reminders || []).length) ? cloudSnap.reminders : (localSnap.reminders || []),
     updated_at: Math.max(localSnap.updated_at || 0, cloudSnap.updated_at || 0, Date.now() / 1000),
   };
@@ -1752,6 +1767,11 @@ async function handleClientCloudPost(url, body) {
     const media_type = body.media_type || "movie";
     const status = body.status || "wishlist";
     const norm = normalizeTitleClient(title_it);
+    const itemKey = `${media_type}_${norm}`;
+
+    // CRITICAL: Unblock! If the item was previously deleted, remove its key from deleted_keys
+    snap.deleted_keys = (snap.deleted_keys || []).filter((k) => k !== itemKey && k !== norm);
+
     let item = snap.library.find((x) => x.media_type === media_type && normalizeTitleClient(x.title_it) === norm);
     if (item) {
       item.status = status;
@@ -1788,7 +1808,10 @@ async function handleClientCloudPost(url, body) {
       }
     }
 
-    await pushCloudSnapshotClient(state.syncCode, snap);
+    // Save locally immediately to guarantee persistence on reload
+    snap.updated_at = Date.now() / 1000;
+    saveLocalSnapshot(snap);
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
     return {
       ok: true,
       id: item.id,
@@ -1802,6 +1825,8 @@ async function handleClientCloudPost(url, body) {
     const item = snap.library.find((x) => Number(x.id) === Number(body.id));
     if (item && body.status) {
       item.status = body.status;
+      const k = `${item.media_type || "movie"}_${normalizeTitleClient(item.title_it)}`;
+      snap.deleted_keys = (snap.deleted_keys || []).filter((x) => x !== k);
       if (item.media_type === "series") {
         if (body.status === "watched") {
           const eps = await fetchSeriesEpisodesClient4G(item.title_it, item.title_original, item.tvmaze_id);
@@ -1813,7 +1838,9 @@ async function handleClientCloudPost(url, body) {
         }
       }
     }
-    await pushCloudSnapshotClient(state.syncCode, snap);
+    snap.updated_at = Date.now() / 1000;
+    saveLocalSnapshot(snap);
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
     return { ok: true };
   }
 
@@ -1853,6 +1880,8 @@ async function handleClientCloudPost(url, body) {
             snap.library.splice(idx, 1);
           }
         } else {
+          const itemKey = `${media_type}_${norm}`;
+          snap.deleted_keys = (snap.deleted_keys || []).filter((k) => k !== itemKey && k !== norm);
           let targetItem;
           if (idx !== -1) {
             snap.library[idx].status = action;
@@ -1891,7 +1920,9 @@ async function handleClientCloudPost(url, body) {
         }
       }
     }
-    await pushCloudSnapshotClient(state.syncCode, snap);
+    snap.updated_at = Date.now() / 1000;
+    saveLocalSnapshot(snap);
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
     return { ok: true, action };
   }
 
@@ -2635,6 +2666,11 @@ async function loadLibrary() {
     saveLocalSnapshot(snap);
   } else {
     state.libraryItems = serverItems;
+    const snap = getLocalSnapshot();
+    if (serverItems.length > 0) {
+      snap.library = serverItems;
+      saveLocalSnapshot(snap);
+    }
   }
   renderLibrary();
   renderStreamingTab();
@@ -3162,18 +3198,26 @@ async function addCatalogItemToLibrary(item, status, buttonElement) {
       buttonElement.disabled = true;
       buttonElement.textContent = "⏳ Rimozione...";
     }
-    await apiPost("/api/library/delete", {
-      id: item.in_library_id || null,
-      title_it: titleIt,
-      media_type: mediaType,
-    });
-    item.in_library_status = null;
-    item.in_library_id = null;
-    item.watched_episodes_count = 0;
+    try {
+      await apiPost("/api/library/delete", {
+        id: item.in_library_id || null,
+        title_it: titleIt,
+        media_type: mediaType,
+      });
+      item.in_library_status = null;
+      item.in_library_id = null;
+      item.watched_episodes_count = 0;
 
-    showToast(`🗑️ "${titleIt}" rimosso dalla lista!`);
-    await loadLibrary();
-    loadMatches(false);
+      showToast(`🗑️ "${titleIt}" rimosso dalla lista!`);
+      await loadLibrary();
+      loadMatches(false);
+    } catch (e) {
+      showToast(`❌ Errore durante la rimozione di "${titleIt}".`);
+    } finally {
+      if (buttonElement) {
+        buttonElement.disabled = false;
+      }
+    }
     return;
   }
 
@@ -3196,29 +3240,37 @@ async function addCatalogItemToLibrary(item, status, buttonElement) {
     status: status,
   };
 
-  const res = await apiPost("/api/library", payload);
-  item.in_library_status = status;
-  if (res && res.id) {
-    item.in_library_id = res.id;
-  }
-  if (mediaType === "series") {
-    if (status === "wishlist") {
-      item.watched_episodes_count = 0;
-    } else if (res && typeof res.watched_episodes_count === "number") {
-      item.watched_episodes_count = res.watched_episodes_count;
+  try {
+    const res = await apiPost("/api/library", payload);
+    item.in_library_status = status;
+    if (res && res.id) {
+      item.in_library_id = res.id;
+    }
+    if (mediaType === "series") {
+      if (status === "wishlist") {
+        item.watched_episodes_count = 0;
+      } else if (res && typeof res.watched_episodes_count === "number") {
+        item.watched_episodes_count = res.watched_episodes_count;
+      }
+    }
+
+    if (mediaType === "series" && status === "watched") {
+      showToast(`✅ "${payload.title_it}" salvata in Già Visti (tutti i ${item.watched_episodes_count || ""} episodi spuntati)!`);
+    } else {
+      showToast(
+        `✨ "${payload.title_it}" salvato in ${status === "wishlist" ? "🎯 Da Vedere (Wishlist)" : "✅ Già Visti"}!`
+      );
+    }
+
+    await loadLibrary();
+    loadMatches(false);
+  } catch (err) {
+    showToast(`❌ Errore durante il salvataggio di "${titleIt}".`);
+  } finally {
+    if (buttonElement) {
+      buttonElement.disabled = false;
     }
   }
-
-  if (mediaType === "series" && status === "watched") {
-    showToast(`✅ "${payload.title_it}" salvata in Già Visti (tutti i ${item.watched_episodes_count || ""} episodi spuntati)!`);
-  } else {
-    showToast(
-      `✨ "${payload.title_it}" salvato in ${status === "wishlist" ? "🎯 Da Vedere (Wishlist)" : "✅ Già Visti"}!`
-    );
-  }
-
-  await loadLibrary();
-  loadMatches(false);
 }
 
 function renderSearchResultCards(results, targetContainer, isCompactModal = false) {

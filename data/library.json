@@ -1,5 +1,131 @@
 [
   {
+    "id": 46,
+    "external_id": "saga_harry_potter_and_the_chamber_of_secrets",
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Harry Potter e la camera dei segreti",
+    "title_original": "Harry Potter and the Chamber of Secrets",
+    "aliases_json": "[\"harry potter e la camera dei segreti\", \"harry potter and the chamber of secrets\"]",
+    "year": "2002",
+    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/b/b2/Harry_Potter_e_la_camera_dei_segreti.jpg/500px-Harry_Potter_e_la_camera_dei_segreti.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "Film (2002) • Titolo orig.: Harry Potter and the Chamber of Secrets",
+    "tvmaze_id": null,
+    "imdb_id": "",
+    "rating": 0,
+    "notes": "",
+    "created_at": "2026-10-31T19:33:17.571Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.cca9f676-f728-62fb-c3ed-910fb3c49262"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/48674b82-9076-4080-a40c-379efad5eb89"
+      },
+      {
+        "id": "timvision",
+        "name": "TIMVISION",
+        "monetization": "FLATRATE",
+        "url": "https://www.timvision.it/h/9060238740_92900005?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
+      }
+    ]
+  },
+  {
+    "id": 1794163919815,
+    "external_id": "wd_Q102235",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Harry Potter e l'Ordine della Fenice",
+    "title_original": "Harry Potter and the Order of the Phoenix",
+    "aliases": [
+      "harry potter e l ordine della fenice",
+      "harry potter and the order of the phoenix"
+    ],
+    "year": "2007",
+    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/7/72/Harry_Potter_e_l%27Ordine_della_Fenice.png/500px-Harry_Potter_e_l%27Ordine_della_Fenice.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "Film (2007) • Titolo orig.: Harry Potter and the Order of the Phoenix",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-08T18:51:59.815Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.a0a9f68b-222e-8332-81bc-52300b2adbf7"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/25768909-39b8-4cb2-a39f-e059460f7add"
+      }
+    ]
+  },
+  {
+    "id": 1794161484871,
+    "external_id": "wd_Q25188",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Inception",
+    "title_original": "Inception",
+    "aliases": [
+      "inception",
+      "inception"
+    ],
+    "year": "2010",
+    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/b/ba/Inception_Paris_scene.jpg/500px-Inception_Paris_scene.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "2014 Short film directed by Danial Hajibarat (2013)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-08T18:11:24.871Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.04a9f72c-f9c8-c4d1-f97b-6d7ad986a51f"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/inception/R_618980_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/14552c93-d318-4563-a00b-343df7e35d0b"
+      },
+      {
+        "id": "timvision",
+        "name": "TIMVISION",
+        "monetization": "FLATRATE",
+        "url": "https://www.timvision.it/h/9050245783_92900001?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
+      }
+    ]
+  },
+  {
     "id": 53,
     "external_id": "imdb_tt6806448",
     "media_type": "movie",
@@ -272,44 +398,6 @@
     ]
   },
   {
-    "id": 46,
-    "external_id": "saga_harry_potter_and_the_chamber_of_secrets",
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Harry Potter e la camera dei segreti",
-    "title_original": "Harry Potter and the Chamber of Secrets",
-    "aliases_json": "[\"harry potter e la camera dei segreti\", \"harry potter and the chamber of secrets\"]",
-    "year": "2002",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/b/b2/Harry_Potter_e_la_camera_dei_segreti.jpg/500px-Harry_Potter_e_la_camera_dei_segreti.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "genre": "Film",
-    "description": "Film (2002) • Titolo orig.: Harry Potter and the Chamber of Secrets",
-    "tvmaze_id": null,
-    "imdb_id": "",
-    "rating": 0,
-    "notes": "",
-    "created_at": "2026-10-31T19:33:17.571Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.cca9f676-f728-62fb-c3ed-910fb3c49262"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/48674b82-9076-4080-a40c-379efad5eb89"
-      },
-      {
-        "id": "timvision",
-        "name": "TIMVISION",
-        "monetization": "FLATRATE",
-        "url": "https://www.timvision.it/h/9060238740_92900005?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
-      }
-    ]
-  },
-  {
     "id": 45,
     "external_id": "saga_harry_potter_and_the_prisoner_of_azkaban",
     "media_type": "movie",
@@ -473,7 +561,7 @@
     "id": 40,
     "external_id": "imdb_tt2531336",
     "media_type": "series",
-    "status": "wishlist",
+    "status": "watching",
     "title_it": "Lupin",
     "title_original": "Lupin",
     "aliases_json": "[\"lupin\"]",
@@ -493,7 +581,35 @@
         "monetization": "FLATRATE",
         "url": "https://www.netflix.com/title/80994082"
       }
-    ]
+    ],
+    "watched_episodes": [
+      "S1E1",
+      "S1E2",
+      "S1E3",
+      "S1E4",
+      "S1E5",
+      "S2E1",
+      "S2E2",
+      "S2E3",
+      "S2E4",
+      "S2E5",
+      "S3E1",
+      "S3E2",
+      "S3E3",
+      "S3E4",
+      "S3E5",
+      "S3E6",
+      "S3E7",
+      "S4E1",
+      "S4E2",
+      "S4E3",
+      "S4E4",
+      "S4E5",
+      "S4E6",
+      "S4E7",
+      "S4E8"
+    ],
+    "watched_episodes_count": 25
   },
   {
     "id": 39,
@@ -1136,6 +1252,93 @@
         "name": "Disney+",
         "monetization": "FLATRATE",
         "url": "https://www.disneyplus.com/browse/entity-b54fbbdc-6a0c-4e84-9d6d-7b44bd808038"
+      }
+    ]
+  },
+  {
+    "id": 1794147107793,
+    "external_id": "wd_Q919649",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lo Hobbit - La battaglia delle cinque armate",
+    "title_original": "Lo Hobbit - La battaglia delle cinque armate",
+    "aliases": [
+      "lo hobbit la battaglia delle cinque armate",
+      "lo hobbit la battaglia delle cinque armate"
+    ],
+    "year": "2014",
+    "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Lo_Hobbit_-_La_battaglia_delle_cinque_armate.png/500px-Lo_Hobbit_-_La_battaglia_delle_cinque_armate.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "film del 2014 diretto da Peter Jackson",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-08T14:11:47.793Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.36a9f6ce-5fb5-389b-e172-da7a4d4e1865"
+      }
+    ]
+  },
+  {
+    "id": 1794147105426,
+    "external_id": "wd_Q719915",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lo Hobbit - La desolazione di Smaug",
+    "title_original": "Lo Hobbit - La desolazione di Smaug",
+    "aliases": [
+      "lo hobbit la desolazione di smaug",
+      "lo hobbit la desolazione di smaug"
+    ],
+    "year": "2013",
+    "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Lo_Hobbit_-_La_desolazione_di_Smaug.png/500px-Lo_Hobbit_-_La_desolazione_di_Smaug.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "film del 2013 diretto da Peter Jackson",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-08T14:11:45.426Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.96a9f6e0-1128-c70c-e520-1986b41e8a1d"
+      }
+    ]
+  },
+  {
+    "id": 1794147104013,
+    "external_id": "wd_Q80379",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lo Hobbit - Un viaggio inaspettato",
+    "title_original": "Lo Hobbit - Un viaggio inaspettato",
+    "aliases": [
+      "lo hobbit un viaggio inaspettato",
+      "lo hobbit un viaggio inaspettato"
+    ],
+    "year": "2012",
+    "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Lo_Hobbit_-_Un_viaggio_inaspettato_logo.png/500px-Lo_Hobbit_-_Un_viaggio_inaspettato_logo.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "film del 2012 diretto da Peter Jackson",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-08T14:11:44.013Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.d8a9f6fd-58c9-64dd-15d0-365bdf846db4"
       }
     ]
   }

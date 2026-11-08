@@ -606,7 +606,8 @@ def merge_cloud_snapshot_into_db(snapshot: Dict) -> int:
             mtype = c_item.get("media_type") if c_item.get("media_type") in ("movie", "series") else "movie"
             k = f"{mtype}_{normalize_title(title_it)}"
             if k in local_deleted:
-                continue
+                conn.execute("DELETE FROM deleted_items WHERE norm_key = ?", (k,))
+                local_deleted.discard(k)
 
             status = c_item.get("status") if c_item.get("status") in ("wishlist", "watched") else "wishlist"
             title_orig = (c_item.get("title_original") or title_it).strip()
@@ -1123,6 +1124,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({
                 "ok": True,
@@ -1178,6 +1183,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({"ok": True})
 
@@ -1210,6 +1219,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({"ok": True})
 
@@ -1326,6 +1339,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({"ok": True, "action": action, "processed": processed})
 
@@ -1416,6 +1433,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({"ok": True, "series_id": series_id, "watched": watched, "status": new_st, "watched_count": ep_cnt})
 
@@ -1507,6 +1528,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({"ok": True, "series_id": series_id, "status": new_st, "watched_count": ep_cnt})
 
@@ -1586,6 +1611,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({"ok": True, "series_id": series_id, "status": new_st, "watched_count": ep_cnt})
 
@@ -1624,6 +1653,10 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
                 conn.close()
 
+            try:
+                export_library_to_json_file()
+            except Exception:
+                pass
             trigger_async_cloud_push()
             return self._send_json({"ok": True, "active": active})
 
