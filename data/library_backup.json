@@ -16,26 +16,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T19:33:17.571Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.cca9f676-f728-62fb-c3ed-910fb3c49262"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/48674b82-9076-4080-a40c-379efad5eb89"
-      },
-      {
-        "id": "timvision",
-        "name": "TIMVISION",
-        "monetization": "FLATRATE",
-        "url": "https://www.timvision.it/h/9060238740_92900005?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 1794163919815,
@@ -57,20 +38,7 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-08T18:51:59.815Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.a0a9f68b-222e-8332-81bc-52300b2adbf7"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/25768909-39b8-4cb2-a39f-e059460f7add"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 1794161484871,
@@ -92,38 +60,7 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-08T18:11:24.871Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.04a9f72c-f9c8-c4d1-f97b-6d7ad986a51f"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/inception/R_618980_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/14552c93-d318-4563-a00b-343df7e35d0b"
-      },
-      {
-        "id": "timvision",
-        "name": "TIMVISION",
-        "monetization": "FLATRATE",
-        "url": "https://www.timvision.it/h/9050245783_92900001?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 53,
@@ -142,32 +79,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-11-02T15:33:00.215193",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/81073022"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.5381e285-6304-43b5-8073-7e63e6fad07d"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-hobbs-and-shaw/R_570220_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 52,
@@ -186,32 +98,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-11-02T15:25:13.513633",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/70103761"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.30a9f77c-9560-a23f-07c4-832bb48165e3"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-solo-parti-originali/R_570215_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 51,
@@ -230,32 +117,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-11-02T15:18:48.589194",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/60027713"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.6cb40ed5-dce6-5ec9-77fe-175dd3dd8f1c"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/2-fast-2-furious/R_570254_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 50,
@@ -274,26 +136,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-11-02T15:15:14.970853",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/60020747"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.7aa9f718-92f4-da0d-144e-b548b6f76837"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/fast-and-furious/R_570221_HD"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 47,
@@ -388,14 +231,7 @@
       "S8E6"
     ],
     "watched_episodes_count": 73,
-    "streaming_providers": [
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/show/4f6b4985-2dc9-4ab6-ac79-d60f0860b0ac/s1/e1-winter-is-coming/83eca32a-12d2-4e05-8245-e17855c9e390"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 45,
@@ -414,20 +250,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T19:33:29.197Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.98c1b69a-4e7d-47cd-a79c-bf9dd59f5410"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/73553a76-1658-45f6-9e26-1b9c4443b0d6"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 44,
@@ -446,20 +269,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T19:33:29.197Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.fea9f6a0-7a85-db41-4db7-9fae0275f74b"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/d2e9ff29-e71d-4eae-9a4b-7cd0e00236ea"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 43,
@@ -478,20 +288,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T19:33:29.198Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.e629f1db-f32d-4e2c-b7dd-bf440af2802b"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/cba1d85a-5ef4-4ba3-b537-1d24554fe85c"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 42,
@@ -510,20 +307,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T19:33:29.199Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.86c06623-8b49-43e1-81d1-c0337e467f51"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/2c394a2d-7d1d-481d-a420-76ee1bee01a7"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 41,
@@ -542,20 +326,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T19:33:29.199Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.534a160f-f33c-43c3-81a7-14925fb031bb"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/1890c8c5-2f40-4140-a363-064428201826"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 40,
@@ -574,14 +345,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T16:49:55.088929",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/80994082"
-      }
-    ],
+    "streaming_providers": [],
     "watched_episodes": [
       "S1E1",
       "S1E2",
@@ -628,26 +392,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T16:39:21.585492",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.88ae477d-8574-3fc1-b27b-e2b723d68d7b"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/4b990c5d-38ab-4daf-8092-2617cbc6d062"
-      },
-      {
-        "id": "timvision",
-        "name": "TIMVISION",
-        "monetization": "FLATRATE",
-        "url": "https://www.timvision.it/h/9060238082_92900005?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 38,
@@ -798,14 +543,7 @@
       "S5E16"
     ],
     "watched_episodes_count": 62,
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/70143836"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 33,
@@ -843,32 +581,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T15:58:10.120836",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/70263863"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.881f589b-439f-43ad-8485-aede11d85797"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-6/R_570216_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 30,
@@ -887,32 +600,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T15:58:10.120836",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/70157102"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.06a9f767-861f-1bf2-eccc-11dd8e637882"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-5/R_570219_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 29,
@@ -931,32 +619,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T15:58:10.120836",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/80150243"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.52adb1cc-5f58-f3c7-2b42-1645186b8f50"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-8/R_570218_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 28,
@@ -975,14 +638,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T15:58:10.120836",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.cc7b5e88-4cf8-42a8-ad13-9b41a80d5436"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 27,
@@ -1001,38 +657,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T15:58:10.120836",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/80019608"
-      },
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.f8a9f6c2-ee64-57e0-3072-2e69cd5cbb13"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/fast-and-furious-7/R_570217_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      },
-      {
-        "id": "timvision",
-        "name": "TIMVISION",
-        "monetization": "FLATRATE",
-        "url": "https://www.timvision.it/h/9060238069_92900005?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 25,
@@ -1142,14 +767,7 @@
       "S5E9"
     ],
     "watched_episodes_count": 88,
-    "streaming_providers": [
-      {
-        "id": "disney",
-        "name": "Disney+",
-        "monetization": "FLATRATE",
-        "url": "https://www.disneyplus.com/browse/entity-d1d023da-ebb7-474c-b858-c4890e2d5757"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 23,
@@ -1168,14 +786,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T14:43:02.314486",
-    "streaming_providers": [
-      {
-        "id": "disney",
-        "name": "Disney+",
-        "monetization": "FLATRATE",
-        "url": "https://www.disneyplus.com/browse/entity-48c0452e-caf3-4e8d-aa6f-6ea6b60fb0ef"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 22,
@@ -1194,14 +805,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T14:43:02.314486",
-    "streaming_providers": [
-      {
-        "id": "disney",
-        "name": "Disney+",
-        "monetization": "FLATRATE",
-        "url": "https://www.disneyplus.com/browse/entity-615a50ef-fde7-4474-8c31-27c136cf862d"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 21,
@@ -1220,14 +824,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T14:43:02.314486",
-    "streaming_providers": [
-      {
-        "id": "disney",
-        "name": "Disney+",
-        "monetization": "FLATRATE",
-        "url": "https://www.disneyplus.com/browse/entity-27f5c1cb-2618-4402-9583-1dcaae0efe1d"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 20,
@@ -1246,14 +843,7 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-10-31T14:43:02.314486",
-    "streaming_providers": [
-      {
-        "id": "disney",
-        "name": "Disney+",
-        "monetization": "FLATRATE",
-        "url": "https://www.disneyplus.com/browse/entity-b54fbbdc-6a0c-4e84-9d6d-7b44bd808038"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 1794147107793,
@@ -1275,14 +865,7 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-08T14:11:47.793Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.36a9f6ce-5fb5-389b-e172-da7a4d4e1865"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 1794147105426,
@@ -1304,14 +887,7 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-08T14:11:45.426Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.96a9f6e0-1128-c70c-e520-1986b41e8a1d"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 1794147104013,
@@ -1333,13 +909,6 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-08T14:11:44.013Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.d8a9f6fd-58c9-64dd-15d0-365bdf846db4"
-      }
-    ]
+    "streaming_providers": []
   }
 ]
