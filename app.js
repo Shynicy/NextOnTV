@@ -2809,6 +2809,19 @@ async function loadMatches(forceRefresh = false) {
     saveLocalSnapshot(snap);
   }
 
+  const skyBannerHtml = (!state.includeSky && (counts.sky_hidden || 0) > 0)
+    ? `
+      <div class="sky-hint-banner" style="background:linear-gradient(135deg,rgba(14,165,233,0.18),rgba(99,102,241,0.18));border:1px solid rgba(56,189,248,0.4);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div style="font-size:0.88rem;color:#e2e8f0;line-height:1.4;">
+          🛰️ <strong>${counts.sky_hidden} programmi TV</strong> della tua libreria sono in programmazione sui canali <strong>Sky Cinema e Sky Serie</strong>!
+        </div>
+        <button type="button" class="btn-primary btn-sm" id="btn-activate-sky-banner" style="white-space:nowrap;padding:6px 14px;font-size:0.82rem;">
+          🛰️ Mostra Sky
+        </button>
+      </div>
+    `
+    : "";
+  
   if (matches.length === 0) {
     const modeLabel = {
       all: "nelle tue liste (Wishlist o Già visti)",
