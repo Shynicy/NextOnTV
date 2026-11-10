@@ -74,6 +74,10 @@ const SAGA_DEFINITIONS = [
     id: "bad_boys",
     names: ["bad boys", "bad boy"],
   },
+  {
+    id: "hunger_games",
+    names: ["hunger games", "the hunger games", "hunger game"],
+  },
 ];
 
 const CLIENT_SAGAS = [
@@ -120,6 +124,11 @@ const CLIENT_SAGAS = [
   { it: "Bad Boys II", orig: "Bad Boys II", type: "movie", year: "2003", saga: "bad_boys", rank: 2, aliases: ["bad boys 2", "bad boys ii"], poster: "https://upload.wikimedia.org/wikipedia/en/f/f4/Bad_Boys_II_Official_Theatrical_Poster.png" },
   { it: "Bad Boys for Life", orig: "Bad Boys for Life", type: "movie", year: "2020", saga: "bad_boys", rank: 3, aliases: ["bad boys 3", "bad boys iii", "bad boys per sempre"], poster: "https://upload.wikimedia.org/wikipedia/en/9/90/Bad_Boys_for_Life_poster.jpg" },
   { it: "Bad Boys: Ride or Die", orig: "Bad Boys: Ride or Die", type: "movie", year: "2024", saga: "bad_boys", rank: 4, aliases: ["bad boys 4", "bad boys iv", "ride or die"], poster: "https://upload.wikimedia.org/wikipedia/en/8/8b/Bad_Boys_Ride_or_Die_%282024%29_poster.jpg" },
+  { it: "Hunger Games", orig: "The Hunger Games", type: "movie", year: "2012", saga: "hunger_games", rank: 1, aliases: ["hunger games 1", "the hunger games"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/4/4b/Hunger_games_poster.jpg/500px-Hunger_games_poster.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Hunger Games: La ragazza di fuoco", orig: "The Hunger Games: Catching Fire", type: "movie", year: "2013", saga: "hunger_games", rank: 2, aliases: ["hunger games 2", "la ragazza di fuoco", "catching fire", "hunger games la ragazza di fuoro"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/9/94/CatchingFire.png/500px-CatchingFire.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Hunger Games - Il canto della rivolta - Parte 1", orig: "The Hunger Games: Mockingjay – Part 1", type: "movie", year: "2014", saga: "hunger_games", rank: 3, aliases: ["hunger games 3", "il canto della rivolta parte 1", "mockingjay part 1"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/7/7b/The_Hunger_Games_-_Mockingjay_Part_1.png/500px-The_Hunger_Games_-_Mockingjay_Part_1.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Hunger Games - Il canto della rivolta - Parte 2", orig: "The Hunger Games: Mockingjay – Part 2", type: "movie", year: "2015", saga: "hunger_games", rank: 4, aliases: ["hunger games 4", "il canto della rivolta parte 2", "mockingjay part 2"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/0/07/The_Hunger_Games_-_Mockingjay_Part_2.png/500px-The_Hunger_Games_-_Mockingjay_Part_2.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
+  { it: "Hunger Games - La ballata dell'usignolo e del serpente", orig: "The Hunger Games: The Ballad of Songbirds & Snakes", type: "movie", year: "2023", saga: "hunger_games", rank: 5, aliases: ["hunger games 5", "la ballata dell usignolo e del serpente", "ballata dell usignolo e del serpente"], poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/1/14/Hunger_Games_-_La_ballata_dell%27usignolo_e_del_serpente.jpg/500px-Hunger_Games_-_La_ballata_dell%27usignolo_e_del_serpente.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000", poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Il_gladiatore.png/500px-Il_gladiatore.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024", poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/ad/Deadpool_%26_Wolverine.png/500px-Deadpool_%26_Wolverine.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4042.jpg" },
@@ -1019,9 +1028,11 @@ async function handleClientCloudGet(url) {
       const defLib = await libRes.json();
       if (Array.isArray(defLib) && defLib.length > 0) {
         if (!snap.library || snap.library.length === 0) {
+          sanitizeKnownLibraryTypos(defLib);
           snap.library = defLib;
           saveLocalSnapshot(snap);
         } else {
+          if (sanitizeKnownLibraryTypos(snap.library)) saveLocalSnapshot(snap);
           // If items in local library have missing posters, backfill from defLib
           let updated = false;
           const defMap = {};
@@ -1744,10 +1755,12 @@ async function directMobileSearch4G(query, libraryItems) {
       const mtype = hasSeries && !hasExplicitFilm ? "series" : "movie";
 
       let titleIt = "";
-      if (!itLbl || (enLbl && itLbl.toLowerCase() === enLbl.toLowerCase() && itwClean && itwClean.toLowerCase() !== enLbl.toLowerCase())) {
-        titleIt = itwClean || itLbl || mulLbl || enLbl || enwClean;
+      if (itwClean) {
+        titleIt = itwClean;
+      } else if (itLbl) {
+        titleIt = itLbl;
       } else {
-        titleIt = itLbl || mulLbl || itwClean || enLbl || enwClean;
+        titleIt = mulLbl || enLbl || enwClean;
       }
 
       // Resolve TRUE native original title (Italian for Italy, native language for Japan/France/Spain/etc.)
@@ -3051,6 +3064,26 @@ function upgradePostersFromCuratedSagas(items) {
   return upgradedCount;
 }
 
+function sanitizeKnownLibraryTypos(items) {
+  if (!Array.isArray(items) || items.length === 0) return 0;
+  let fixedCount = 0;
+  items.forEach((it) => {
+    if (!it) return;
+    if (it.title_it && it.title_it.includes("fuoro")) {
+      it.title_it = it.title_it.replace(/fuoro/gi, "fuoco");
+      fixedCount++;
+    }
+    if (it.title_original && it.title_original.includes("fuoro")) {
+      it.title_original = it.title_original.replace(/fuoro/gi, "fuoco");
+      fixedCount++;
+    }
+    if (Array.isArray(it.aliases)) {
+      it.aliases = it.aliases.map((a) => (a && a.includes("fuoro") ? a.replace(/fuoro/gi, "fuoco") : a));
+    }
+  });
+  return fixedCount;
+}
+
 async function refreshAllLibraryPostersAction() {
   const btnToolbar = document.getElementById("btn-refresh-posters-toolbar");
   const btnModal = document.getElementById("btn-refresh-posters-modal");
@@ -3189,8 +3222,9 @@ async function loadLibrary() {
       saveLocalSnapshot(snap);
     }
   }
+  const typoFixed = sanitizeKnownLibraryTypos(state.libraryItems);
   const sagaUpgraded = upgradePostersFromCuratedSagas(state.libraryItems);
-  if (sagaUpgraded > 0) {
+  if (typoFixed > 0 || sagaUpgraded > 0) {
     const snap = getLocalSnapshot();
     snap.library = state.libraryItems;
     saveLocalSnapshot(snap);
@@ -4933,6 +4967,9 @@ function setupNavigationAndEvents() {
             showToast("⚠️ Il file selezionato non contiene titoli validi.");
             return;
           }
+
+          sanitizeKnownLibraryTypos(items);
+          upgradePostersFromCuratedSagas(items);
 
           const snap = getLocalSnapshot();
           snap.library = items;

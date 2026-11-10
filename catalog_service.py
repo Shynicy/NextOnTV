@@ -21,6 +21,7 @@ SAGA_GROUPS: List[Dict] = [
     {"id": "back_to_future", "names": ["ritorno al futuro", "back to the future"]},
     {"id": "rocky", "names": ["rocky", "rocky balboa", "creed"]},
     {"id": "bad_boys", "names": ["bad boys", "bad boy"]},
+    {"id": "hunger_games", "names": ["hunger games", "the hunger games", "hunger game"]},
 ]
 
 # Comprehensive bilingual alias & saga catalog (Italian broadcast title <-> Original title)
@@ -82,6 +83,12 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict] = [
     {"it": "Bad Boys II", "orig": "Bad Boys II", "type": "movie", "year": "2003", "aliases": ["bad boys 2", "bad boys ii"], "saga_group": "bad_boys", "saga_rank": 2, "poster": "https://upload.wikimedia.org/wikipedia/en/f/f4/Bad_Boys_II_Official_Theatrical_Poster.png"},
     {"it": "Bad Boys for Life", "orig": "Bad Boys for Life", "type": "movie", "year": "2020", "aliases": ["bad boys 3", "bad boys iii", "bad boys per sempre"], "saga_group": "bad_boys", "saga_rank": 3, "poster": "https://upload.wikimedia.org/wikipedia/en/9/90/Bad_Boys_for_Life_poster.jpg"},
     {"it": "Bad Boys: Ride or Die", "orig": "Bad Boys: Ride or Die", "type": "movie", "year": "2024", "aliases": ["bad boys 4", "bad boys iv", "ride or die"], "saga_group": "bad_boys", "saga_rank": 4, "poster": "https://upload.wikimedia.org/wikipedia/en/8/8b/Bad_Boys_Ride_or_Die_%282024%29_poster.jpg"},
+    # Hunger Games Complete 5-Movie Saga
+    {"it": "Hunger Games", "orig": "The Hunger Games", "type": "movie", "year": "2012", "aliases": ["hunger games 1", "the hunger games"], "saga_group": "hunger_games", "saga_rank": 1, "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/4/4b/Hunger_games_poster.jpg/500px-Hunger_games_poster.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail"},
+    {"it": "Hunger Games: La ragazza di fuoco", "orig": "The Hunger Games: Catching Fire", "type": "movie", "year": "2013", "aliases": ["hunger games 2", "la ragazza di fuoco", "catching fire", "hunger games la ragazza di fuoro"], "saga_group": "hunger_games", "saga_rank": 2, "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/9/94/CatchingFire.png/500px-CatchingFire.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail"},
+    {"it": "Hunger Games - Il canto della rivolta - Parte 1", "orig": "The Hunger Games: Mockingjay – Part 1", "type": "movie", "year": "2014", "aliases": ["hunger games 3", "il canto della rivolta parte 1", "mockingjay part 1"], "saga_group": "hunger_games", "saga_rank": 3, "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/7/7b/The_Hunger_Games_-_Mockingjay_Part_1.png/500px-The_Hunger_Games_-_Mockingjay_Part_1.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail"},
+    {"it": "Hunger Games - Il canto della rivolta - Parte 2", "orig": "The Hunger Games: Mockingjay – Part 2", "type": "movie", "year": "2015", "aliases": ["hunger games 4", "il canto della rivolta parte 2", "mockingjay part 2"], "saga_group": "hunger_games", "saga_rank": 4, "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/0/07/The_Hunger_Games_-_Mockingjay_Part_2.png/500px-The_Hunger_Games_-_Mockingjay_Part_2.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail"},
+    {"it": "Hunger Games - La ballata dell'usignolo e del serpente", "orig": "The Hunger Games: The Ballad of Songbirds & Snakes", "type": "movie", "year": "2023", "aliases": ["hunger games 5", "la ballata dell usignolo e del serpente", "ballata dell usignolo e del serpente"], "saga_group": "hunger_games", "saga_rank": 5, "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/1/14/Hunger_Games_-_La_ballata_dell%27usignolo_e_del_serpente.jpg/500px-Hunger_Games_-_La_ballata_dell%27usignolo_e_del_serpente.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail"},
     # Altri Film Celebri & Anime Bridge
     {"it": "Deadpool & Wolverine", "orig": "Deadpool & Wolverine", "type": "movie", "year": "2024"},
     {"it": "Mr. & Mrs. Smith", "orig": "Mr. & Mrs. Smith", "type": "movie", "year": "2005"},
@@ -1144,10 +1151,12 @@ def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None
         has_explicit_film = any(p in WD_MOVIE_EXPLICIT_P31 for p in p31s)
         mtype = "series" if (has_series and not has_explicit_film) else "movie"
 
-        if not it_lbl or (en_lbl and it_lbl.lower() == en_lbl.lower() and itw_clean and itw_clean.lower() != en_lbl.lower()):
-            title_it = itw_clean or it_lbl or mul_lbl or en_lbl or enw_clean
+        if itw_clean:
+            title_it = itw_clean
+        elif it_lbl:
+            title_it = it_lbl
         else:
-            title_it = it_lbl or mul_lbl or itw_clean or en_lbl or enw_clean
+            title_it = mul_lbl or en_lbl or enw_clean
 
         # Resolve TRUE native original title (Italian for Italy, native language for Japan/France/Spain/etc.)
         p1476_list = claims.get("P1476") or []
