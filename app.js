@@ -4595,6 +4595,18 @@ function setupNavigationAndEvents() {
 
   // Tab 3 Search (ONLY on form submit / Cerca button click or Enter key!)
   const mainSearchInput = document.getElementById("catalog-search-input");
+  if (mainSearchInput) {
+    mainSearchInput.addEventListener("click", () => {
+      if (mainSearchInput.value) {
+        mainSearchInput.value = "";
+      }
+    });
+    mainSearchInput.addEventListener("focus", () => {
+      if (mainSearchInput.value) {
+        mainSearchInput.value = "";
+      }
+    });
+  }
   document.getElementById("catalog-search-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const q = mainSearchInput.value.trim();
@@ -4650,6 +4662,16 @@ function setupNavigationAndEvents() {
   // Modal Search (ONLY on Cerca button click or Enter key)
   const modalSearchInput = document.getElementById("modal-live-search-input");
   if (modalSearchInput) {
+    modalSearchInput.addEventListener("click", () => {
+      if (modalSearchInput.value) {
+        modalSearchInput.value = "";
+      }
+    });
+    modalSearchInput.addEventListener("focus", () => {
+      if (modalSearchInput.value) {
+        modalSearchInput.value = "";
+      }
+    });
     modalSearchInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
