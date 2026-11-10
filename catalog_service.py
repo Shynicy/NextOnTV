@@ -103,31 +103,31 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict] = [
     {"it": "Rush Hour - Due mine vaganti", "orig": "Rush Hour", "type": "movie", "year": "1998"},
     {"it": "Colpo grosso al drago rosso - Rush Hour 2", "orig": "Rush Hour 2", "type": "movie", "year": "2001"},
     {"it": "Rush Hour 3 - Missione Parigi", "orig": "Rush Hour 3", "type": "movie", "year": "2007"},
-    {"it": "Ken il guerriero", "orig": "Fist of the North Star", "type": "series", "year": "1984", "aliases": ["ken il guerriero", "hokuto no ken", "fist of the north star"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/43/109033.jpg"},
-    {"it": "L'attacco dei giganti", "orig": "Attack on Titan", "type": "series", "year": "2013", "aliases": ["l attacco dei giganti", "attacco dei giganti", "shingeki no kyojin", "attack on titan"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/4/11919.jpg"},
-    # Lupin III Film e Serie Celebri
+    {"it": "Ken il guerriero", "orig": "Hokuto no Ken (北斗の拳)", "type": "series", "year": "1984", "aliases": ["ken il guerriero", "hokuto no ken", "fist of the north star"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/43/109033.jpg"},
+    {"it": "L'attacco dei giganti", "orig": "Shingeki no Kyojin (進撃の巨人)", "type": "series", "year": "2013", "aliases": ["l attacco dei giganti", "attacco dei giganti", "shingeki no kyojin", "attack on titan"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/4/11919.jpg"},
+    # Lupin III Film e Serie Celebri (Titoli Originali Giapponesi)
     {"it": "Lupin", "orig": "Lupin", "type": "series", "year": "2021", "aliases": ["lupin 2021", "lupin serie tv", "lupin netflix"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/646/1617244.jpg"},
-    {"it": "Lupin III", "orig": "Lupin III", "type": "series", "year": "1971", "aliases": ["lupin 3", "le avventure di lupin iii", "le avventure di lupin 3", "lupin prima serie"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/38/96191.jpg"},
-    {"it": "Le nuove avventure di Lupin III", "orig": "Shin Rupan Sansei", "type": "series", "year": "1977", "aliases": ["lupin giacca rossa", "lupin seconda serie"], "poster": "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin, l'incorreggibile Lupin", "orig": "Rupan Sansei: Part III", "type": "series", "year": "1984", "aliases": ["lupin giacca rosa", "lupin terza serie"], "poster": "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin e le profezie di Nostradamus", "orig": "Lupin III - Kutabare! Nostradamus", "type": "movie", "year": "1995", "aliases": ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus", "farewell to nostradamus"], "poster": "https://m.media-amazon.com/images/M/MV5BMDI1MDU2MjQtODEwNi00MTEwLTkwOTUtYWZjZWNkYWJlY2ZmXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - Il castello di Cagliostro", "orig": "The Castle of Cagliostro", "type": "movie", "year": "1979", "aliases": ["il castello di cagliostro", "castello di cagliostro", "cagliostro", "lupin cagliostro"], "poster": "https://m.media-amazon.com/images/M/MV5BYjQwZWNkMTYtYTU2Ny00YzgyLTljYTMtNjc0MjRkNWY5NDM4XkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - La pietra della saggezza", "orig": "The Mystery of Mamo", "type": "movie", "year": "1978", "aliases": ["la pietra della saggezza", "pietra della saggezza", "mystery of mamo"], "poster": "https://m.media-amazon.com/images/M/MV5BMTkzM2E4YjUtYmQ4Yi00NWZmLThiYmYtZjhhNzk3OGRhMjBlXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - La leggenda dell'oro di Babilonia", "orig": "Legend of the Gold of Babylon", "type": "movie", "year": "1985", "aliases": ["oro di babilonia", "babilonia", "la leggenda dell oro di babilonia"], "poster": "https://m.media-amazon.com/images/M/MV5BYTQ4YmVjNTctYTE2MS00NTUyLWE0MjMtOTFkMDQ1NGE2OTU4XkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - La cospirazione dei Fuma", "orig": "The Fuma Conspiracy", "type": "movie", "year": "1987", "aliases": ["cospirazione dei fuma", "fuma"], "poster": "https://m.media-amazon.com/images/M/MV5BYTAwZWRmZjktMGU4MC00Zjk5LWI4YWUtMjE4MDdmMjBhYThkXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - Trappola mortale", "orig": "Lupin III: Dead or Alive", "type": "movie", "year": "1996", "aliases": ["trappola mortale", "dead or alive"], "poster": "https://m.media-amazon.com/images/M/MV5BMzRlZDRkMzEtODgzNi00ZGQ4LWIwMDgtMzY0YWE5NzU2MTA2XkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - The First", "orig": "Lupin III: The First", "type": "movie", "year": "2019", "aliases": ["the first", "lupin the first"], "poster": "https://m.media-amazon.com/images/M/MV5BM2UwMjlmZWEtZjBiMi00ZmJmLTg1MDAtOWQ4NjFjMTY5MzhkXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin the Third - La donna chiamata Fujiko Mine", "orig": "The Woman Called Fujiko Mine", "type": "series", "year": "2012", "aliases": ["la donna chiamata fujiko mine", "fujiko mine"], "poster": "https://m.media-amazon.com/images/M/MV5BYmY2ODI1YTYtZDQ4Zi00NDU0LWFkMzktOGEyMzJjYzU0OTc0XkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III vs Detective Conan", "orig": "Lupin the 3rd vs Detective Conan: The Movie", "type": "movie", "year": "2013", "aliases": ["lupin vs detective conan", "lupin conan", "lupin terzo vs detective conan"], "poster": "https://m.media-amazon.com/images/M/MV5BNDRlNmFjMzYtMDYzZi00NDI4LWE1MDItZGJmNmEwZTRhOWFhXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - Green vs Red", "orig": "Lupin III: Green vs. Red", "type": "movie", "year": "2008", "aliases": ["green vs red", "lupin green vs red"], "poster": "https://m.media-amazon.com/images/M/MV5BZDk5NDRlNDMtNGNiNy00ZjZkLWI2NGEtMjM5ZDliNGJjNjBmXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin III - Walther P38", "orig": "Lupin III: Island of Assassins", "type": "movie", "year": "1997", "aliases": ["walther p38", "island of assassins"], "poster": "https://m.media-amazon.com/images/M/MV5BODg3ZjY2MTItODhlNy00YzkzLTk5ODgtMGI3MjI2MWI0ZmYyXkEyXkFqcGc@._V1_UX400_.jpg"},
-    {"it": "Lupin Zero", "orig": "Lupin Zero", "type": "series", "year": "2022", "aliases": ["lupin zero"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/435/1088890.jpg"},
+    {"it": "Lupin III", "orig": "Rupan Sansei (ルパン三世)", "type": "series", "year": "1971", "aliases": ["lupin 3", "le avventure di lupin iii", "le avventure di lupin 3", "lupin prima serie", "rupan sansei"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/38/96191.jpg"},
+    {"it": "Le nuove avventure di Lupin III", "orig": "Shin Rupan Sansei (新 ルパン三世)", "type": "series", "year": "1977", "aliases": ["lupin giacca rossa", "lupin seconda serie", "shin rupan sansei"], "poster": "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin, l'incorreggibile Lupin", "orig": "Rupan Sansei: Part III (ルパン三世 PARTIII)", "type": "series", "year": "1984", "aliases": ["lupin giacca rosa", "lupin terza serie", "rupan sansei part 3"], "poster": "https://m.media-amazon.com/images/M/MV5BMjA5MjYwNDktYzM5ZC00Y2UyLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin e le profezie di Nostradamus", "orig": "Rupan Sansei - Kutabare! Nosutoradamusu (ルパン三世 くたばれ!ノストラダムス)", "type": "movie", "year": "1995", "aliases": ["le profezie di nostradamus", "profezie di nostradamus", "lupin nostradamus", "lupin iii le profezie di nostradamus", "lupin 3 le profezie di nostradamus", "farewell to nostradamus", "kutabare nostradamus"], "poster": "https://m.media-amazon.com/images/M/MV5BMDI1MDU2MjQtODEwNi00MTEwLTkwOTUtYWZjZWNkYWJlY2ZmXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Il castello di Cagliostro", "orig": "Rupan Sansei: Kariosutoro no shiro (ルパン三世 カリオストロの城)", "type": "movie", "year": "1979", "aliases": ["il castello di cagliostro", "castello di cagliostro", "cagliostro", "lupin cagliostro", "the castle of cagliostro", "kariosutoro no shiro"], "poster": "https://m.media-amazon.com/images/M/MV5BYjQwZWNkMTYtYTU2Ny00YzgyLTljYTMtNjc0MjRkNWY5NDM4XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - La pietra della saggezza", "orig": "Rupan Sansei: Rupan tai Kuron (ルパン三世 ルパンVS複製人間)", "type": "movie", "year": "1978", "aliases": ["la pietra della saggezza", "pietra della saggezza", "the mystery of mamo", "mystery of mamo", "rupan tai kuron"], "poster": "https://m.media-amazon.com/images/M/MV5BMTkzM2E4YjUtYmQ4Yi00NWZmLThiYmYtZjhhNzk3OGRhMjBlXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - La leggenda dell'oro di Babilonia", "orig": "Rupan Sansei: Babiron no Ōgon Densetsu (ルパン三世 バビロンの黄金伝説)", "type": "movie", "year": "1985", "aliases": ["oro di babilonia", "babilonia", "la leggenda dell oro di babilonia", "legend of the gold of babylon"], "poster": "https://m.media-amazon.com/images/M/MV5BYTQ4YmVjNTctYTE2MS00NTUyLWE0MjMtOTFkMDQ1NGE2OTU4XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - La cospirazione dei Fuma", "orig": "Rupan Sansei: Fūma Ichizoku no Inbō (ルパン三世 風魔一族の陰謀)", "type": "movie", "year": "1987", "aliases": ["cospirazione dei fuma", "fuma", "the fuma conspiracy"], "poster": "https://m.media-amazon.com/images/M/MV5BYTAwZWRmZjktMGU4MC00Zjk5LWI4YWUtMjE4MDdmMjBhYThkXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Trappola mortale", "orig": "Rupan Sansei: DEAD OR ALIVE (ルパン三世 DEAD OR ALIVE)", "type": "movie", "year": "1996", "aliases": ["trappola mortale", "dead or alive"], "poster": "https://m.media-amazon.com/images/M/MV5BMzRlZDRkMzEtODgzNi00ZGQ4LWIwMDgtMzY0YWE5NzU2MTA2XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - The First", "orig": "Lupin III: The First (ルパン三世 THE FIRST)", "type": "movie", "year": "2019", "aliases": ["the first", "lupin the first"], "poster": "https://m.media-amazon.com/images/M/MV5BM2UwMjlmZWEtZjBiMi00ZmJmLTg1MDAtOWQ4NjFjMTY5MzhkXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin the Third - La donna chiamata Fujiko Mine", "orig": "LUPIN the Third: Mine Fujiko to Iu Onna (LUPIN the Third 〜峰不二子という女〜)", "type": "series", "year": "2012", "aliases": ["la donna chiamata fujiko mine", "fujiko mine", "the woman called fujiko mine"], "poster": "https://m.media-amazon.com/images/M/MV5BYmY2ODI1YTYtZDQ4Zi00NDU0LWFkMzktOGEyMzJjYzU0OTc0XkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III vs Detective Conan", "orig": "Rupan Sansei Vāsasu Meitantei Konan (ルパン三世VS名探偵コナン THE MOVIE)", "type": "movie", "year": "2013", "aliases": ["lupin vs detective conan", "lupin conan", "lupin terzo vs detective conan"], "poster": "https://m.media-amazon.com/images/M/MV5BNDRlNmFjMzYtMDYzZi00NDI4LWE1MDItZGJmNmEwZTRhOWFhXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Green vs Red", "orig": "Rupan Sansei: GREEN vs RED (ルパン三世 GREEN vs RED)", "type": "movie", "year": "2008", "aliases": ["green vs red", "lupin green vs red"], "poster": "https://m.media-amazon.com/images/M/MV5BZDk5NDRlNDMtNGNiNy00ZjZkLWI2NGEtMjM5ZDliNGJjNjBmXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin III - Walther P38", "orig": "Rupan Sansei: Warusā P38 (ルパン三世 ワルサーP38)", "type": "movie", "year": "1997", "aliases": ["walther p38", "island of assassins"], "poster": "https://m.media-amazon.com/images/M/MV5BODg3ZjY2MTItODhlNy00YzkzLTk5ODgtMGI3MjI2MWI0ZmYyXkEyXkFqcGc@._V1_UX400_.jpg"},
+    {"it": "Lupin Zero", "orig": "Lupin Zero (ルパンゼロ)", "type": "series", "year": "2022", "aliases": ["lupin zero"], "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/435/1088890.jpg"},
     # Serie TV Celebri
     {"it": "Una mamma per amica", "orig": "Gilmore Girls", "type": "series", "year": "2000"},
     {"it": "L'ispettore Barnaby", "orig": "Midsomer Murders", "type": "series", "year": "1997"},
     {"it": "La signora in giallo", "orig": "Murder, She Wrote", "type": "series", "year": "1984"},
     {"it": "Il Trono di Spade", "orig": "Game of Thrones", "type": "series", "year": "2011"},
-    {"it": "La casa di carta", "orig": "Money Heist", "type": "series", "year": "2017"},
+    {"it": "La casa di carta", "orig": "La casa de papel", "type": "series", "year": "2017", "aliases": ["money heist", "la casa de papel"]},
     {"it": "E alla fine arriva mamma", "orig": "How I Met Your Mother", "type": "series", "year": "2005"},
     {"it": "Tutto in famiglia", "orig": "My Wife and Kids", "type": "series", "year": "2001"},
     {"it": "La vita secondo Jim", "orig": "According to Jim", "type": "series", "year": "2001"},
@@ -632,13 +632,17 @@ def _search_imdb_with_italian_labels(query: str, extra_queries: Optional[List[st
         if imdb_id in it_lookup:
             title_it, it_desc = it_lookup[imdb_id]
             has_it = True
-        else:
-            norm_o = strip_conjunctions(normalize_title(title_orig))
-            for al in ITALIAN_ORIGINAL_ALIASES:
-                if strip_conjunctions(normalize_title(al["orig"])) == norm_o:
-                    title_it = al["it"]
-                    has_it = True
-                    break
+        norm_o = strip_conjunctions(normalize_title(title_orig))
+        norm_it = strip_conjunctions(normalize_title(title_it))
+        for al in ITALIAN_ORIGINAL_ALIASES:
+            al_orig_norm = strip_conjunctions(normalize_title(al["orig"]))
+            al_it_norm = strip_conjunctions(normalize_title(al["it"]))
+            al_aliases = [strip_conjunctions(normalize_title(a)) for a in al.get("aliases", [])]
+            if norm_o == al_orig_norm or norm_it == al_it_norm or norm_o in al_aliases or norm_it in al_aliases:
+                title_it = al["it"]
+                title_orig = al["orig"]
+                has_it = True
+                break
 
         desc_parts = []
         if it_desc:
@@ -1144,7 +1148,41 @@ def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None
             title_it = itw_clean or it_lbl or mul_lbl or en_lbl or enw_clean
         else:
             title_it = it_lbl or mul_lbl or itw_clean or en_lbl or enw_clean
-        title_orig = en_lbl or enw_clean or title_it
+
+        # Resolve TRUE native original title (Italian for Italy, native language for Japan/France/Spain/etc.)
+        p1476_list = claims.get("P1476") or []
+        p495_ids = [(c.get("mainsnak") or {}).get("datavalue", {}).get("value", {}).get("id") for c in (claims.get("P495") or [])]
+        is_italian_prod = "Q38" in p495_ids
+
+        title_orig = ""
+        if is_italian_prod:
+            title_orig = title_it
+        else:
+            for c in p1476_list:
+                val = (c.get("mainsnak") or {}).get("datavalue", {}).get("value")
+                if isinstance(val, dict) and val.get("language") != "en" and val.get("text"):
+                    title_orig = val["text"].strip()
+                    break
+            if not title_orig and p1476_list:
+                v0 = ((p1476_list[0].get("mainsnak") or {}).get("datavalue", {}).get("value"))
+                if isinstance(v0, dict) and v0.get("text"):
+                    title_orig = v0["text"].strip()
+            if not title_orig and claims.get("P1705"):
+                v1705 = ((claims["P1705"][0].get("mainsnak") or {}).get("datavalue", {}).get("value"))
+                if isinstance(v1705, dict) and v1705.get("text"):
+                    title_orig = v1705["text"].strip()
+            labels = e.get("labels") or {}
+            if not title_orig and "Q17" in p495_ids and labels.get("ja"):
+                title_orig = (labels["ja"].get("value") or "").strip()
+            if not title_orig and "Q142" in p495_ids and labels.get("fr"):
+                title_orig = (labels["fr"].get("value") or "").strip()
+            if not title_orig and "Q29" in p495_ids and labels.get("es"):
+                title_orig = (labels["es"].get("value") or "").strip()
+            if not title_orig and "Q183" in p495_ids and labels.get("de"):
+                title_orig = (labels["de"].get("value") or "").strip()
+
+        if not title_orig:
+            title_orig = en_lbl or enw_clean or title_it
         if not title_it:
             continue
         has_it = bool(it_lbl or itw_clean)
