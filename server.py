@@ -1253,6 +1253,7 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
         if path == "/api/library/delete":
             item_id = body.get("id")
             title_it = (body.get("title_it") or body.get("title") or "").strip()
+            title_original = (body.get("title_original") or "").strip()
             media_type = body.get("media_type") or ""
             now_iso = datetime.datetime.now().isoformat()
             with _DB_LOCK:
@@ -1260,13 +1261,32 @@ class NextOnTVRequestHandler(BaseHTTPRequestHandler):
                 row = None
                 if item_id:
                     row = conn.execute("SELECT id, media_type, title_it FROM library WHERE id = ?", (item_id,)).fetchone()
-                if not row and title_it:
+                if not row and (title_it or title_original):
                     n_target = normalize_title(title_it)
-                    candidates = conn.execute("SELECT id, media_type, title_it FROM library").fetchall()
+                    n_target_clean = strip_conjunctions(n_target)
+                    n_orig = normalize_title(title_original)
+                    n_orig_clean = strip_conjunctions(n_orig)
+                    candidates = conn.execute("SELECT id, media_type, title_it, title_original, aliases FROM library").fetchall()
                     for c in candidates:
-                        if normalize_title(c["title_it"]) == n_target and (not media_type or c["media_type"] == media_type):
+                        if media_type and c["media_type"] != media_type:
+                            continue
+                        c_norm = normalize_title(c["title_it"])
+                        c_clean = strip_conjunctions(c_norm)
+                        c_orig = normalize_title(c["title_original"] or "")
+                        c_orig_clean = strip_conjunctions(c_orig)
+                        if n_target and (c_norm == n_target or c_clean == n_target_clean):
                             row = c
                             break
+                        if n_orig and (c_norm == n_orig or c_orig == n_orig or c_clean == n_orig_clean or c_orig_clean == n_orig_clean):
+                            row = c
+                            break
+                        try:
+                            al_list = json.loads(c["aliases"] or "[]")
+                            if any(normalize_title(a) in (n_target, n_orig) for a in al_list):
+                                row = c
+                                break
+                        except Exception:
+                            pass
                 if row:
                     target_id = row["id"]
                     d_key = f"{row['media_type']}_{normalize_title(row['title_it'])}"

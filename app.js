@@ -822,11 +822,15 @@ async function pushCloudSnapshotClient(syncCode, snap) {
     const rawPayload = JSON.stringify(snap);
     let attUrl = null;
     try {
+      const c1 = new AbortController();
+      const t1 = setTimeout(() => c1.abort(), 3500);
       const postRes = await fetch(`https://ntfy.sh/${topic}?filename=snapshot.json`, {
         method: "PUT",
         headers: { "Title": "NextOnTV Cloud Snapshot", "Tags": "package" },
         body: rawPayload,
+        signal: c1.signal,
       });
+      clearTimeout(t1);
       if (postRes.ok) {
         const postData = await postRes.json();
         attUrl = postData?.attachment?.url || null;
@@ -834,6 +838,8 @@ async function pushCloudSnapshotClient(syncCode, snap) {
     } catch (e) { }
 
     try {
+      const c2 = new AbortController();
+      const t2 = setTimeout(() => c2.abort(), 3500);
       const notice = JSON.stringify({
         attachment_url: attUrl || "",
         updated_at: (snap && snap.updated_at) || Date.now() / 1000,
@@ -844,7 +850,9 @@ async function pushCloudSnapshotClient(syncCode, snap) {
         method: "POST",
         headers: { "Title": "NextOnTV Sync Notice" },
         body: notice,
+        signal: c2.signal,
       });
+      clearTimeout(t2);
     } catch (e) { }
 
     return attUrl || "ok";
@@ -2174,17 +2182,47 @@ async function handleClientCloudPost(url, body) {
 
   if (url === "/api/library/delete") {
     const normTarget = normalizeTitleClient(body.title_it || body.title || "");
-    const idx = snap.library.findIndex(
-      (x) =>
-        (body.id && Number(x.id) === Number(body.id)) ||
-        (normTarget && normalizeTitleClient(x.title_it) === normTarget && (!body.media_type || x.media_type === body.media_type))
-    );
+    const cleanTarget = stripConjunctionsClient(normTarget);
+    const normOrig = normalizeTitleClient(body.title_original || "");
+    const cleanOrig = stripConjunctionsClient(normOrig);
+    const targetId = body.id ? Number(body.id) : null;
+    const targetType = body.media_type || "";
+
+    if (!Array.isArray(snap.library)) snap.library = [];
+    if (!Array.isArray(snap.deleted_keys)) snap.deleted_keys = [];
+
+    const idx = snap.library.findIndex((x) => {
+      if (targetId && Number(x.id) === targetId) return true;
+      if (targetType && x.media_type && x.media_type !== targetType) return false;
+      const xNorm = normalizeTitleClient(x.title_it);
+      const xClean = stripConjunctionsClient(xNorm);
+      const xOrigNorm = normalizeTitleClient(x.title_original || "");
+      const xOrigClean = stripConjunctionsClient(xOrigNorm);
+      if (normTarget && (xNorm === normTarget || xClean === cleanTarget)) return true;
+      if (normOrig && (xNorm === normOrig || xClean === cleanOrig || xOrigNorm === normOrig || xOrigClean === cleanOrig)) return true;
+      if (Array.isArray(x.aliases)) {
+        return x.aliases.some((al) => {
+          const alNorm = normalizeTitleClient(al);
+          return (normTarget && alNorm === normTarget) || (normOrig && alNorm === normOrig);
+        });
+      }
+      return false;
+    });
+
     if (idx !== -1) {
       const removed = snap.library[idx];
-      snap.deleted_keys.push(`${removed.media_type}_${normalizeTitleClient(removed.title_it)}`);
+      const remNorm = normalizeTitleClient(removed.title_it);
+      const remType = removed.media_type || "movie";
+      snap.deleted_keys.push(`${remType}_${remNorm}`);
+      snap.deleted_keys.push(remNorm);
       snap.library.splice(idx, 1);
+    } else if (normTarget) {
+      snap.deleted_keys.push(`${targetType || "movie"}_${normTarget}`);
+      snap.deleted_keys.push(normTarget);
     }
-    await pushCloudSnapshotClient(state.syncCode, snap);
+    snap.updated_at = Date.now() / 1000;
+    saveLocalSnapshot(snap);
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
     return { ok: true };
   }
 
@@ -2301,12 +2339,16 @@ async function handleClientCloudPost(url, body) {
         if (createdFromSearch) {
           const idx = snap.library.findIndex((x) => Number(x.id) === Number(item.id));
           if (idx !== -1) snap.library.splice(idx, 1);
-          await pushCloudSnapshotClient(state.syncCode, snap);
+          snap.updated_at = Date.now() / 1000;
+          saveLocalSnapshot(snap);
+          pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
           return { ok: true, status: null, series_id: 0, watched_count: 0 };
         }
         item.status = "wishlist";
       }
-      await pushCloudSnapshotClient(state.syncCode, snap);
+      snap.updated_at = Date.now() / 1000;
+      saveLocalSnapshot(snap);
+      pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
       return {
         ok: true,
         status: item.status,
@@ -2336,7 +2378,9 @@ async function handleClientCloudPost(url, body) {
       if (createdFromSearch) {
         const idx = snap.library.findIndex((x) => Number(x.id) === Number(item.id));
         if (idx !== -1) snap.library.splice(idx, 1);
-        await pushCloudSnapshotClient(state.syncCode, snap);
+        snap.updated_at = Date.now() / 1000;
+        saveLocalSnapshot(snap);
+        pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
         return { ok: true, status: null, series_id: 0, watched_count: 0 };
       }
       item.status = "wishlist";
@@ -2346,7 +2390,9 @@ async function handleClientCloudPost(url, body) {
       item.status = "watching";
     }
 
-    await pushCloudSnapshotClient(state.syncCode, snap);
+    snap.updated_at = Date.now() / 1000;
+    saveLocalSnapshot(snap);
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
     return {
       ok: true,
       status: item.status,
@@ -3713,11 +3759,26 @@ async function addCatalogItemToLibrary(item, status, buttonElement) {
       await apiPost("/api/library/delete", {
         id: item.in_library_id || null,
         title_it: titleIt,
+        title_original: item.title_original || "",
         media_type: mediaType,
       });
       item.in_library_status = null;
       item.in_library_id = null;
       item.watched_episodes_count = 0;
+
+      // Update any duplicate or alias card in search results
+      const allResults = [...(state.searchResults || []), ...(state.modalSearchResults || [])];
+      allResults.forEach((it) => {
+        if (
+          it &&
+          it.media_type === mediaType &&
+          normalizeTitleClient(it.title_it || it.title) === normalizeTitleClient(titleIt)
+        ) {
+          it.in_library_status = null;
+          it.in_library_id = null;
+          it.watched_episodes_count = 0;
+        }
+      });
 
       showToast(`🗑️ "${titleIt}" rimosso dalla lista!`);
       await loadLibrary();
@@ -3727,6 +3788,15 @@ async function addCatalogItemToLibrary(item, status, buttonElement) {
     } finally {
       if (buttonElement) {
         buttonElement.disabled = false;
+        if (!item.in_library_status) {
+          buttonElement.classList.remove("active-watched");
+          if (status === "wishlist") {
+            buttonElement.classList.add("btn-primary", "btn-sm");
+            buttonElement.textContent = "🎯 Aggiungi in Wishlist";
+          } else {
+            buttonElement.textContent = "✅ Aggiungi in Visti";
+          }
+        }
       }
     }
     return;
