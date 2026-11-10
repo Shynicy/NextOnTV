@@ -36,17 +36,6 @@ python server.py
 
 NextOnTV ti permette di scaricare in qualsiasi momento un backup completo in formato JSON di tutti i tuoi film e serie TV salvati, per poi caricarlo su GitHub e renderlo la copia ufficiale dell'app.
 
-### ❓ Quale file comanda e quale va modificato?
-
-Nella cartella `data/` del progetto ci sono due file:
-
-| File | Ruolo e Funzione | Viene letto dall'app? |
-| :--- | :--- | :---: |
-| **`data/library.json`** | **File PRINCIPALE ed EFFETTIVO.**<br>È il database operativo ufficiale. Quando apri NextOnTV da un nuovo dispositivo o clicchi *"Ripristina copia ufficiale da GitHub"*, l'app legge questo file. | **SÌ (Comanda tutto)** |
-| **`data/library_backup.json`** | **Copia di sicurezza a freddo ("paracadute").**<br>Serve come copia ridondante di emergenza nell'archivio Git nel caso in cui il file principale venga corrotto o cancellato per errore. | **NO (Solo riserva)** |
-
-> **Regola d'oro:** Il file che fa funzionare l'applicazione è **`library.json`**. Per sicurezza si tiene sempre aggiornato con lo stesso contenuto anche `library_backup.json`.
-
 ---
 
 ### 📥 1. Come scaricare il backup dall'app
