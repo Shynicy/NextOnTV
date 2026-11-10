@@ -325,6 +325,10 @@
               <option value="cards" selected>🃏 Vista: Schede complete</option>
               <option value="compact">📋 Vista: Solo elenco titoli</option>
             </select>
+            <button type="button" class="btn-secondary btn-sm" id="btn-refresh-posters-toolbar"
+              title="Aggiorna le locandine dei film e serie TV con le versioni ufficiali in alta definizione">
+              🎨 Aggiorna Locandine
+            </button>
             <input type="search" id="lib-filter-input" class="search-inline"
               placeholder="Filtra tra i titoli già salvati..." />
           </div>
@@ -556,6 +560,10 @@
               title="Ricarica all'istante la copia ufficiale dei tuoi programmi salvata su GitHub">
               🔄 Ricarica da GitHub
             </button>
+            <button type="button" class="btn-secondary btn-sm" id="btn-refresh-posters-modal"
+              title="Aggiorna le locandine di tutti i titoli salvati con le versioni ufficiali in alta definizione">
+              🎨 Aggiorna Locandine
+            </button>
             <input type="file" id="input-import-backup" accept=".json" style="display:none;" />
           </div>
         </div>
@@ -581,7 +589,7 @@
   </div>
 
   <div id="toast-container" class="toast-container"></div>
-  <script src="./app.js?v=39"></script>
+  <script src="./app.js?v=40"></script>
 </body>
 
 </html>

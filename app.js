@@ -713,7 +713,11 @@ function mergeSnapshotsClient(localSnap, cloudSnap) {
             existing.status = item.status;
           }
         }
-        if (!existing.poster && item.poster) existing.poster = item.poster;
+        if (!existing.poster && item.poster) {
+          existing.poster = item.poster;
+        } else if (item.poster && getPosterQualityRank(item.poster) > getPosterQualityRank(existing.poster)) {
+          existing.poster = item.poster;
+        }
         if ((item.watched_episodes || []).length > (existing.watched_episodes || []).length) {
           existing.watched_episodes = item.watched_episodes;
           existing.watched_episodes_count = item.watched_episodes.length;
@@ -1017,7 +1021,7 @@ async function handleClientCloudGet(url) {
           snap.library.forEach((x) => {
             const defItem = defMap[normalizeTitleClient(x.title_it)];
             if (defItem) {
-              if ((!x.poster || x.poster === "") && defItem.poster) {
+              if (defItem.poster && ((!x.poster || x.poster === "") || getPosterQualityRank(defItem.poster) > getPosterQualityRank(x.poster))) {
                 x.poster = defItem.poster;
                 updated = true;
               }
@@ -2853,6 +2857,137 @@ function renderStreamingCard(item) {
   `;
 }
 
+function upgradePostersFromCuratedSagas(items) {
+  if (!Array.isArray(items) || items.length === 0) return 0;
+  const map = new Map();
+  CLIENT_SAGAS.forEach((s) => {
+    if (s.poster) {
+      const pRank = getPosterQualityRank(s.poster);
+      const k1 = `${s.type || "movie"}_${normalizeTitleClient(s.it)}`;
+      const k2 = `${s.type || "movie"}_${normalizeTitleClient(s.orig)}`;
+      map.set(k1, { poster: s.poster, rank: pRank });
+      map.set(k2, { poster: s.poster, rank: pRank });
+      (s.aliases || []).forEach((a) => {
+        map.set(`${s.type || "movie"}_${normalizeTitleClient(a)}`, { poster: s.poster, rank: pRank });
+      });
+    }
+  });
+
+  let upgradedCount = 0;
+  items.forEach((it) => {
+    const m = it.media_type || "movie";
+    const k1 = `${m}_${normalizeTitleClient(it.title_it)}`;
+    const k2 = `${m}_${normalizeTitleClient(it.title_original || "")}`;
+    const best = map.get(k1) || map.get(k2);
+    if (best && best.rank > getPosterQualityRank(it.poster)) {
+      it.poster = best.poster;
+      upgradedCount++;
+    }
+  });
+  return upgradedCount;
+}
+
+async function refreshAllLibraryPostersAction() {
+  const btnToolbar = document.getElementById("btn-refresh-posters-toolbar");
+  const btnModal = document.getElementById("btn-refresh-posters-modal");
+  [btnToolbar, btnModal].forEach((b) => {
+    if (b) {
+      b.disabled = true;
+      b.textContent = "⏳ Aggiornamento...";
+    }
+  });
+
+  try {
+    showToast("🎨 Aggiornamento locandine in corso...");
+    let snap = getLocalSnapshot();
+    let lib = (snap.library && snap.library.length > 0) ? snap.library : state.libraryItems;
+
+    // 1. Pull latest cloud snapshot if syncCode is configured
+    if (state.syncCode) {
+      const cloudSnap = await pullCloudSnapshotClient(state.syncCode);
+      if (cloudSnap && Array.isArray(cloudSnap.library) && cloudSnap.library.length > 0) {
+        snap = mergeSnapshotsClient(snap, cloudSnap);
+        lib = snap.library;
+      }
+    }
+
+    // 2. Upgrade from curated sagas (instant HD posters)
+    let upgraded = upgradePostersFromCuratedSagas(lib);
+
+    // 3. Batch resolve posters from Wikipedia PageImages for any item with rank <= 3 or missing
+    const lowRankItems = lib.filter((x) => getPosterQualityRank(x.poster) <= 3);
+    if (lowRankItems.length > 0) {
+      const itBatch = [];
+      const enBatch = [];
+      const itItemMap = {};
+      const enItemMap = {};
+
+      lowRankItems.forEach((x) => {
+        const tIt = (x.title_it || "").trim();
+        const tEn = (x.title_original || "").trim();
+        if (tIt) {
+          itBatch.push(tIt);
+          itItemMap[tIt.toLowerCase()] = x;
+        }
+        if (tEn && tEn.toLowerCase() !== tIt.toLowerCase()) {
+          enBatch.push(tEn);
+          enItemMap[tEn.toLowerCase()] = x;
+        }
+      });
+
+      const fetchWikiBatch = async (host, titles, itemMap) => {
+        for (let i = 0; i < titles.length; i += 30) {
+          const chunk = titles.slice(i, i + 30);
+          try {
+            const piUrl = `https://${host}/w/api.php?action=query&titles=${encodeURIComponent(chunk.join("|"))}&prop=pageimages&pilicense=any&pithumbsize=500&format=json&origin=*`;
+            const d = await fetchJsonSafeClient(piUrl);
+            const pages = d?.query?.pages || {};
+            Object.values(pages).forEach((p) => {
+              const src = p?.thumbnail?.source || "";
+              const title = (p?.title || "").toLowerCase();
+              const target = itemMap[title];
+              if (target && src && getPosterQualityRank(src) > getPosterQualityRank(target.poster)) {
+                target.poster = src;
+                upgraded++;
+              }
+            });
+          } catch (e) { }
+        }
+      };
+
+      await Promise.allSettled([
+        fetchWikiBatch("it.wikipedia.org", itBatch, itItemMap),
+        fetchWikiBatch("en.wikipedia.org", enBatch, enItemMap),
+      ]);
+    }
+
+    // 4. Save and sync back
+    snap.library = lib;
+    snap.updated_at = Date.now() / 1000;
+    saveLocalSnapshot(snap);
+    state.libraryItems = lib;
+    renderLibrary();
+
+    if (state.syncCode) {
+      await pushCloudSnapshotClient(state.syncCode, snap);
+    }
+    if (!state.isCloudMode) {
+      await apiPost("/api/library/batch", { action: "restore", items: lib }).catch(() => {});
+    }
+
+    showToast(`✨ Locandine aggiornate con successo! (${upgraded > 0 ? upgraded + ' migliorate' : 'tutte in alta definizione'})`);
+  } catch (err) {
+    showToast("❌ Errore aggiornamento locandine: " + err.message);
+  } finally {
+    [btnToolbar, btnModal].forEach((b) => {
+      if (b) {
+        b.disabled = false;
+        b.textContent = "🎨 Aggiorna Locandine";
+      }
+    });
+  }
+}
+
 // ============================================================================
 // TAB 3: LE MIE LISTE 
 // ============================================================================
@@ -2889,6 +3024,12 @@ async function loadLibrary() {
       snap.library = serverItems;
       saveLocalSnapshot(snap);
     }
+  }
+  const sagaUpgraded = upgradePostersFromCuratedSagas(state.libraryItems);
+  if (sagaUpgraded > 0) {
+    const snap = getLocalSnapshot();
+    snap.library = state.libraryItems;
+    saveLocalSnapshot(snap);
   }
   renderLibrary();
   renderStreamingTab();
@@ -4649,6 +4790,15 @@ function setupNavigationAndEvents() {
         btnRestoreGh.textContent = "🔄 Ricarica da GitHub";
       }
     });
+  }
+
+  const btnRefreshPostersModal = document.getElementById("btn-refresh-posters-modal");
+  if (btnRefreshPostersModal) {
+    btnRefreshPostersModal.addEventListener("click", refreshAllLibraryPostersAction);
+  }
+  const btnRefreshPostersToolbar = document.getElementById("btn-refresh-posters-toolbar");
+  if (btnRefreshPostersToolbar) {
+    btnRefreshPostersToolbar.addEventListener("click", refreshAllLibraryPostersAction);
   }
 
   // Tab 3 Search (ONLY on form submit / Cerca button click or Enter key!)
