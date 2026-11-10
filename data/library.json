@@ -1,16 +1,1422 @@
 [
   {
+    "id": 1794343966643,
+    "external_id": "wd_Q23628",
+    "tvmaze_id": 527,
+    "media_type": "series",
+    "status": "watching",
+    "title_it": "I Soprano",
+    "title_original": "The Sopranos",
+    "aliases": [
+      "i soprano",
+      "the sopranos"
+    ],
+    "year": "1999",
+    "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/4/11341.jpg",
+    "genre": "Serie TV",
+    "description": "Serie televisiva statunitense (1999)",
+    "watched_episodes": [
+      "S1E1"
+    ],
+    "watched_episodes_count": 1,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:52:46.643Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343953965,
+    "external_id": "wd_Q19347291",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Deadpool",
+    "title_original": "Deadpool",
+    "aliases": [
+      "deadpool",
+      "deadpool"
+    ],
+    "year": "2016",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/2/23/Deadpool_%282016_poster%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2016 diretto da Tim Miller (2016)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:52:33.965Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343941721,
+    "external_id": "wd_Q44578",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Titanic (film 1997)",
+    "title_original": "Titanic",
+    "aliases": [
+      "titanic film 1997",
+      "titanic"
+    ],
+    "year": "1997",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/18/Titanic_%281997_film%29_poster.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1997 diretto da James Cameron (1997)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:52:21.721Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343929237,
+    "external_id": "wd_Q209170",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Mary Poppins",
+    "title_original": "Mary Poppins",
+    "aliases": [
+      "mary poppins",
+      "mary poppins"
+    ],
+    "year": "1965",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/7/78/Marypoppins.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1964 diretto da Robert Stevenson (1965)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:52:09.237Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343602855,
+    "external_id": "wd_Q21647114",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "La torre nera",
+    "title_original": "The Dark Tower",
+    "aliases": [
+      "la torre nera",
+      "the dark tower"
+    ],
+    "year": "2017",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/4/49/The_Dark_Tower_teaser_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2017 diretto da Nikolaj Arcel (2017)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:46:42.855Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343576949,
+    "external_id": "wd_Q206576",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Hugo Cabret",
+    "title_original": "Hugo",
+    "aliases": [
+      "hugo cabret",
+      "hugo"
+    ],
+    "year": "2011",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/7/73/Hugo_Poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2011 diretto da Martin Scorsese (2011)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:46:16.949Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343565462,
+    "external_id": "wd_Q23016495",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Baywatch",
+    "title_original": "Baywatch",
+    "aliases": [
+      "baywatch",
+      "baywatch"
+    ],
+    "year": "2017",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/13/Baywatch_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2017 diretto da Seth Gordon (2017)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:46:05.462Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343524598,
+    "external_id": "wd_Q19595098",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Mowgli - Il figlio della giungla",
+    "title_original": "Mowgli: Legend of the Jungle",
+    "aliases": [
+      "mowgli il figlio della giungla",
+      "mowgli legend of the jungle"
+    ],
+    "year": "2018",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/4/41/Mowgli_Legend_of_the_Jungle_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2018 diretto da Andy Serkis (2018)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:45:24.598Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343497865,
+    "external_id": "wd_Q21313531",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lo chiamavano Jeeg Robot",
+    "title_original": "They Call Me Jeeg",
+    "aliases": [
+      "lo chiamavano jeeg robot",
+      "they call me jeeg"
+    ],
+    "year": "2015",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/7/73/Lo_chiamavano_Jeeg_Robot_Poster_Italia_01_mid.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2015 diretto da Gabriele Mainetti (2015)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:44:57.865Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343487601,
+    "external_id": "wd_Q27689100",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Assassinio sull'Orient Express",
+    "title_original": "Murder on the Orient Express",
+    "aliases": [
+      "assassinio sull orient express",
+      "murder on the orient express"
+    ],
+    "year": "2017",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/bd/Murder_on_the_Orient_Express_teaser_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2017 diretto da Kenneth Branagh (2017)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:44:47.601Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343460336,
+    "external_id": "wd_Q117662601",
+    "tvmaze_id": 68803,
+    "media_type": "series",
+    "status": "wishlist",
+    "title_it": "Harry Potter",
+    "title_original": "Harry Potter",
+    "aliases": [
+      "harry potter",
+      "harry potter"
+    ],
+    "year": "2026",
+    "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/648/1621498.jpg",
+    "genre": "Serie TV",
+    "description": "Serie televisiva anglo-statunitense del 2026 (2026)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:44:20.336Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343448369,
+    "external_id": "wd_Q18151446",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Knock Knock",
+    "title_original": "Knock Knock",
+    "aliases": [
+      "knock knock",
+      "knock knock"
+    ],
+    "year": "2015",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/d/d1/Knock_Knock_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2015 diretto da Eli Roth (2015)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:44:08.369Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343436723,
+    "external_id": "wd_Q43370937",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Bird Box",
+    "title_original": "Bird Box",
+    "aliases": [
+      "bird box",
+      "bird box"
+    ],
+    "year": "2018",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/bd/Bird_Box_%28film%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2018 diretto da Susanne Bier (2018)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:43:56.723Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343356548,
+    "external_id": "saga_pirates_of_the_caribbean_the_curse_of_the_black_pearl",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "La maledizione della prima luna",
+    "title_original": "Pirates of the Caribbean: The Curse of the Black Pearl",
+    "aliases": [
+      "la maledizione della prima luna",
+      "pirates of the caribbean the curse of the black pearl"
+    ],
+    "year": "2003",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/8/89/Pirates_of_the_Caribbean_-_The_Curse_of_the_Black_Pearl.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2003 diretto da Gore Verbinski (2003)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:42:36.548Z",
+    "streaming_providers": [
+      {
+        "id": "disney",
+        "name": "Disney+",
+        "monetization": "FLATRATE",
+        "url": "https://www.disneyplus.com/browse/entity-2d6036d7-f3b4-42c3-b1d3-cd5dd79bf307"
+      }
+    ]
+  },
+  {
+    "id": 1794343310420,
+    "external_id": "wd_Q18703028",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Now You See Me 2",
+    "title_original": "Now You See Me 2",
+    "aliases": [
+      "now you see me 2",
+      "now you see me 2"
+    ],
+    "year": "2016",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/9/9a/Now_You_See_Me_2_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2016 diretto da Jon M. Chu (2016)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:41:50.420Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343306918,
+    "external_id": "wd_Q499851",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Now You See Me - I maghi del crimine",
+    "title_original": "Now You See Me",
+    "aliases": [
+      "now you see me i maghi del crimine",
+      "now you see me"
+    ],
+    "year": "2013",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/c/c7/Now_You_See_Me_Poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2013 diretto da Louis Leterrier (2013)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:41:46.918Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343276894,
+    "external_id": "wd_Q195949",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Un'impresa da Dio",
+    "title_original": "Evan Almighty",
+    "aliases": [
+      "un impresa da dio",
+      "evan almighty"
+    ],
+    "year": "2007",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/14/Evan_almightymp1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2007 diretto Tom Shadyac (2007)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:41:16.894Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343163915,
+    "external_id": "wd_Q91226161",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Aquaman e il regno perduto",
+    "title_original": "Aquaman and the Lost Kingdom",
+    "aliases": [
+      "aquaman e il regno perduto",
+      "aquaman and the lost kingdom"
+    ],
+    "year": "2022",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/4/4a/Aquaman_and_the_Lost_Kingdom_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2023 diretto da James Wan (2022)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:39:23.915Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343157556,
+    "external_id": "wd_Q22998395",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Aquaman",
+    "title_original": "Aquaman",
+    "aliases": [
+      "aquaman",
+      "aquaman"
+    ],
+    "year": "2018",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/e/ed/Aquaman_%28film%29_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "📡 In onda su Sky Cinema Action (Canale 305) • Jason Momoa e Amber Heard nel fanta-action sulle origini del supereroe DC Comics. Arthur Curry scopre di essere figlio della Regina di Atlantide e in possesso di poteri stra",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:39:17.556Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343119481,
+    "external_id": "wd_Q8561227",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Divergent",
+    "title_original": "Divergent",
+    "aliases": [
+      "divergent",
+      "divergent"
+    ],
+    "year": "2014",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/7/7e/Divergent_film_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2014 diretto da Neil Burger (2014)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:38:39.481Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343106263,
+    "external_id": "wd_Q19648591",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Divergent Series: Allegiant",
+    "title_original": "The Divergent Series: Allegiant",
+    "aliases": [
+      "the divergent series allegiant",
+      "the divergent series allegiant"
+    ],
+    "year": "2016",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/f/f8/Allegiantfilmposter.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2016 diretto da Robert Schwentke (2016)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:38:26.263Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794343103199,
+    "external_id": "wd_Q16997069",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Divergent Series: Insurgent",
+    "title_original": "The Divergent Series: Insurgent",
+    "aliases": [
+      "the divergent series insurgent",
+      "the divergent series insurgent"
+    ],
+    "year": "2015",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/a/af/Insurgent_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2015 diretto da Robert Schwentke (2015)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:38:23.199Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342595537,
+    "external_id": "wd_Q23780914",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Avengers: Infinity War",
+    "title_original": "Avengers: Infinity War",
+    "aliases": [
+      "avengers infinity war",
+      "avengers infinity war"
+    ],
+    "year": "2018",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/4/4d/Avengers_Infinity_War_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2018 diretto da Anthony Russo e Joe Russo (2018)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:29:55.537Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342592502,
+    "external_id": "wd_Q14171368",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Avengers: Age of Ultron",
+    "title_original": "Avengers: Age of Ultron",
+    "aliases": [
+      "avengers age of ultron",
+      "avengers age of ultron"
+    ],
+    "year": "2015",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/f/ff/Avengers_Age_of_Ultron_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2015 diretto da Joss Whedon (2015)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:29:52.502Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342586544,
+    "external_id": "wd_Q23781155",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Avengers: Endgame",
+    "title_original": "Avengers: Endgame",
+    "aliases": [
+      "avengers endgame",
+      "avengers endgame"
+    ],
+    "year": "2019",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/0/0d/Avengers_Endgame_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2019 diretto da Anthony e Joe Russo (2019)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:29:46.544Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342583122,
+    "external_id": "wd_Q182218",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Avengers",
+    "title_original": "The Avengers",
+    "aliases": [
+      "the avengers",
+      "the avengers"
+    ],
+    "year": "2012",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/8/8a/The_Avengers_%282012_film%29_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2012 diretto da Joss Whedon (2012)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:29:43.122Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342571707,
+    "external_id": "wd_Q186341",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Shining",
+    "title_original": "The Shining",
+    "aliases": [
+      "shining",
+      "the shining"
+    ],
+    "year": "1980",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/1d/The_Shining_%281980%29_U.K._release_poster_-_The_tide_of_terror_that_swept_America_IS_HERE.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "📡 In onda su Sky Cinema Suspense (Canale 306) • Jack Nicholson nel capolavoro horror di Stanley Kubrick. Dopo averne accettato l'impiego di custode invernale, uno scrittore si trasferisce insieme alla famiglia in un rem",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:29:31.707Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342558599,
+    "external_id": "wd_Q218235",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "La fabbrica di cioccolato",
+    "title_original": "Charlie and the Chocolate Factory",
+    "aliases": [
+      "la fabbrica di cioccolato",
+      "charlie and the chocolate factory"
+    ],
+    "year": "2005",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/17/Charlie_and_the_Chocolate_Factory_%28film%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2005 diretto da Tim Burton (2005)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:29:18.599Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342543653,
+    "external_id": "wd_Q153723",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Bastardi senza gloria",
+    "title_original": "Inglourious Basterds",
+    "aliases": [
+      "bastardi senza gloria",
+      "inglourious basterds"
+    ],
+    "year": "2009",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/c/c3/Inglourious_Basterds_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2009 diretto da Quentin Tarantino (2009)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:29:03.653Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342533599,
+    "external_id": "wd_Q217182",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Edward mani di forbice",
+    "title_original": "Edward Scissorhands",
+    "aliases": [
+      "edward mani di forbice",
+      "edward scissorhands"
+    ],
+    "year": "1990",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/3/3b/Edwardscissorhandsposter.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1990 diretto da Tim Burton (1990)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:28:53.599Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342524273,
+    "external_id": "wd_Q15624215",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lucy",
+    "title_original": "Lucy",
+    "aliases": [
+      "lucy",
+      "lucy"
+    ],
+    "year": "2014",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/14/Lucy_%282014_film%29_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2014 diretto da Luc Besson (2014)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:28:44.273Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342513851,
+    "external_id": "wd_Q104123",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Pulp Fiction",
+    "title_original": "Pulp Fiction",
+    "aliases": [
+      "pulp fiction",
+      "pulp fiction"
+    ],
+    "year": "1994",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1994 diretto da Quentin Tarantino (1994)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:28:33.851Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342498957,
+    "external_id": "wd_Q19938437",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The War - Il pianeta delle scimmie",
+    "title_original": "War for the Planet of the Apes",
+    "aliases": [
+      "the war il pianeta delle scimmie",
+      "war for the planet of the apes"
+    ],
+    "year": "2017",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/d/d7/War_for_the_Planet_of_the_Apes_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2017 diretto da Matt Reeves (2017)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:28:18.957Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342478191,
+    "external_id": "wd_Q127367",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Il Signore degli Anelli - La Compagnia dell'Anello",
+    "title_original": "The Lord of the Rings: The Fellowship of the Ring",
+    "aliases": [
+      "il signore degli anelli la compagnia dell anello",
+      "the lord of the rings the fellowship of the ring"
+    ],
+    "year": "2001",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/f/fb/Lord_Rings_Fellowship_Ring.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2001 diretto da Peter Jackson (2001)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:27:58.191Z",
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/60004480"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.84a9f6d5-bc3f-73a3-e41f-a82b4ff83e67"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-signore-degli-anelli-la-compagnia-dellanello/R_192125_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/fb9f961f-6302-4776-91d7-f1b7a69fb61d"
+      }
+    ]
+  },
+  {
+    "id": 1794342475391,
+    "external_id": "wd_Q131074",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Il Signore degli Anelli - Il ritorno del re",
+    "title_original": "The Lord of the Rings: The Return of the King",
+    "aliases": [
+      "il signore degli anelli il ritorno del re",
+      "the lord of the rings the return of the king"
+    ],
+    "year": "2003",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/4/48/Lord_Rings_Return_King.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2003 diretto da Peter Jackson (2003)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:27:55.391Z",
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/60004484"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.91d91081-a2e1-4004-af7d-4efb31e99e27"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-signore-degli-anelli-il-ritorno-del-re/R_192127_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/ad704585-6774-4d37-8c61-1bd41154173f"
+      }
+    ]
+  },
+  {
+    "id": 1794342471614,
+    "external_id": "wd_Q164963",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Il Signore degli Anelli - Le due torri",
+    "title_original": "The Lord of the Rings: The Two Towers",
+    "aliases": [
+      "il signore degli anelli le due torri",
+      "the lord of the rings the two towers"
+    ],
+    "year": "2002",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/a/a1/Lord_Rings_Two_Towers.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "📡 In onda su Sky Cinema Stories (Canale 302) • 2 Oscar al secondo capitolo della saga di Peter Jackson, dal romanzo di J.R.R. Tolkien. Dopo la scissione della Compagnia dell'Anello, Gollum insegue Frodo e Sam, diretti a",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:27:51.614Z",
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/60004483"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.a2a9f6ce-d700-f70b-88bf-54f0968a48d5"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-signore-degli-anelli-le-due-torri/R_192130_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/1b73bd19-1229-4e5f-986a-ae38ac0f5476"
+      }
+    ]
+  },
+  {
+    "id": 1794342457404,
+    "external_id": "wd_Q209538",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Iron Man 3",
+    "title_original": "Iron Man 3",
+    "aliases": [
+      "iron man 3",
+      "iron man 3"
+    ],
+    "year": "2013",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/19/Iron_Man_3_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2013 diretto da Shane Black (2013)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:27:37.404Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342443926,
+    "external_id": "wd_Q18225084",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Hateful Eight",
+    "title_original": "The Hateful Eight",
+    "aliases": [
+      "the hateful eight",
+      "the hateful eight"
+    ],
+    "year": "2015",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/d/d4/The_Hateful_Eight.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "📡 In onda su Sky Cinema Stories (Canale 302) • Western di Quentin Tarantino con un supercast. In un rifugio di montagna, otto sconosciuti si scontrano fra minacce, inganni e pallottole. Oscar alle musiche di Ennio Morri",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:27:23.926Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342417174,
+    "external_id": "wd_Q571032",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Django Unchained",
+    "title_original": "Django Unchained",
+    "aliases": [
+      "django unchained",
+      "django unchained"
+    ],
+    "year": "2012",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/8/8b/Django_Unchained_Poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2012 diretto da Quentin Tarantino (2012)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:26:57.174Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342397479,
+    "external_id": "wd_Q60487",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Twilight Saga: Breaking Dawn - Parte 2",
+    "title_original": "The Twilight Saga: Breaking Dawn – Part 2",
+    "aliases": [
+      "the twilight saga breaking dawn parte 2",
+      "the twilight saga breaking dawn part 2"
+    ],
+    "year": "2012",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/4/49/The_Twilight_Saga_Breaking_Dawn_Part_2_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2012 diretto da Bill Condon (2012)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:26:37.479Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342394490,
+    "external_id": "wd_Q60506",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Twilight Saga: Breaking Dawn - Parte 1",
+    "title_original": "The Twilight Saga: Breaking Dawn – Part 1",
+    "aliases": [
+      "the twilight saga breaking dawn parte 1",
+      "the twilight saga breaking dawn part 1"
+    ],
+    "year": "2011",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/c/c2/Breaking_Dawn_Part_1_Poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2011 diretto da Bill Condon (2011)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:26:34.490Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342391098,
+    "external_id": "wd_Q217010",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Twilight Saga: Eclipse",
+    "title_original": "The Twilight Saga: Eclipse",
+    "aliases": [
+      "the twilight saga eclipse",
+      "the twilight saga eclipse"
+    ],
+    "year": "2010",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/d/d7/Eclipse_Theatrical_One-Sheet.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2010 diretto da David Slade (2010)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:26:31.098Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342388237,
+    "external_id": "wd_Q116928",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Twilight Saga: New Moon",
+    "title_original": "The Twilight Saga: New Moon",
+    "aliases": [
+      "the twilight saga new moon",
+      "the twilight saga new moon"
+    ],
+    "year": "2009",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/9/93/The_Twilight_Saga-_New_Moon_poster.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2009 diretto da Chris Weitz (2009)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:26:28.237Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342384283,
+    "external_id": "wd_Q160071",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Twilight",
+    "title_original": "Twilight",
+    "aliases": [
+      "twilight",
+      "twilight"
+    ],
+    "year": "2008",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/b6/Twilight_%282008_film%29_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2008 diretto da Catherine Hardwicke (2008)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:26:24.283Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342335271,
+    "external_id": "wd_Q1090697",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Tom & Jerry - Il film",
+    "title_original": "Tom and Jerry: The Movie",
+    "aliases": [
+      "tom jerry il film",
+      "tom and jerry the movie"
+    ],
+    "year": "1992",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/b4/Tom_and_Jerry_-_The_Movie_Poster.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1992 diretto da Phil Roman (1992)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:25:35.271Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342198374,
+    "external_id": "wd_Q1437024",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin III - Un diamante per sempre",
+    "title_original": "Operation Return the Treasure",
+    "aliases": [
+      "lupin iii un diamante per sempre",
+      "operation return the treasure"
+    ],
+    "year": "2003",
+    "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1424-2yFiHF2N8gUa.jpg",
+    "genre": "Film",
+    "description": "Quindicesimo special televisivo d'animazione giapponese con protagonista Lupin III. (2003)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:23:18.374Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342182873,
+    "external_id": "wd_Q3130163",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin III - Il mistero delle carte di Hemingway",
+    "title_original": "Hemingway Papers",
+    "aliases": [
+      "lupin iii il mistero delle carte di hemingway",
+      "hemingway papers"
+    ],
+    "year": "1990",
+    "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1421-zTMijlcU3595.jpg",
+    "genre": "Film",
+    "description": "Secondo special televisivo d'animazione giapponese con protagonista Lupin III. (1990)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:23:02.873Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342114845,
+    "external_id": "wd_Q1440610",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin III - Spada Zantetsu, infuocati!",
+    "title_original": "Lupin the Third: Dragon of Doom",
+    "aliases": [
+      "lupin iii spada zantetsu infuocati",
+      "lupin the third dragon of doom"
+    ],
+    "year": "1994",
+    "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1417-ujVtPBTGlsWV.jpg",
+    "genre": "Film",
+    "description": "Sesto special televisivo d'animazione giapponese con protagonista Lupin III. (1994)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:21:54.845Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794342101750,
+    "external_id": "wd_Q1437012",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin III - All'inseguimento del tesoro di Harimao",
+    "title_original": "Lupin the Third: The Pursuit of Harimao’s Treasure",
+    "aliases": [
+      "lupin iii all inseguimento del tesoro di harimao",
+      "lupin the third the pursuit of harimao s treasure"
+    ],
+    "year": "1995",
+    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/b/bf/All%27inseguimento_del_tesoro_di_Harimao.PNG/500px-All%27inseguimento_del_tesoro_di_Harimao.PNG?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "Settimo special televisivo d'animazione giapponese con protagonista Lupin III. (1995)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:21:41.750Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341875043,
+    "external_id": "wd_Q1294193",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin III - Le profezie di Nostradamus",
+    "title_original": "Farewell to Nostradamus",
+    "aliases": [
+      "lupin iii le profezie di nostradamus",
+      "farewell to nostradamus"
+    ],
+    "year": "1995",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMDI1MDU2MjQtODEwNi00MTEwLTkwOTUtYWZjZWNkYWJlY2ZmXkEyXkFqcGc@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film d'animazione del 1995 diretto da Shun'ya Itō e Takeshi Shirato (1995)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:17:55.043Z",
+    "streaming_providers": [
+      {
+        "id": "timvision",
+        "name": "TIMVISION",
+        "monetization": "FLATRATE",
+        "url": "https://www.timvision.it/h/9060118900_92900005?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
+      }
+    ]
+  },
+  {
+    "id": 1794341866947,
+    "external_id": "wd_Q608079",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin III - Il castello di Cagliostro",
+    "title_original": "The Castle of Cagliostro",
+    "aliases": [
+      "lupin iii il castello di cagliostro",
+      "the castle of cagliostro"
+    ],
+    "year": "1979",
+    "poster": "https://m.media-amazon.com/images/M/MV5BYjQwZWNkMTYtYTU2Ny00YzgyLTljYTMtNjc0MjRkNWY5NDM4XkEyXkFqcGc@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film anime del 1979 diretto da Hayao Miyazaki (1979)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:17:46.947Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341853747,
+    "external_id": "wd_Q3530523",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin III - Tokyo Crisis: Memories of Blaze",
+    "title_original": "Tokyo Crisis",
+    "aliases": [
+      "lupin iii tokyo crisis memories of blaze",
+      "tokyo crisis"
+    ],
+    "year": "1998",
+    "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1437-0oQS3aiiyyp7.jpg",
+    "genre": "Film",
+    "description": "Decimo special televisivo d'animazione giapponese con protagonista Lupin III. (1998)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:17:33.748Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341837602,
+    "external_id": "ani_12117",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Detective Conan: The Eleventh Striker",
+    "title_original": "Meitantei Conan: Juuichininme no Striker",
+    "aliases": [
+      "detective conan the eleventh striker",
+      "meitantei conan juuichininme no striker"
+    ],
+    "year": "2012",
+    "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx12117-wCtSIeqrMhTZ.jpg",
+    "genre": "Adventure, Comedy, Mystery",
+    "description": "After an interaction with J-League professional players, Conan and co watches the big match between Tokyo Spirits and Gamba Osaka, only to find out that a bomb has been planted in the stadium. It is now up to Conan once ",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:17:17.602Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341821948,
+    "external_id": "wd_Q13417248",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Lupin Terzo vs Detective Conan",
+    "title_original": "Lupin the 3rd vs. Detective Conan: The Movie",
+    "aliases": [
+      "lupin terzo vs detective conan",
+      "lupin the 3rd vs detective conan the movie"
+    ],
+    "year": "2013",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNDRlNmFjMzYtMDYzZi00NDI4LWE1MDItZGJmNmEwZTRhOWFhXkEyXkFqcGc@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film d'animazione del 2013 diretto da Hajime Kamegaki (2013)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:17:01.949Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341780999,
+    "external_id": "wd_Q1586077",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Karate Kid III - La sfida finale",
+    "title_original": "The Karate Kid Part III",
+    "aliases": [
+      "karate kid iii la sfida finale",
+      "the karate kid part iii"
+    ],
+    "year": "1989",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/d/de/Karate_kid_part_III.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1989 diretto da John G. Avildsen (1989)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:16:21.000Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341778060,
+    "external_id": "wd_Q1418251",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Karate Kid II - La storia continua...",
+    "title_original": "The Karate Kid Part II",
+    "aliases": [
+      "karate kid ii la storia continua",
+      "the karate kid part ii"
+    ],
+    "year": "1986",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/b5/Karate_kid_part_II.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1986 diretto da John G. Avildsen (1986)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:16:18.060Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341769683,
+    "external_id": "wd_Q289127",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Karate Kid 4",
+    "title_original": "The Next Karate Kid",
+    "aliases": [
+      "karate kid 4",
+      "the next karate kid"
+    ],
+    "year": "1994",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/e/ea/The_next_karate_kid.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1994 diretto da Christopher Cain (1994)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:16:09.683Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341748765,
+    "external_id": "wd_Q327685",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "The Karate Kid - La leggenda continua",
+    "title_original": "The Karate Kid",
+    "aliases": [
+      "the karate kid la leggenda continua",
+      "the karate kid"
+    ],
+    "year": "2010",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/d/d5/Karate_kid_ver2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2010 diretto da Harald Zwart (2010)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:15:48.765Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794341740493,
+    "external_id": "wd_Q846679",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Per vincere domani - The Karate Kid",
+    "title_original": "The Karate Kid",
+    "aliases": [
+      "per vincere domani the karate kid",
+      "the karate kid"
+    ],
+    "year": "1984",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/a/a9/Karate_kid.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1984 diretto da John G. Avildsen (1984)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T20:15:40.493Z",
+    "streaming_providers": []
+  },
+  {
     "id": 1794326510091,
     "external_id": "wd_Q100320850",
     "tvmaze_id": null,
     "media_type": "movie",
     "status": "watched",
     "title_it": "Il film Pokémon: Bianco - Victini e Zekrom",
-    "title_original": "Gekijōban Poketto Monsutā: Bikutini to Kuroki Eiyū Zekuromu (劇場版ポケットモンスター ビクティニと黒き英雄 ゼクロム)",
+    "title_original": "Pokémon the Movie: White—Victini and Zekrom",
     "aliases": [
       "il film pokemon bianco victini e zekrom",
-      "pokemon the movie white victini and zekrom",
-      "Pokémon the Movie: White—Victini and Zekrom"
+      "pokemon the movie white victini and zekrom"
     ],
     "year": "2011",
     "poster": "https://m.media-amazon.com/images/M/MV5BZjkzNDVjZWYtYTljNS00YmQxLWFkY2UtN2E0NGJlNzE0NDM2XkEyXkFqcGc@._V1_UX400_.jpg",
@@ -19,7 +1425,8 @@
     "watched_episodes": [],
     "watched_episodes_count": 0,
     "upcoming_airings": [],
-    "created_at": "2026-11-10T16:01:50.091Z"
+    "created_at": "2026-11-10T16:01:50.091Z",
+    "streaming_providers": []
   },
   {
     "id": 1794326496668,
@@ -28,11 +1435,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Pokémon il film - Mewtwo contro Mew",
-    "title_original": "Gekijōban Poketto Monsutā: Myūtsū no Gyakushū (劇場版ポケットモンスター ミュウツーの逆襲)",
+    "title_original": "Pokémon: The First Movie",
     "aliases": [
       "pokemon il film mewtwo contro mew",
-      "pokemon the first movie",
-      "Pokémon: The First Movie"
+      "pokemon the first movie"
     ],
     "year": "1998",
     "poster": "https://upload.wikimedia.org/wikipedia/en/c/c9/Pokemon-mewtwo-strikes-back.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
@@ -51,11 +1457,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Il film Pokémon: Nero - Victini e Reshiram",
-    "title_original": "Gekijōban Poketto Monsutā: Bikutini to Shiroki Eiyū Reshiramu (劇場版ポケットモンスター ビクティニと白き英雄 レシラム)",
+    "title_original": "Pokémon the Movie: Black—Victini and Reshiram",
     "aliases": [
       "il film pokemon nero victini e reshiram",
-      "pokemon the movie black victini and reshiram",
-      "Pokémon the Movie: Black—Victini and Reshiram"
+      "pokemon the movie black victini and reshiram"
     ],
     "year": "2011",
     "poster": "https://m.media-amazon.com/images/M/MV5BNmMwMzljYTgtY2NmNS00M2FhLWI0YzMtY2Y3MzlmMzBhYTE1XkEyXkFqcGc@._V1_UX400_.jpg",
@@ -74,11 +1479,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Il film Pokémon - Kyurem e il solenne spadaccino",
-    "title_original": "Gekijōban Poketto Monsutā: Kyuremu tai Seikenshi Kerudio (劇場版ポケットモンスター キュレムVS聖剣士 ケルディオ)",
+    "title_original": "Pokémon the Movie: Kyurem vs. the Sword of Justice",
     "aliases": [
       "il film pokemon kyurem e il solenne spadaccino",
-      "pokemon the movie kyurem vs the sword of justice",
-      "Pokémon the Movie: Kyurem vs. the Sword of Justice"
+      "pokemon the movie kyurem vs the sword of justice"
     ],
     "year": "2012",
     "poster": "https://upload.wikimedia.org/wikipedia/en/3/35/Pokemon_Kyurem_Keldeo_Poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
@@ -97,11 +1501,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Pokémon: Giratina e il Guerriero dei Cieli",
-    "title_original": "Gekijōban Poketto Monsutā: Giratina to Sora no Hanataba: Sheimi (劇場版ポケットモンスター ギラティナと氷空の花束 シェイミ)",
+    "title_original": "Pokémon: Giratina & the Sky Warrior",
     "aliases": [
       "pokemon giratina e il guerriero dei cieli",
-      "pokemon giratina the sky warrior",
-      "Pokémon: Giratina & the Sky Warrior"
+      "pokemon giratina the sky warrior"
     ],
     "year": "2008",
     "poster": "https://upload.wikimedia.org/wikipedia/en/2/20/Giratina_%26_The_Sky_Warrior_Japanese_Poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
@@ -120,11 +1523,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Pokémon: Il re delle illusioni Zoroark",
-    "title_original": "Gekijōban Poketto Monsutā: Gen'ei no Hasha: Zoroāku (劇場版ポケットモンスター 幻影の覇者 ゾロアーク)",
+    "title_original": "Pokémon: Zoroark: Master of Illusions",
     "aliases": [
       "pokemon il re delle illusioni zoroark",
-      "pokemon zoroark master of illusions",
-      "Pokémon: Zoroark: Master of Illusions"
+      "pokemon zoroark master of illusions"
     ],
     "year": "2010",
     "poster": "https://upload.wikimedia.org/wikipedia/en/f/f1/Zoroark_Japanese_Poster.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
@@ -1443,7 +2845,7 @@
     "external_id": "wd_Q641760",
     "tvmaze_id": null,
     "media_type": "movie",
-    "status": "wishlist",
+    "status": "watched",
     "title_it": "Ted",
     "title_original": "Ted",
     "aliases": [
@@ -1577,11 +2979,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Il guardiano invisibile",
-    "title_original": "El guardián invisible",
+    "title_original": "The Invisible Guardian",
     "aliases": [
       "il guardiano invisibile",
-      "the invisible guardian",
-      "The Invisible Guardian"
+      "the invisible guardian"
     ],
     "year": "2017",
     "poster": "https://m.media-amazon.com/images/M/MV5BZTY5YWFjZDYtNzExNy00Mzc3LWExMTktYjRkNzViMzg5YzFlXkEyXkFqcGc@._V1_UX400_.jpg",
@@ -1600,11 +3001,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Inciso nelle ossa",
-    "title_original": "Legado en los huesos",
+    "title_original": "The Legacy of the Bones",
     "aliases": [
       "inciso nelle ossa",
-      "the legacy of the bones",
-      "The Legacy of the Bones"
+      "the legacy of the bones"
     ],
     "year": "2019",
     "poster": "https://m.media-amazon.com/images/M/MV5BMDU5YTFlZmYtMTAyYy00OTA4LThjNTYtZTQ1ZGNiZmNkZTk2XkEyXkFqcGc@._V1_UX400_.jpg",
@@ -1623,11 +3023,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Offerta alla tormenta",
-    "title_original": "Ofrenda a la tormenta",
+    "title_original": "Offering to the Storm",
     "aliases": [
       "offerta alla tormenta",
-      "offering to the storm",
-      "Offering to the Storm"
+      "offering to the storm"
     ],
     "year": "2020",
     "poster": "https://m.media-amazon.com/images/M/MV5BYTgyYWEzNWYtN2FlNy00NTc3LWI1ZDktNjQyNjk5MzM0Njc0XkEyXkFqcGc@._V1_UX400_.jpg",
@@ -1646,11 +3045,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Notte prima degli esami - Oggi",
-    "title_original": "Notte prima degli esami - Oggi",
+    "title_original": "Notte prima degli esami – Oggi",
     "aliases": [
       "notte prima degli esami oggi",
-      "notte prima degli esami oggi",
-      "Notte prima degli esami – Oggi"
+      "notte prima degli esami oggi"
     ],
     "year": "2007",
     "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/0/09/Notte_prima_degli_esami_oggi.png/500px-Notte_prima_degli_esami_oggi.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
@@ -2561,7 +3959,7 @@
     "external_id": "wd_Q476726",
     "tvmaze_id": null,
     "media_type": "movie",
-    "status": "wishlist",
+    "status": "watched",
     "title_it": "Una notte al museo 2 - La fuga",
     "title_original": "Night at the Museum: Battle of the Smithsonian",
     "aliases": [
@@ -3889,7 +5287,7 @@
       "the scorpion king book of souls"
     ],
     "year": "2018",
-    "poster": "",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/c/c2/%22The_Scorpion_King%2C_Book_of_Souls%22_Blu_Ray_Cover.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "genre": "Film",
     "description": "Film d'azione del 2018 (2018)",
     "watched_episodes": [],
@@ -3911,7 +5309,7 @@
       "the scorpion king 4 quest for power"
     ],
     "year": "2015",
-    "poster": "",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/0/00/%22The_Scorpion_King_4%2C_Quest_for_Power%22_Blu-Ray_Cover.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "genre": "Film",
     "description": "Film del 2015 diretto da Mike Elliott (2015)",
     "watched_episodes": [],
@@ -5097,7 +6495,7 @@
     "external_id": "wd_Q191543",
     "tvmaze_id": null,
     "media_type": "movie",
-    "status": "wishlist",
+    "status": "watched",
     "title_it": "Terminator Salvation",
     "title_original": "Terminator Salvation",
     "aliases": [
@@ -5273,7 +6671,7 @@
     "external_id": "wd_Q15140437",
     "tvmaze_id": null,
     "media_type": "movie",
-    "status": "wishlist",
+    "status": "watched",
     "title_it": "Terminator Genisys",
     "title_original": "Terminator Genisys",
     "aliases": [
@@ -6484,10 +7882,10 @@
     "tvmaze_id": null,
     "media_type": "movie",
     "status": "watched",
-    "title_it": "Hunger Games: La ragazza di fuoco",
+    "title_it": "Hunger Games: La ragazza di fuoro",
     "title_original": "The Hunger Games: Catching Fire",
     "aliases": [
-      "hunger games la ragazza di fuoco",
+      "hunger games la ragazza di fuoro",
       "the hunger games catching fire"
     ],
     "year": "2013",
@@ -6703,7 +8101,7 @@
     "external_id": "wd_Q34220038",
     "tvmaze_id": null,
     "media_type": "movie",
-    "status": "wishlist",
+    "status": "watched",
     "title_it": "Bumblebee",
     "title_original": "Bumblebee",
     "aliases": [
@@ -8171,11 +9569,10 @@
     "media_type": "series",
     "status": "watched",
     "title_it": "Vis a vis - Il prezzo del riscatto",
-    "title_original": "Vis a vis",
+    "title_original": "Vis a Vis",
     "aliases": [
       "vis a vis il prezzo del riscatto",
-      "vis a vis",
-      "Vis a Vis"
+      "vis a vis"
     ],
     "year": "2015",
     "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/62/155947.jpg",
@@ -8873,11 +10270,10 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "La casa di carta - Il fenomeno",
-    "title_original": "La casa de papel: El fenómeno",
+    "title_original": "Money Heist: The Phenomenon",
     "aliases": [
       "la casa di carta il fenomeno",
-      "money heist the phenomenon",
-      "Money Heist: The Phenomenon"
+      "money heist the phenomenon"
     ],
     "year": "2020",
     "poster": "https://m.media-amazon.com/images/M/MV5BNmZiZDk1NzQtMGI2ZS00YWQ3LWI2NDctNDE0YTQ3NjY2YzYxXkEyXkFqcGc@._V1_UX400_.jpg",
@@ -9769,11 +11165,10 @@
     "media_type": "series",
     "status": "watched",
     "title_it": "L'attacco dei giganti",
-    "title_original": "Shingeki no Kyojin (進撃の巨人)",
+    "title_original": "Shingeki no Kyojin",
     "aliases": [
       "l attacco dei giganti",
-      "shingeki no kyojin",
-      "Shingeki no Kyojin"
+      "shingeki no kyojin"
     ],
     "year": "2013",
     "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx16498-buvcRTBx4NSm.jpg",
@@ -10348,11 +11743,10 @@
     "media_type": "series",
     "status": "watched",
     "title_it": "Death Note",
-    "title_original": "DEATH NOTE (デスノート)",
+    "title_original": "DEATH NOTE",
     "aliases": [
       "death note",
-      "death note",
-      "DEATH NOTE"
+      "death note"
     ],
     "year": "2006",
     "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1535-kUgkcrfOrkUM.jpg",
@@ -10409,11 +11803,10 @@
     "media_type": "series",
     "status": "watched",
     "title_it": "The Seven Deadly Sins",
-    "title_original": "Nanatsu no Taizai (七つの大罪)",
+    "title_original": "Nanatsu no Taizai",
     "aliases": [
       "the seven deadly sins",
-      "nanatsu no taizai",
-      "Nanatsu no Taizai"
+      "nanatsu no taizai"
     ],
     "year": "2014",
     "poster": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20789-Ma5ouSYPkru9.jpg",
@@ -10835,11 +12228,10 @@
     "media_type": "series",
     "status": "watched",
     "title_it": "Romanzo criminale - La serie",
-    "title_original": "Romanzo criminale - La serie",
+    "title_original": "Romanzo Criminale",
     "aliases": [
       "romanzo criminale la serie",
-      "romanzo criminale",
-      "Romanzo Criminale"
+      "romanzo criminale"
     ],
     "year": "2008",
     "poster": "https://static.tvmaze.com/uploads/images/medium_portrait/24/60253.jpg",
@@ -11406,25 +12798,6 @@
     "rating": 0,
     "notes": "",
     "created_at": "2026-11-02T15:18:48.589194",
-    "streaming_providers": []
-  },
-  {
-    "id": 50,
-    "external_id": "imdb_tt0232500",
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Fast and Furious",
-    "title_original": "The Fast and the Furious",
-    "aliases_json": "[\"fast and furious\", \"fast and furious solo parti originali\", \"fast and the furious\", \"fast e furious\", \"fast e furious solo parti originali\", \"fast end furious\", \"fast end furious solo parti originali\", \"fast furious\", \"fast furious solo parti originali\", \"fast the furious\", \"the fast and the furious\", \"the fast the furious\"]",
-    "year": "2001",
-    "poster": "https://m.media-amazon.com/images/M/MV5BZGRiMDE1NTMtMThmZS00YjE4LWI1ODQtNjRkZGZlOTg2MGE1XkEyXkFqcGc@._V1_UX400_.jpg",
-    "genre": "Film",
-    "description": "Film del 1955 diretto da John Ireland, Edward Sampson • Con John Ireland, Dorothy Malone",
-    "tvmaze_id": null,
-    "imdb_id": "tt0232500",
-    "rating": 0,
-    "notes": "",
-    "created_at": "2026-11-02T15:15:14.970853",
     "streaming_providers": []
   },
   {
@@ -12207,59 +13580,6 @@
         "name": "HBO / Max",
         "monetization": "FLATRATE",
         "url": "https://www.hbomax.com/it/en/movie/25768909-39b8-4cb2-a39f-e059460f7add"
-      }
-    ]
-  },
-  {
-    "id": 1794161484871,
-    "external_id": "wd_Q25188",
-    "tvmaze_id": null,
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Inception",
-    "title_original": "Inception",
-    "aliases": [
-      "inception",
-      "inception"
-    ],
-    "year": "2010",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/b/ba/Inception_Paris_scene.jpg/500px-Inception_Paris_scene.jpg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "genre": "Film",
-    "description": "2014 Short film directed by Danial Hajibarat (2013)",
-    "watched_episodes": [],
-    "watched_episodes_count": 0,
-    "upcoming_airings": [],
-    "created_at": "2026-11-08T18:11:24.871Z",
-    "streaming_providers": [
-      {
-        "id": "prime",
-        "name": "Prime Video",
-        "monetization": "FLATRATE",
-        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.04a9f72c-f9c8-c4d1-f97b-6d7ad986a51f"
-      },
-      {
-        "id": "now",
-        "name": "NOW",
-        "monetization": "FLATRATE",
-        "url": "https://www.nowtv.it/watch/asset/inception/R_618980_HD"
-      },
-      {
-        "id": "sky",
-        "name": "Sky Go",
-        "monetization": "FLATRATE",
-        "url": "https://skygo.sky.it/"
-      },
-      {
-        "id": "hbo",
-        "name": "HBO / Max",
-        "monetization": "FLATRATE",
-        "url": "https://www.hbomax.com/it/en/movie/14552c93-d318-4563-a00b-343df7e35d0b"
-      },
-      {
-        "id": "timvision",
-        "name": "TIMVISION",
-        "monetization": "FLATRATE",
-        "url": "https://www.timvision.it/h/9050245783_92900001?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
       }
     ]
   }
