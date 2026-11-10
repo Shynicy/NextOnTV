@@ -537,33 +537,112 @@ def fetch_7day_epg(start_date: Optional[datetime.date] = None, days: int = 7) ->
             except Exception:
                 pass
 
-    # Deduplicate by (lcn, date, start_time[:4], norm_title), preferring entries with richer metadata/posters
-    dedup: Dict[Tuple, Dict] = {}
+    # Deduplicate multi-source events (Sky GTV, RaiPlay, StaseraInTV)
+    def _is_placeholder(p: Optional[str]) -> bool:
+        if not p:
+            return True
+        p_lower = p.lower()
+        return "placeholder" in p_lower or "logo" in p_lower or "blank" in p_lower
+
+    def _strip_conj(t: str) -> str:
+        t = re.sub(r"\b(e|ed|and|et|y)\b", " ", t.lower())
+        return re.sub(r"\s+", " ", t).strip()
+
+    def _titles_match(t1: str, t2: str) -> bool:
+        if not t1 or not t2:
+            return False
+        if t1 == t2:
+            return True
+        if _strip_conj(t1) == _strip_conj(t2):
+            return True
+        if len(t1) >= 5 and t1 in t2:
+            return True
+        if len(t2) >= 5 and t2 in t1:
+            return True
+        return False
+
+    # Pass 1: Exact channel, date and start_time deduplication
+    by_exact: Dict[Tuple[int, str, str], Dict] = {}
     for ev in raw_events:
         if not ev.get("norm_title"):
             continue
-        # Round start_time to 10-min bucket when deduplicating Sky vs RaiPlay on same channel
-        hh_mm = ev["start_time"][:4]
-        key = (ev["lcn"], ev["date"], hh_mm, ev["norm_title"])
-        existing = dedup.get(key)
+        key = (ev["lcn"], ev["date"], ev["start_time"])
+        existing = by_exact.get(key)
         if not existing:
-            dedup[key] = ev
+            by_exact[key] = dict(ev)
         else:
-            # Prefer movie/series classification and poster/season info
+            # Prefer movie/series classification over 'other'
             if existing["media_type"] == "other" and ev["media_type"] != "other":
                 existing["media_type"] = ev["media_type"]
-            if not existing.get("poster") and ev.get("poster"):
+            # Prefer real poster over generic placeholder or empty
+            if _is_placeholder(existing.get("poster")) and not _is_placeholder(ev.get("poster")):
                 existing["poster"] = ev["poster"]
+            # Prefer episode / season numbers if available
             if existing.get("season") is None and ev.get("season") is not None:
                 existing["season"] = ev["season"]
             if existing.get("episode") is None and ev.get("episode") is not None:
                 existing["episode"] = ev["episode"]
             if not existing.get("episode_title") and ev.get("episode_title"):
                 existing["episode_title"] = ev["episode_title"]
+            # Prefer richer description
             if len(ev.get("description") or "") > len(existing.get("description") or ""):
                 existing["description"] = ev["description"]
+            # Prefer title with clean & symbol if titles match
+            if "&" in ev.get("title", "") and "&" not in existing.get("title", ""):
+                existing["title"] = ev["title"]
+                existing["norm_title"] = ev["norm_title"]
 
-    sorted_events = sorted(dedup.values(), key=lambda x: (x["date"], x["start_time"], x["lcn"]))
+    # Pass 2: Merge multi-source near-duplicates (within <= 5 mins on same channel & date where titles match)
+    from collections import defaultdict
+    by_chan_date = defaultdict(list)
+    for x in by_exact.values():
+        by_chan_date[(x["lcn"], x["date"])].append(x)
+
+    deduped_events = []
+    for (lcn, d_str), ch_evs in by_chan_date.items():
+        ch_evs.sort(key=lambda x: x["start_time"])
+        idx = 0
+        while idx < len(ch_evs):
+            curr = ch_evs[idx]
+            if idx + 1 < len(ch_evs):
+                nxt = ch_evs[idx + 1]
+                if curr.get("source") != nxt.get("source"):
+                    try:
+                        t1 = datetime.datetime.strptime(curr["start_time"], "%H:%M")
+                        t2 = datetime.datetime.strptime(nxt["start_time"], "%H:%M")
+                        diff_m = abs((t2 - t1).total_seconds()) / 60
+                        if 0 < diff_m <= 5:
+                            n1 = curr.get("norm_title", "")
+                            n2 = nxt.get("norm_title", "")
+                            if _titles_match(n1, n2):
+                                # Merge nxt into curr
+                                if nxt.get("source") == "sky_gtv":
+                                    curr["start_time"] = nxt["start_time"]
+                                    curr["end_time"] = nxt["end_time"]
+                                    curr["start_iso"] = nxt["start_iso"]
+                                    curr["duration_min"] = nxt["duration_min"]
+                                if _is_placeholder(curr.get("poster")) and not _is_placeholder(nxt.get("poster")):
+                                    curr["poster"] = nxt["poster"]
+                                if curr.get("season") is None and nxt.get("season") is not None:
+                                    curr["season"] = nxt["season"]
+                                if curr.get("episode") is None and nxt.get("episode") is not None:
+                                    curr["episode"] = nxt["episode"]
+                                if not curr.get("episode_title") and nxt.get("episode_title"):
+                                    curr["episode_title"] = nxt["episode_title"]
+                                if len(nxt.get("description") or "") > len(curr.get("description") or ""):
+                                    curr["description"] = nxt["description"]
+                                if "&" in nxt.get("title", "") and "&" not in curr.get("title", ""):
+                                    curr["title"] = nxt["title"]
+                                    curr["norm_title"] = nxt["norm_title"]
+                                deduped_events.append(curr)
+                                idx += 2
+                                continue
+                    except Exception:
+                        pass
+            deduped_events.append(curr)
+            idx += 1
+
+    sorted_events = sorted(deduped_events, key=lambda x: (x["date"], x["start_time"], x["lcn"]))
     return sorted_events
 
 

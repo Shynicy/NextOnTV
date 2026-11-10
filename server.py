@@ -433,6 +433,14 @@ def match_epg_with_library(
             if al:
                 full_exact_map.setdefault(al, []).append(item)
 
+    def _is_place(p: Optional[str]) -> bool:
+        if not p:
+            return True
+        p_l = p.lower()
+        return "placeholder" in p_l or "logo" in p_l or "blank" in p_l
+
+    deduped_slot_map: Dict[str, Dict] = {}
+
     for ev in events:
         if ev.get("media_type") not in ("movie", "series"):
             continue
@@ -441,31 +449,6 @@ def match_epg_with_library(
             continue
         ev_norm = ev.get("norm_title") or ""
         if not ev_norm:
-            continue
-
-        full_matches = full_exact_map.get(ev_norm) or []
-        for fm in full_matches:
-            if fm["media_type"] == ev["media_type"]:
-                counts_by_category["all"] += 1
-                if fm["status"] == "wishlist":
-                    counts_by_category["wishlist"] += 1
-                elif fm["status"] == "watched" and fm["media_type"] == "movie":
-                    counts_by_category["watched_movies"] += 1
-                elif fm["status"] in ("watched", "watching") and fm["media_type"] == "series":
-                    counts_by_category["watched_series"] += 1
-                break
-
-        if day_filter != "all" and ev["date"] != day_filter:
-            continue
-        if lcn_filter and ev["lcn"] != lcn_filter:
-            continue
-
-        hh_mm = ev.get("start_time") or "00:00"
-        if time_slot == "primetime" and not ("20:20" <= hh_mm <= "23:15"):
-            continue
-        elif time_slot == "evening" and not (hh_mm >= "19:00" or hh_mm <= "00:30"):
-            continue
-        elif time_slot == "daytime" and not ("06:00" <= hh_mm < "19:00"):
             continue
 
         candidates = exact_map.get(ev_norm)
@@ -485,29 +468,106 @@ def match_epg_with_library(
         if not lib_item:
             continue
 
+        chan_key = str(ev.get("lcn") or ev.get("channel_name") or "")
+        date_key = ev.get("date") or ""
+        time_key = (ev.get("start_time") or "00:00")[:5]
+        slot_key = f"{chan_key}_{date_key}_{time_key}"
+
+        existing = deduped_slot_map.get(slot_key)
+        if not existing and lib_item.get("id"):
+            for cand_ev in deduped_slot_map.values():
+                if (
+                    str(cand_ev.get("lcn") or cand_ev.get("channel_name") or "") == chan_key
+                    and cand_ev.get("date") == date_key
+                    and cand_ev.get("library_item", {}).get("id") == lib_item["id"]
+                ):
+                    try:
+                        h1, m1 = map(int, (cand_ev.get("start_time") or "00:00").split(":")[:2])
+                        h2, m2 = map(int, time_key.split(":")[:2])
+                        if abs((h1 * 60 + m1) - (h2 * 60 + m2)) <= 15:
+                            existing = cand_ev
+                            break
+                    except Exception:
+                        pass
+
         watched_ep_set = set(lib_item.get("watched_episodes") or [])
         s_num = ev.get("season")
         e_num = ev.get("episode")
         ep_code = f"S{s_num}E{e_num}" if (s_num is not None and e_num is not None) else ""
         is_ep_watched = (ep_code in watched_ep_set) if ep_code else (lib_item["status"] == "watched" and lib_item["media_type"] == "movie")
 
-        if only_unwatched_episodes and is_ep_watched:
+        if existing:
+            # Merge richer poster and details
+            if _is_place(existing.get("poster")) and not _is_place(ev.get("poster")):
+                existing["poster"] = ev["poster"]
+            if len(ev.get("description") or "") > len(existing.get("description") or ""):
+                existing["description"] = ev["description"]
+            if existing.get("season") is None and s_num is not None:
+                existing["season"] = s_num
+            if existing.get("episode") is None and e_num is not None:
+                existing["episode"] = e_num
+                existing["ep_code"] = ep_code
+                existing["is_episode_watched"] = is_ep_watched
+            if not existing.get("episode_title") and ev.get("episode_title"):
+                existing["episode_title"] = ev["episode_title"]
+            if lib_item.get("title_it") and ev.get("media_type") == "movie":
+                existing["title"] = lib_item["title_it"]
+        else:
+            enriched = dict(ev)
+            if lib_item.get("title_it") and ev.get("media_type") == "movie":
+                enriched["title"] = lib_item["title_it"]
+            if not enriched.get("poster") and lib_item.get("poster"):
+                enriched["poster"] = lib_item["poster"]
+            enriched["library_item"] = {
+                "id": lib_item["id"],
+                "title_it": lib_item["title_it"],
+                "title_original": lib_item["title_original"],
+                "media_type": lib_item["media_type"],
+                "status": lib_item["status"],
+                "rating": lib_item.get("rating") or 0,
+            }
+            enriched["ep_code"] = ep_code
+            enriched["is_episode_watched"] = is_ep_watched
+            enriched["has_reminder"] = ev["id"] in reminder_ids
+            deduped_slot_map[slot_key] = enriched
+
+    # Calculate deduplicated category counts and apply view filters
+    for enriched in deduped_slot_map.values():
+        lib_it = enriched["library_item"]
+        st = lib_it["status"]
+        mtype = lib_it["media_type"]
+
+        counts_by_category["all"] += 1
+        if st == "wishlist":
+            counts_by_category["wishlist"] += 1
+        elif st == "watched" and mtype == "movie":
+            counts_by_category["watched_movies"] += 1
+        elif st in ("watched", "watching") and mtype == "series":
+            counts_by_category["watched_series"] += 1
+
+        if filter_mode == "wishlist" and st != "wishlist":
+            continue
+        if filter_mode == "watched_movies" and not (st == "watched" and mtype == "movie"):
+            continue
+        if filter_mode == "watched_series" and not (st in ("watched", "watching") and mtype == "series"):
             continue
 
-        enriched = dict(ev)
-        if not enriched.get("poster") and lib_item.get("poster"):
-            enriched["poster"] = lib_item["poster"]
-        enriched["library_item"] = {
-            "id": lib_item["id"],
-            "title_it": lib_item["title_it"],
-            "title_original": lib_item["title_original"],
-            "media_type": lib_item["media_type"],
-            "status": lib_item["status"],
-            "rating": lib_item.get("rating") or 0,
-        }
-        enriched["ep_code"] = ep_code
-        enriched["is_episode_watched"] = is_ep_watched
-        enriched["has_reminder"] = ev["id"] in reminder_ids
+        if day_filter != "all" and enriched["date"] != day_filter:
+            continue
+        if lcn_filter and enriched["lcn"] != lcn_filter:
+            continue
+
+        hh_mm = enriched.get("start_time") or "00:00"
+        if time_slot == "primetime" and not ("20:20" <= hh_mm <= "23:15"):
+            continue
+        elif time_slot == "evening" and not (hh_mm >= "19:00" or hh_mm <= "00:30"):
+            continue
+        elif time_slot == "daytime" and not ("06:00" <= hh_mm < "19:00"):
+            continue
+
+        if only_unwatched_episodes and enriched.get("is_episode_watched"):
+            continue
+
         matched_broadcasts.append(enriched)
 
     return {

@@ -1170,8 +1170,8 @@ async function handleClientCloudGet(url) {
       return null;
     };
 
-    let counts = { all: 0, wishlist: 0, watched_movies: 0, watched_series: 0 };
-    const matchedEvents = [];
+    // First pass: match all events against library and deduplicate identical/near broadcast slots on same channel
+    const dedupedMap = new Map();
 
     allEvents.forEach((ev) => {
       const isSkyEv = Boolean(ev.is_sky || Number(ev.lcn || 0) >= 100);
@@ -1180,11 +1180,37 @@ async function handleClientCloudGet(url) {
       const lib = isMatch(ev);
       if (!lib) return;
 
+      const chanKey = String(ev.lcn || ev.channel_name || "");
+      const dateKey = ev.date || "";
+      const timeKey = (ev.start_time || "00:00").slice(0, 5);
+      const exactSlotKey = `${chanKey}_${dateKey}_${timeKey}`;
+
+      let existing = dedupedMap.get(exactSlotKey);
+
+      // Also check near-slot (within 15 minutes) on same channel and date for the SAME library item
+      if (!existing && lib.id) {
+        for (const cand of dedupedMap.values()) {
+          if (
+            String(cand.lcn || cand.channel_name || "") === chanKey &&
+            cand.date === dateKey &&
+            cand.library_item &&
+            cand.library_item.id === lib.id
+          ) {
+            const [h1, m1] = (cand.start_time || "00:00").split(":").map(Number);
+            const [h2, m2] = timeKey.split(":").map(Number);
+            const diffMin = Math.abs((h1 * 60 + m1) - (h2 * 60 + m2));
+            if (diffMin <= 15) {
+              existing = cand;
+              break;
+            }
+          }
+        }
+      }
+
       const st = lib.status || "wishlist";
       const mtype = lib.media_type || ev.media_type || "movie";
       const isMovie = mtype === "movie";
 
-      // Calculate watched episode status
       let isEpWatched = false;
       const epCode = (ev.season && ev.episode) ? `S${ev.season}E${ev.episode}` : "";
       if (lib.watched_episodes && Array.isArray(lib.watched_episodes) && epCode) {
@@ -1193,7 +1219,62 @@ async function handleClientCloudGet(url) {
         isEpWatched = true;
       }
 
-      // Check counts
+      const isPlace = (p) => !p || p.includes("placeholder") || p.includes("logo") || p.includes("blank");
+
+      if (existing) {
+        // Merge richer metadata into existing entry
+        if (isPlace(existing.poster) && !isPlace(ev.poster)) {
+          existing.poster = ev.poster;
+        }
+        if ((ev.description || "").length > (existing.description || "").length) {
+          existing.description = ev.description;
+        }
+        if (existing.season == null && ev.season != null) {
+          existing.season = ev.season;
+        }
+        if (existing.episode == null && ev.episode != null) {
+          existing.episode = ev.episode;
+          existing.ep_code = epCode;
+          existing.is_episode_watched = isEpWatched;
+        }
+        if (!existing.episode_title && ev.episode_title) {
+          existing.episode_title = ev.episode_title;
+        }
+        if (isMovie && lib.title_it) {
+          existing.title = lib.title_it;
+        } else if (ev.title && ev.title.includes("&") && !existing.title.includes("&")) {
+          existing.title = ev.title;
+        }
+      } else {
+        const enriched = {
+          ...ev,
+          title: (isMovie && lib.title_it) ? lib.title_it : ev.title,
+          library_item: lib,
+          is_episode_watched: isEpWatched,
+          ep_code: epCode,
+        };
+        dedupedMap.set(exactSlotKey, enriched);
+      }
+    });
+
+    const uniqueMatches = Array.from(dedupedMap.values());
+    uniqueMatches.sort((a, b) => {
+      const dCmp = (a.date || "").localeCompare(b.date || "");
+      if (dCmp !== 0) return dCmp;
+      const tCmp = (a.start_time || "").localeCompare(b.start_time || "");
+      if (tCmp !== 0) return tCmp;
+      return Number(a.lcn || 0) - Number(b.lcn || 0);
+    });
+
+    let counts = { all: 0, wishlist: 0, watched_movies: 0, watched_series: 0 };
+    const matchedEvents = [];
+
+    uniqueMatches.forEach((ev) => {
+      const lib = ev.library_item;
+      const st = lib.status || "wishlist";
+      const mtype = lib.media_type || ev.media_type || "movie";
+      const isMovie = mtype === "movie";
+
       counts.all++;
       if (st === "wishlist") counts.wishlist++;
       if (st === "watched" && isMovie) counts.watched_movies++;
@@ -1223,14 +1304,9 @@ async function handleClientCloudGet(url) {
       }
 
       // Filter by unwatched only
-      if (onlyUnwatched && (isEpWatched || (isMovie && st === "watched"))) return;
+      if (onlyUnwatched && (ev.is_episode_watched || (isMovie && st === "watched"))) return;
 
-      matchedEvents.push({
-        ...ev,
-        library_item: lib,
-        is_episode_watched: isEpWatched,
-        ep_code: epCode,
-      });
+      matchedEvents.push(ev);
     });
 
     let statusFile = null;
