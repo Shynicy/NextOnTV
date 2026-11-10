@@ -3975,8 +3975,35 @@ function renderSearchResultCards(results, targetContainer, isCompactModal = fals
 }
 
 // ============================================================================
-// TAB 3 & MODAL LIVE SEARCH: CERCA & AGGIUNGI FILM E SERIE TV
+// TAB 4 & MODAL LIVE SEARCH: CERCA & AGGIUNGI FILM E SERIE TV
 // ============================================================================
+function resetCatalogSearchTab() {
+  const catalogSearch = document.getElementById("catalog-search-input");
+  if (catalogSearch) {
+    catalogSearch.value = "";
+  }
+  state.searchLastQuery = "";
+  state.searchRawResults = [];
+  state.searchResults = [];
+  state.selectedSearchIndices.clear();
+  state.searchMediaType = "all";
+
+  const btnSearchMovie = document.getElementById("filter-search-movies");
+  const btnSearchSeries = document.getElementById("filter-search-series");
+  if (btnSearchMovie) btnSearchMovie.classList.remove("active");
+  if (btnSearchSeries) btnSearchSeries.classList.remove("active");
+
+  const container = document.getElementById("search-results-container");
+  if (container) {
+    container.innerHTML = `
+      <div class="empty-box">
+        <p>Digita il titolo (anche incompleto) di un Film o di una Serie TV qui sopra e premi
+          <strong>Cerca</strong>!
+        </p>
+      </div>`;
+  }
+}
+
 async function executeCatalogSearch(query) {
   const container = document.getElementById("search-results-container");
   const cleanQ = (query || "").trim();
@@ -4593,10 +4620,9 @@ function setupNavigationAndEvents() {
         libFilter.value = "";
         state.libQuery = "";
       }
-      const catalogSearch = document.getElementById("catalog-search-input");
-      if (catalogSearch && catalogSearch.value) {
-        catalogSearch.value = "";
-      }
+
+      // Reset Tab 4 (Cerca & Aggiungi) completely (empty input + clean initial prompt) whenever switching sections
+      resetCatalogSearchTab();
 
       if (targetId === "tab-explore") {
         loadExploreEpg();
@@ -4877,7 +4903,7 @@ function setupNavigationAndEvents() {
     btnRefreshPostersToolbar.addEventListener("click", refreshAllLibraryPostersAction);
   }
 
-  // Tab 3 Search (ONLY on form submit / Cerca button click or Enter key!)
+  // Tab 4 Search (ONLY on form submit / Cerca button click or Enter key!)
   const mainSearchInput = document.getElementById("catalog-search-input");
   if (mainSearchInput) {
     mainSearchInput.addEventListener("click", () => {
@@ -4888,6 +4914,11 @@ function setupNavigationAndEvents() {
     mainSearchInput.addEventListener("focus", () => {
       if (mainSearchInput.value) {
         mainSearchInput.value = "";
+      }
+    });
+    mainSearchInput.addEventListener("search", () => {
+      if (!mainSearchInput.value) {
+        resetCatalogSearchTab();
       }
     });
   }
