@@ -36,8 +36,6 @@ python server.py
 
 NextOnTV ti permette di scaricare in qualsiasi momento un backup completo in formato JSON di tutti i tuoi film e serie TV salvati, per poi caricarlo su GitHub e renderlo la copia ufficiale dell'app.
 
----
-
 ### 📥 1. Come scaricare il backup dall'app
 1. Apri l'app NextOnTV (sul telefono o su PC).
 2. Vai nella scheda **"Le Mie Liste"** (terza icona in basso).
