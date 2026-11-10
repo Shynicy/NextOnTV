@@ -20,6 +20,7 @@ SAGA_GROUPS: List[Dict] = [
     {"id": "pirates", "names": ["pirati dei caraibi", "pirates of the caribbean", "la maledizione della prima luna"]},
     {"id": "back_to_future", "names": ["ritorno al futuro", "back to the future"]},
     {"id": "rocky", "names": ["rocky", "rocky balboa", "creed"]},
+    {"id": "bad_boys", "names": ["bad boys", "bad boy"]},
 ]
 
 # Comprehensive bilingual alias & saga catalog (Italian broadcast title <-> Original title)
@@ -76,6 +77,11 @@ ITALIAN_ORIGINAL_ALIASES: List[Dict] = [
     {"it": "Pirati dei Caraibi - Ai confini del mondo", "orig": "Pirates of the Caribbean: At World's End", "type": "movie", "year": "2007", "aliases": ["pirati dei caraibi 3", "ai confini del mondo"], "saga_group": "pirates", "saga_rank": 3},
     {"it": "Pirati dei Caraibi - Oltre i confini del mare", "orig": "Pirates of the Caribbean: On Stranger Tides", "type": "movie", "year": "2011", "aliases": ["pirati dei caraibi 4", "oltre i confini del mare"], "saga_group": "pirates", "saga_rank": 4},
     {"it": "Pirati dei Caraibi - La vendetta di Salazar", "orig": "Pirates of the Caribbean: Dead Men Tell No Tales", "type": "movie", "year": "2017", "aliases": ["pirati dei caraibi 5", "vendetta di salazar"], "saga_group": "pirates", "saga_rank": 5},
+    # Bad Boys Complete 4-Movie Saga
+    {"it": "Bad Boys", "orig": "Bad Boys", "type": "movie", "year": "1995", "aliases": ["bad boys 1", "bad boys i"], "saga_group": "bad_boys", "saga_rank": 1, "poster": "https://upload.wikimedia.org/wikipedia/en/a/a8/Bad_Boys.jpg"},
+    {"it": "Bad Boys II", "orig": "Bad Boys II", "type": "movie", "year": "2003", "aliases": ["bad boys 2", "bad boys ii"], "saga_group": "bad_boys", "saga_rank": 2, "poster": "https://upload.wikimedia.org/wikipedia/en/f/f4/Bad_Boys_II_Official_Theatrical_Poster.png"},
+    {"it": "Bad Boys for Life", "orig": "Bad Boys for Life", "type": "movie", "year": "2020", "aliases": ["bad boys 3", "bad boys iii", "bad boys per sempre"], "saga_group": "bad_boys", "saga_rank": 3, "poster": "https://upload.wikimedia.org/wikipedia/en/9/90/Bad_Boys_for_Life_poster.jpg"},
+    {"it": "Bad Boys: Ride or Die", "orig": "Bad Boys: Ride or Die", "type": "movie", "year": "2024", "aliases": ["bad boys 4", "bad boys iv", "ride or die"], "saga_group": "bad_boys", "saga_rank": 4, "poster": "https://upload.wikimedia.org/wikipedia/en/8/8b/Bad_Boys_Ride_or_Die_%282024%29_poster.jpg"},
     # Altri Film Celebri & Anime Bridge
     {"it": "Deadpool & Wolverine", "orig": "Deadpool & Wolverine", "type": "movie", "year": "2024"},
     {"it": "Mr. & Mrs. Smith", "orig": "Mr. & Mrs. Smith", "type": "movie", "year": "2005"},
@@ -743,7 +749,7 @@ def _poster_quality_rank(url: str) -> int:
         return 3
     if "/wikipedia/it/" in u:
         return 4
-    if "static.tvmaze.com" in u or "anilist.co" in u:
+    if "/wikipedia/en/" in u or "static.tvmaze.com" in u or "anilist.co" in u:
         return 5
     if "m.media-amazon.com" in u or "imdb" in u:
         return 6
@@ -826,7 +832,7 @@ WD_MOVIE_EXPLICIT_P31 = {
 WD_ALL_MEDIA_P31 = WD_SERIES_P31 | WD_MOVIE_P31
 WD_REJECT_P31 = {
     "Q7889", "Q7058673", "Q482994", "Q134556",
-    "Q3464665", "Q21191270", "Q1983062", "Q4167410",
+    "Q3464665", "Q21191270", "Q1983062", "Q4167410", "Q185529",
 }
 WD_BRIDGE_P31 = {"Q21198342", "Q196600", "Q7725634", "Q8274", "Q1667921"}
 WD_STMT = "haswbstatement:" + "|".join(f"P31={q}" for q in sorted(WD_ALL_MEDIA_P31))
@@ -903,9 +909,23 @@ def _score_candidate_list(query: str, primary_cands: List[str], alias_cands: Lis
         elif (q_str and q_str in c_str) or (q_core_str and q_core_str in c_core_str):
             is_start = c_str.startswith(q_str) or (q_core_str and c_core_str.startswith(q_core_str))
             is_end = c_str.endswith(q_str) or (q_core_str and c_core_str.endswith(q_core_str))
-            phrase_score = 940 if is_start else (920 if is_end else 900)
             extra_words = abs(len(c_core) - len(q_core))
-            s = max(780, phrase_score - extra_words * 8)
+            if is_start and 1 <= extra_words <= 3:
+                rem_tokens = c_core[len(q_core) :] if len(c_core) > len(q_core) else []
+                if extra_words == 1 and rem_tokens and rem_tokens[0].isdigit():
+                    s = 965
+                elif rem_tokens and (
+                    rem_tokens[0].isdigit()
+                    or rem_tokens[0] in ("parte", "part", "capitolo", "chapter", "vol", "volume", "for", "ride", "forever")
+                    or ":" in cand
+                    or "-" in cand
+                ):
+                    s = max(935, 955 - (extra_words - 1) * 6)
+                else:
+                    s = max(780, 945 - extra_words * 7)
+            else:
+                phrase_score = 940 if is_start else (920 if is_end else 900)
+                s = max(780, phrase_score - extra_words * 8)
         elif q_core:
             matched_indices = []
             matched_count = 0
@@ -1068,6 +1088,7 @@ def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None
 
     results: List[Dict] = []
     itwiki_map: Dict[str, Dict] = {}
+    enwiki_map: Dict[str, Dict] = {}
 
     for qid in qid_to_fetch:
         e = ents.get(qid)
@@ -1148,6 +1169,8 @@ def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None
 
         descs = e.get("descriptions") or {}
         desc_val = ((descs.get("it") or {}).get("value") or (descs.get("en") or {}).get("value") or "").strip()
+        if any(bad_w in desc_val.lower() for bad_w in ("pornographic", "pornografico", "adult film", "hardcore")):
+            continue
         desc_nice = (desc_val[0].upper() + desc_val[1:]) if desc_val else ("Serie TV" if mtype == "series" else "Film")
         sl = len(e.get("sitelinks") or {})
 
@@ -1173,6 +1196,8 @@ def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None
         if match_sc > 0 or sug_match:
             if itw:
                 itwiki_map[itw] = item
+            if enw:
+                enwiki_map[enw] = item
             if match_sc >= 750 and en_lbl:
                 norm_en = normalize_title(en_lbl)
                 if norm_en and norm_en != q_norm and norm_en not in q_norm and en_lbl not in bridge_queries and len(bridge_queries) < 2:
@@ -1180,24 +1205,30 @@ def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None
 
         results.append(item)
 
-    # Batch resolve Italian Wikipedia pageimages posters for matching items
+    # Batch resolve Italian & English Wikipedia pageimages posters (including official theatrical posters via pilicense=any)
+    wiki_jobs: List[Tuple[str, Dict[str, Dict], List[str]]] = []
     itwiki_titles = list(itwiki_map.keys())[:70]
-    if itwiki_titles:
-        pi_batches = [itwiki_titles[i : i + 35] for i in range(0, len(itwiki_titles), 35)]
+    for i in range(0, len(itwiki_titles), 35):
+        wiki_jobs.append(("it.wikipedia.org", itwiki_map, itwiki_titles[i : i + 35]))
+    enwiki_titles = list(enwiki_map.keys())[:70]
+    for i in range(0, len(enwiki_titles), 35):
+        wiki_jobs.append(("en.wikipedia.org", enwiki_map, enwiki_titles[i : i + 35]))
 
-        def _fetch_pi(tbatch: List[str]) -> None:
-            url = f"https://it.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote('|'.join(tbatch))}&prop=pageimages&pithumbsize=500&format=json"
+    if wiki_jobs:
+        def _fetch_pi(job: Tuple[str, Dict[str, Dict], List[str]]) -> None:
+            host, wmap, tbatch = job
+            url = f"https://{host}/w/api.php?action=query&titles={urllib.parse.quote('|'.join(tbatch))}&prop=pageimages&pilicense=any&pithumbsize=500&format=json"
             pi_data = _http_get_json(url, timeout=5)
             pages = ((pi_data or {}).get("query") or {}).get("pages") or {}
             for p in pages.values():
                 t = p.get("title")
                 src = (p.get("thumbnail") or {}).get("source") or ""
-                target = t and itwiki_map.get(t)
+                target = t and wmap.get(t)
                 if target and src and _poster_quality_rank(src) > _poster_quality_rank(target.get("poster", "")):
                     target["poster"] = src
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=len(pi_batches)) as ex:
-            for fut in [ex.submit(_fetch_pi, b) for b in pi_batches]:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(6, len(wiki_jobs))) as ex:
+            for fut in [ex.submit(_fetch_pi, j) for j in wiki_jobs]:
                 try:
                     fut.result()
                 except Exception:
@@ -1235,12 +1266,12 @@ def compute_relevance_score(
 
     if item.get("is_saga"):
         rank = item.get("saga_rank", 1)
-        if best_score >= 950:
+        if best_score >= 960:
             pass
         elif best_score > 0:
-            best_score = max(best_score, 900 - rank * 8)
+            best_score = max(best_score, 960 - rank * 6)
         else:
-            best_score = max(best_score, 850 - rank * 8)
+            best_score = max(best_score, 920 - rank * 6)
 
     if best_score == 0:
         return 0
@@ -1248,45 +1279,75 @@ def compute_relevance_score(
     pop_bonus = 0
     sl = item.get("sitelinks_count") or 0
     if isinstance(sl, (int, float)):
-        if sl >= 50:
-            pop_bonus = max(pop_bonus, 70)
-        elif sl >= 25:
-            pop_bonus = max(pop_bonus, 45)
-        elif sl >= 10:
-            pop_bonus = max(pop_bonus, 25)
+        if sl >= 45:
+            pop_bonus = max(pop_bonus, 160)
+        elif sl >= 30:
+            pop_bonus = max(pop_bonus, 130)
+        elif sl >= 15:
+            pop_bonus = max(pop_bonus, 90)
+        elif sl >= 8:
+            pop_bonus = max(pop_bonus, 50)
         elif sl >= 4:
-            pop_bonus = max(pop_bonus, 10)
+            pop_bonus = max(pop_bonus, 20)
 
     apop = item.get("anilist_popularity") or 0
     if isinstance(apop, (int, float)):
-        if apop >= 100000:
-            pop_bonus = max(pop_bonus, 65)
-        elif apop >= 30000:
-            pop_bonus = max(pop_bonus, 40)
-        elif apop >= 5000:
-            pop_bonus = max(pop_bonus, 20)
+        if apop >= 120000:
+            pop_bonus = max(pop_bonus, 150)
+        elif apop >= 60000:
+            pop_bonus = max(pop_bonus, 115)
+        elif apop >= 25000:
+            pop_bonus = max(pop_bonus, 75)
+        elif apop >= 8000:
+            pop_bonus = max(pop_bonus, 35)
 
     imdb_rank = item.get("popularity_rank")
     if imdb_rank is not None and isinstance(imdb_rank, (int, float)) and imdb_rank > 0:
         if imdb_rank <= 2500:
-            pop_bonus = max(pop_bonus, 70)
-        elif imdb_rank <= 15000:
-            pop_bonus = max(pop_bonus, 45)
+            pop_bonus = max(pop_bonus, 160)
+        elif imdb_rank <= 10000:
+            pop_bonus = max(pop_bonus, 130)
+        elif imdb_rank <= 30000:
+            pop_bonus = max(pop_bonus, 90)
         elif imdb_rank <= 60000:
-            pop_bonus = max(pop_bonus, 25)
+            pop_bonus = max(pop_bonus, 50)
         elif imdb_rank <= 150000:
-            pop_bonus = max(pop_bonus, 10)
+            pop_bonus = max(pop_bonus, 20)
 
     tv_weight = item.get("popularity_weight")
     if tv_weight is not None and isinstance(tv_weight, (int, float)):
-        if tv_weight >= 85:
-            pop_bonus = max(pop_bonus, 60)
+        if tv_weight >= 92:
+            pop_bonus = max(pop_bonus, 145)
+        elif tv_weight >= 85:
+            pop_bonus = max(pop_bonus, 115)
         elif tv_weight >= 70:
-            pop_bonus = max(pop_bonus, 40)
+            pop_bonus = max(pop_bonus, 75)
         elif tv_weight >= 50:
-            pop_bonus = max(pop_bonus, 20)
+            pop_bonus = max(pop_bonus, 35)
 
-    return best_score + pop_bonus
+    if item.get("is_saga"):
+        pop_bonus = max(pop_bonus, 140)
+
+    it_bonus = 35 if item.get("has_it_title") else 0
+
+    obscurity_penalty = 0
+    src = item.get("source") or ""
+    if not item.get("is_saga") and src != "catalog_it" and src != "epg_dtt":
+        if src == "wikidata":
+            if sl <= 1 and not item.get("has_it_title") and not item.get("imdb_id"):
+                obscurity_penalty = 150
+            elif sl <= 3 and not item.get("has_it_title"):
+                obscurity_penalty = 95
+            elif sl <= 2:
+                obscurity_penalty = 60
+        elif src == "anilist":
+            if apop < 5000 and not item.get("has_it_title"):
+                obscurity_penalty = 110
+        elif src == "tvmaze":
+            if (tv_weight or 0) < 40 and not item.get("has_it_title"):
+                obscurity_penalty = 90
+
+    return max(10, best_score + pop_bonus + it_bonus - obscurity_penalty)
 
 
 def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[Dict]:
@@ -1460,19 +1521,41 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
         it_year_s = str(item.get("year") or "").strip()
         it_year = int(it_year_s) if it_year_s.isdigit() else 0
         it_imdb = (item.get("imdb_id") or "").strip()
+        it_ext = str(item.get("external_id") or "")
+        it_src = str(item.get("source") or "")
 
         matched_ex = None
         for ex in dedup:
             if ex["media_type"] != item["media_type"]:
                 continue
-            ex_year_s = str(ex.get("year") or "").strip()
-            ex_year = int(ex_year_s) if ex_year_s.isdigit() else 0
-            if ex_year and it_year and abs(ex_year - it_year) > 3:
+            ex_imdb = (ex.get("imdb_id") or "").strip()
+            ex_ext = str(ex.get("external_id") or "")
+            ex_src = str(ex.get("source") or "")
+
+            if it_imdb and ex_imdb:
+                if it_imdb == ex_imdb:
+                    matched_ex = ex
+                    break
+                else:
+                    continue
+
+            if it_ext.startswith("wd_") and ex_ext.startswith("wd_") and it_ext != ex_ext:
                 continue
 
-            if it_imdb and (ex.get("imdb_id") or "").strip() == it_imdb:
-                matched_ex = ex
-                break
+            ex_year_s = str(ex.get("year") or "").strip()
+            ex_year = int(ex_year_s) if ex_year_s.isdigit() else 0
+            if ex_year and it_year:
+                if abs(ex_year - it_year) > 1:
+                    continue
+            elif (ex_year and not it_year) or (it_year and not ex_year):
+                if ex_src not in ("catalog_it", "epg_dtt") and it_src not in ("catalog_it", "epg_dtt"):
+                    continue
+
+            if (it_src == "anilist") != (ex_src == "anilist"):
+                other = ex if it_src == "anilist" else item
+                other_blob = f"{other.get('genre', '')} {other.get('description', '')}".lower()
+                if not any(w in other_blob for w in ("anime", "animat", "animazione", "manga", "japanese")):
+                    continue
 
             ex_keys = _build_item_keys(ex)
             if it_keys & ex_keys:
@@ -1490,13 +1573,33 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
                 matched_ex["tvmaze_id"] = item["tvmaze_id"]
             if not matched_ex.get("imdb_id") and item.get("imdb_id"):
                 matched_ex["imdb_id"] = item["imdb_id"]
-            if len(item.get("description") or "") > len(matched_ex.get("description") or ""):
-                matched_ex["description"] = item["description"]
+
+            ex_desc = matched_ex.get("description") or ""
+            it_desc = item.get("description") or ""
+            ex_is_it_desc = bool(matched_ex.get("has_it_title")) or ex_desc.startswith(("Film ", "Serie ", "📡"))
+            it_is_it_desc = bool(item.get("has_it_title")) or it_desc.startswith(("Film ", "Serie ", "📡"))
+            if it_desc and (
+                (it_is_it_desc and not ex_is_it_desc)
+                or (it_is_it_desc == ex_is_it_desc and len(it_desc) > len(ex_desc) and "Titolo orig.:" not in it_desc)
+                or ("Titolo orig.:" in ex_desc and len(it_desc) > 15)
+            ):
+                matched_ex["description"] = it_desc
+
             if not matched_ex.get("has_it_title") and item.get("has_it_title"):
                 matched_ex["title_it"] = item["title_it"]
                 matched_ex["has_it_title"] = True
-            if item.get("relevance_score", 0) > matched_ex.get("relevance_score", 0):
-                matched_ex["relevance_score"] = item["relevance_score"]
+
+            if (item.get("sitelinks_count") or 0) > (matched_ex.get("sitelinks_count") or 0):
+                matched_ex["sitelinks_count"] = item["sitelinks_count"]
+            if (item.get("anilist_popularity") or 0) > (matched_ex.get("anilist_popularity") or 0):
+                matched_ex["anilist_popularity"] = item["anilist_popularity"]
+            if (item.get("popularity_weight") or 0) > (matched_ex.get("popularity_weight") or 0):
+                matched_ex["popularity_weight"] = item["popularity_weight"]
+            it_pr = item.get("popularity_rank")
+            ex_pr = matched_ex.get("popularity_rank")
+            if it_pr and (not ex_pr or it_pr < ex_pr):
+                matched_ex["popularity_rank"] = it_pr
+
             if item.get("is_saga"):
                 matched_ex["is_saga"] = True
                 matched_ex["saga_rank"] = item.get("saga_rank", 1)
@@ -1507,6 +1610,10 @@ def search_catalog(query: str, epg_events: Optional[List[Dict]] = None) -> List[
         else:
             dedup.append(item)
 
+    for d in dedup:
+        d["relevance_score"] = compute_relevance_score(query, d, bridge_queries=bridge_queries, suggestions=suggestions)
+
+    dedup.sort(key=lambda d: (-d.get("relevance_score", 0), -_poster_quality_rank(d.get("poster", ""))))
     return dedup[:100]
 
 

@@ -70,6 +70,10 @@ const SAGA_DEFINITIONS = [
     id: "rocky",
     names: ["rocky", "rocky balboa", "creed"],
   },
+  {
+    id: "bad_boys",
+    names: ["bad boys", "bad boy"],
+  },
 ];
 
 const CLIENT_SAGAS = [
@@ -112,6 +116,10 @@ const CLIENT_SAGAS = [
   { it: "Creed - Nato per combattere", orig: "Creed", type: "movie", year: "2015", saga: "rocky", rank: 7, aliases: ["creed 1", "creed", "rocky 7", "rocky vii"], poster: "https://m.media-amazon.com/images/M/MV5BODg5NDM3ODUxN15BMl5BanBnXkFtZTgwNWQ0MzQ5NjE@._V1_UX400_.jpg" },
   { it: "Creed II", orig: "Creed II", type: "movie", year: "2018", saga: "rocky", rank: 8, aliases: ["creed 2", "creed ii", "rocky 8", "rocky viii"], poster: "https://m.media-amazon.com/images/M/MV5BYmEyNWZhNzctZTQzYS00NWVkLTg3MmQtZDU0NDZhY2VmNDRhXkEyXkFqcGc@._V1_UX400_.jpg" },
   { it: "Creed III", orig: "Creed III", type: "movie", year: "2023", saga: "rocky", rank: 9, aliases: ["creed 3", "creed iii", "rocky 9", "rocky ix"], poster: "https://m.media-amazon.com/images/M/MV5BYWY1ZDY4MmQtYjhiYS00N2QwLThkNGUtMmNiNmVhGFiZTk2XkEyXkFqcGc@._V1_UX400_.jpg" },
+  { it: "Bad Boys", orig: "Bad Boys", type: "movie", year: "1995", saga: "bad_boys", rank: 1, aliases: ["bad boys 1", "bad boys i"], poster: "https://upload.wikimedia.org/wikipedia/en/a/a8/Bad_Boys.jpg" },
+  { it: "Bad Boys II", orig: "Bad Boys II", type: "movie", year: "2003", saga: "bad_boys", rank: 2, aliases: ["bad boys 2", "bad boys ii"], poster: "https://upload.wikimedia.org/wikipedia/en/f/f4/Bad_Boys_II_Official_Theatrical_Poster.png" },
+  { it: "Bad Boys for Life", orig: "Bad Boys for Life", type: "movie", year: "2020", saga: "bad_boys", rank: 3, aliases: ["bad boys 3", "bad boys iii", "bad boys per sempre"], poster: "https://upload.wikimedia.org/wikipedia/en/9/90/Bad_Boys_for_Life_poster.jpg" },
+  { it: "Bad Boys: Ride or Die", orig: "Bad Boys: Ride or Die", type: "movie", year: "2024", saga: "bad_boys", rank: 4, aliases: ["bad boys 4", "bad boys iv", "ride or die"], poster: "https://upload.wikimedia.org/wikipedia/en/8/8b/Bad_Boys_Ride_or_Die_%282024%29_poster.jpg" },
   { it: "Il Gladiatore", orig: "Gladiator", type: "movie", year: "2000", poster: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Il_gladiatore.png/500px-Il_gladiatore.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Deadpool & Wolverine", orig: "Deadpool & Wolverine", type: "movie", year: "2024", poster: "https://thumb.wikimedia.org/wikipedia/it/thumb/a/ad/Deadpool_%26_Wolverine.png/500px-Deadpool_%26_Wolverine.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail" },
   { it: "Law & Order - Unità vittime speciali", orig: "Law & Order: Special Victims Unit", type: "series", year: "1999", poster: "https://static.tvmaze.com/uploads/images/medium_portrait/1/4042.jpg" },
@@ -151,7 +159,7 @@ function getPosterQualityRank(url) {
   if (u.includes("screenshot")) return 2;
   if (u.includes("special:filepath") || u.includes("/wikipedia/commons/")) return 3;
   if (u.includes("/wikipedia/it/")) return 4;
-  if (u.includes("static.tvmaze.com") || u.includes("anilist.co")) return 5;
+  if (u.includes("/wikipedia/en/") || u.includes("static.tvmaze.com") || u.includes("anilist.co")) return 5;
   if (u.includes("m.media-amazon.com") || u.includes("imdb")) return 6;
   return 3;
 }
@@ -240,9 +248,27 @@ function scoreCandidateListClient(query, primaryCands, aliasCands) {
     } else if ((qStr && cStr.includes(qStr)) || (qCoreStr && cCoreStr.includes(qCoreStr))) {
       const isStart = cStr.startsWith(qStr) || (qCoreStr && cCoreStr.startsWith(qCoreStr));
       const isEnd = cStr.endsWith(qStr) || (qCoreStr && cCoreStr.endsWith(qCoreStr));
-      const phraseScore = isStart ? 940 : isEnd ? 920 : 900;
       const extraWords = Math.abs(cCore.length - qCore.length);
-      s = Math.max(780, phraseScore - extraWords * 8);
+      if (isStart && extraWords >= 1 && extraWords <= 3) {
+        const remTokens = cCore.length > qCore.length ? cCore.slice(qCore.length) : [];
+        const firstRem = remTokens[0] || "";
+        if (extraWords === 1 && /^\d+$/.test(firstRem)) {
+          s = 965;
+        } else if (
+          firstRem &&
+          (/^\d+$/.test(firstRem) ||
+            ["parte", "part", "capitolo", "chapter", "vol", "volume", "for", "ride", "forever"].includes(firstRem) ||
+            cand.includes(":") ||
+            cand.includes("-"))
+        ) {
+          s = Math.max(935, 955 - (extraWords - 1) * 6);
+        } else {
+          s = Math.max(780, 945 - extraWords * 7);
+        }
+      } else {
+        const phraseScore = isStart ? 940 : isEnd ? 920 : 900;
+        s = Math.max(780, phraseScore - extraWords * 8);
+      }
     } else if (qCore.length > 0) {
       let matchedCount = 0;
       const matchedIndices = [];
@@ -313,12 +339,12 @@ function computeRelevanceScoreClient(query, item, bridgeQueries = [], suggestion
 
   if (item.is_saga) {
     const rank = Number(item.saga_rank || 1);
-    if (bestScore >= 950) {
+    if (bestScore >= 960) {
       // Mantieni punteggio massimo
     } else if (bestScore > 0) {
-      bestScore = Math.max(bestScore, 900 - rank * 8);
+      bestScore = Math.max(bestScore, 960 - rank * 6);
     } else {
-      bestScore = Math.max(bestScore, 850 - rank * 8);
+      bestScore = Math.max(bestScore, 920 - rank * 6);
     }
   }
 
@@ -326,22 +352,53 @@ function computeRelevanceScoreClient(query, item, bridgeQueries = [], suggestion
 
   let popBonus = 0;
   const sl = Number(item.sitelinks_count || 0);
-  if (sl >= 50) popBonus = Math.max(popBonus, 70);
-  else if (sl >= 25) popBonus = Math.max(popBonus, 45);
-  else if (sl >= 10) popBonus = Math.max(popBonus, 25);
-  else if (sl >= 4) popBonus = Math.max(popBonus, 10);
+  if (sl >= 45) popBonus = Math.max(popBonus, 160);
+  else if (sl >= 30) popBonus = Math.max(popBonus, 130);
+  else if (sl >= 15) popBonus = Math.max(popBonus, 90);
+  else if (sl >= 8) popBonus = Math.max(popBonus, 50);
+  else if (sl >= 4) popBonus = Math.max(popBonus, 20);
 
   const apop = Number(item.anilist_popularity || 0);
-  if (apop >= 100000) popBonus = Math.max(popBonus, 65);
-  else if (apop >= 30000) popBonus = Math.max(popBonus, 40);
-  else if (apop >= 5000) popBonus = Math.max(popBonus, 20);
+  if (apop >= 120000) popBonus = Math.max(popBonus, 150);
+  else if (apop >= 60000) popBonus = Math.max(popBonus, 115);
+  else if (apop >= 25000) popBonus = Math.max(popBonus, 75);
+  else if (apop >= 8000) popBonus = Math.max(popBonus, 35);
 
   const w = Number(item.tvmaze_weight || 0);
-  if (w >= 85) popBonus = Math.max(popBonus, 60);
-  else if (w >= 70) popBonus = Math.max(popBonus, 40);
-  else if (w >= 50) popBonus = Math.max(popBonus, 20);
+  if (w >= 92) popBonus = Math.max(popBonus, 145);
+  else if (w >= 85) popBonus = Math.max(popBonus, 115);
+  else if (w >= 70) popBonus = Math.max(popBonus, 75);
+  else if (w >= 50) popBonus = Math.max(popBonus, 35);
 
-  return bestScore + popBonus;
+  if (item.is_saga) {
+    popBonus = Math.max(popBonus, 140);
+  }
+
+  const itBonus = item.has_it_title ? 35 : 0;
+
+  let obscurityPenalty = 0;
+  const src = item.src || "";
+  if (!item.is_saga && src !== "ALIAS" && src !== "EPG") {
+    if (src === "WD") {
+      if (sl <= 1 && !item.has_it_title && !item.imdb_id) {
+        obscurityPenalty = 150;
+      } else if (sl <= 3 && !item.has_it_title) {
+        obscurityPenalty = 95;
+      } else if (sl <= 2) {
+        obscurityPenalty = 60;
+      }
+    } else if (src === "ANI") {
+      if (apop < 5000 && !item.has_it_title) {
+        obscurityPenalty = 110;
+      }
+    } else if (src === "TVM") {
+      if (w < 40 && !item.has_it_title) {
+        obscurityPenalty = 90;
+      }
+    }
+  }
+
+  return Math.max(10, bestScore + popBonus + itBonus - obscurityPenalty);
 }
 
 function normalizeTitleClient(str) {
@@ -1277,7 +1334,7 @@ const WD_MOVIE_EXPLICIT_P31 = new Set([
 const WD_ALL_MEDIA_P31 = new Set([...WD_SERIES_P31, ...WD_MOVIE_P31]);
 const WD_REJECT_P31 = new Set([
   "Q7889", "Q7058673", "Q482994", "Q134556",
-  "Q3464665", "Q21191270", "Q1983062", "Q4167410"
+  "Q3464665", "Q21191270", "Q1983062", "Q4167410", "Q185529"
 ]);
 const WD_BRIDGE_P31 = new Set([
   "Q21198342", "Q196600", "Q7725634", "Q8274", "Q1667921"
@@ -1529,6 +1586,7 @@ async function directMobileSearch4G(query, libraryItems) {
   // 4. Hydrate Wikidata Entities (strict P31 filtering, Italian labels & aliases, bridge extraction)
   const qidToFetch = wdQids.slice(0, 80);
   const itwikiMap = {};
+  const enwikiMap = {};
   if (qidToFetch.length > 0) {
     const chunks = [];
     for (let i = 0; i < qidToFetch.length; i += 40) {
@@ -1625,6 +1683,10 @@ async function directMobileSearch4G(query, libraryItems) {
       }
 
       const descVal = (e.descriptions?.it?.value || e.descriptions?.en?.value || "").trim();
+      const descLower = descVal.toLowerCase();
+      if (descLower.includes("pornographic") || descLower.includes("pornografico") || descLower.includes("adult film") || descLower.includes("hardcore")) {
+        continue;
+      }
       const descNice = descVal ? descVal.charAt(0).toUpperCase() + descVal.slice(1) : (mtype === "series" ? "Serie TV" : "Film");
       const sl = Object.keys(e.sitelinks || {}).length;
 
@@ -1649,6 +1711,7 @@ async function directMobileSearch4G(query, libraryItems) {
       const sugMatch = suggestions.some((s) => scoreCandidateListClient(s, [titleIt, titleOrig], aliases) > 0);
       if (matchScore > 0 || sugMatch) {
         if (itw) itwikiMap[itw] = item;
+        if (enw) enwikiMap[enw] = item;
         if (matchScore >= 750 && enLbl) {
           const normEn = normalizeTitleClient(enLbl);
           if (normEn && normEn !== qNorm && !qNorm.includes(normEn) && !bridgeQueries.includes(enLbl) && bridgeQueries.length < 2) {
@@ -1660,21 +1723,21 @@ async function directMobileSearch4G(query, libraryItems) {
     }
   }
 
-  // 5. Phase 2 In Parallel: Batch itwiki pageimages posters + Validated Bridge Query on TVMaze & AniList
+  // 5. Phase 2 In Parallel: Batch itwiki + enwiki pageimages posters (with pilicense=any) + Validated Bridge Query on TVMaze & AniList
   const phase2Jobs = [];
-  const itwikiTitles = Object.keys(itwikiMap).slice(0, 70);
-  if (itwikiTitles.length > 0) {
-    for (let i = 0; i < itwikiTitles.length; i += 35) {
-      const batch = itwikiTitles.slice(i, i + 35);
+  const addWikiPosterJobs = (host, wmap) => {
+    const titles = Object.keys(wmap).slice(0, 70);
+    for (let i = 0; i < titles.length; i += 35) {
+      const batch = titles.slice(i, i + 35);
       phase2Jobs.push(
         fetchJsonSafeClient(
-          `https://it.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(batch.join("|"))}&prop=pageimages&pithumbsize=500&format=json&origin=*`
+          `https://${host}/w/api.php?action=query&titles=${encodeURIComponent(batch.join("|"))}&prop=pageimages&pilicense=any&pithumbsize=500&format=json&origin=*`
         ).then((piData) => {
           const pages = piData?.query?.pages || {};
           Object.values(pages).forEach((p) => {
             const t = p?.title;
             const src = p?.thumbnail?.source || "";
-            const target = t && itwikiMap[t];
+            const target = t && wmap[t];
             if (target && src && getPosterQualityRank(src) > getPosterQualityRank(target.poster)) {
               target.poster = src;
             }
@@ -1682,7 +1745,9 @@ async function directMobileSearch4G(query, libraryItems) {
         })
       );
     }
-  }
+  };
+  addWikiPosterJobs("it.wikipedia.org", itwikiMap);
+  addWikiPosterJobs("en.wikipedia.org", enwikiMap);
 
   if (bridgeQueries.length > 0) {
     const bq = bridgeQueries[0];
@@ -1773,16 +1838,44 @@ async function directMobileSearch4G(query, libraryItems) {
     const rKeys = buildItemKeys(r);
     const rYear = /^\d{4}$/.test(String(r.year || "").trim()) ? parseInt(r.year, 10) : 0;
     const rImdb = String(r.imdb_id || "").trim();
+    const rExt = String(r.external_id || "");
+    const rSrc = String(r.src || "");
 
     let matchedEx = null;
     for (const ex of dedup) {
       if (ex.media_type !== r.media_type) continue;
-      const exYear = /^\d{4}$/.test(String(ex.year || "").trim()) ? parseInt(ex.year, 10) : 0;
-      if (exYear && rYear && Math.abs(exYear - rYear) > 3) continue;
+      const exImdb = String(ex.imdb_id || "").trim();
+      const exExt = String(ex.external_id || "");
+      const exSrc = String(ex.src || "");
 
-      if (rImdb && String(ex.imdb_id || "").trim() === rImdb) {
-        matchedEx = ex;
-        break;
+      if (rImdb && exImdb) {
+        if (rImdb === exImdb) {
+          matchedEx = ex;
+          break;
+        } else {
+          continue;
+        }
+      }
+
+      if (rExt.startsWith("wd_") && exExt.startsWith("wd_") && rExt !== exExt) {
+        continue;
+      }
+
+      const exYear = /^\d{4}$/.test(String(ex.year || "").trim()) ? parseInt(ex.year, 10) : 0;
+      if (exYear && rYear) {
+        if (Math.abs(exYear - rYear) > 1) continue;
+      } else if ((exYear && !rYear) || (rYear && !exYear)) {
+        if (!["ALIAS", "EPG"].includes(exSrc) && !["ALIAS", "EPG"].includes(rSrc)) {
+          continue;
+        }
+      }
+
+      if ((rSrc === "ANI") !== (exSrc === "ANI")) {
+        const other = rSrc === "ANI" ? ex : r;
+        const otherBlob = `${other.genre || ""} ${other.description || ""}`.toLowerCase();
+        if (!["anime", "animat", "animazione", "manga", "japanese"].some((w) => otherBlob.includes(w))) {
+          continue;
+        }
       }
 
       const exKeys = buildItemKeys(ex);
@@ -1802,19 +1895,42 @@ async function directMobileSearch4G(query, libraryItems) {
     if (matchedEx) {
       if (getPosterQualityRank(r.poster) > getPosterQualityRank(matchedEx.poster)) {
         matchedEx.poster = r.poster;
+      } else if (!matchedEx.poster && r.poster) {
+        matchedEx.poster = r.poster;
       }
       if (!matchedEx.year && r.year) matchedEx.year = r.year;
       if (!matchedEx.tvmaze_id && r.tvmaze_id) matchedEx.tvmaze_id = r.tvmaze_id;
       if (!matchedEx.imdb_id && r.imdb_id) matchedEx.imdb_id = r.imdb_id;
-      if ((r.description || "").length > (matchedEx.description || "").length) {
-        matchedEx.description = r.description;
+
+      const exDesc = matchedEx.description || "";
+      const rDesc = r.description || "";
+      const exIsItDesc = Boolean(matchedEx.has_it_title) || exDesc.startsWith("Film ") || exDesc.startsWith("Serie ") || exDesc.startsWith("📡");
+      const rIsItDesc = Boolean(r.has_it_title) || rDesc.startsWith("Film ") || rDesc.startsWith("Serie ") || rDesc.startsWith("📡");
+      if (
+        rDesc &&
+        ((rIsItDesc && !exIsItDesc) ||
+          (rIsItDesc === exIsItDesc && rDesc.length > exDesc.length && !rDesc.includes("Titolo orig.:")) ||
+          (exDesc.includes("Titolo orig.:") && rDesc.length > 15))
+      ) {
+        matchedEx.description = rDesc;
       }
+
       if (!matchedEx.has_it_title && r.has_it_title) {
         matchedEx.title_it = r.title_it;
         matchedEx.has_it_title = true;
       }
-      if (r.relevance_score > matchedEx.relevance_score) {
-        matchedEx.relevance_score = r.relevance_score;
+      if ((r.sitelinks_count || 0) > (matchedEx.sitelinks_count || 0)) {
+        matchedEx.sitelinks_count = r.sitelinks_count;
+      }
+      if ((r.anilist_popularity || 0) > (matchedEx.anilist_popularity || 0)) {
+        matchedEx.anilist_popularity = r.anilist_popularity;
+      }
+      if ((r.tvmaze_weight || 0) > (matchedEx.tvmaze_weight || 0)) {
+        matchedEx.tvmaze_weight = r.tvmaze_weight;
+      }
+      if (r.is_saga) {
+        matchedEx.is_saga = true;
+        matchedEx.saga_rank = r.saga_rank || 1;
       }
       if (Array.isArray(r.aliases) && r.aliases.length > 0) {
         const mergedAl = new Set([...(matchedEx.aliases || []), ...r.aliases]);
@@ -1835,6 +1951,14 @@ async function directMobileSearch4G(query, libraryItems) {
       dedup.push(r);
     }
   }
+
+  dedup.forEach((d) => {
+    d.relevance_score = computeRelevanceScoreClient(rawTrimmed, d, bridgeQueries, suggestions);
+  });
+  dedup.sort((a, b) => {
+    if (b.relevance_score !== a.relevance_score) return b.relevance_score - a.relevance_score;
+    return getPosterQualityRank(b.poster) - getPosterQualityRank(a.poster);
+  });
 
   return { results: dedup.slice(0, 100) };
 }
