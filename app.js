@@ -2,79 +2,79 @@
 // DEFAULT STATIC CHANNELS (OFFLINE & FAST FALLBACK - DTT LCN 1-70 + SKY)
 // ============================================================================
 const DEFAULT_CHANNELS = [
-  {"lcn": 1, "name": "Rai 1", "is_sky": false},
-  {"lcn": 2, "name": "Rai 2", "is_sky": false},
-  {"lcn": 3, "name": "Rai 3", "is_sky": false},
-  {"lcn": 4, "name": "Rete 4", "is_sky": false},
-  {"lcn": 5, "name": "Canale 5", "is_sky": false},
-  {"lcn": 6, "name": "Italia 1", "is_sky": false},
-  {"lcn": 7, "name": "LA7", "is_sky": false},
-  {"lcn": 8, "name": "TV8", "is_sky": false},
-  {"lcn": 9, "name": "NOVE", "is_sky": false},
-  {"lcn": 20, "name": "20 Mediaset", "is_sky": false},
-  {"lcn": 21, "name": "Rai 4", "is_sky": false},
-  {"lcn": 22, "name": "Iris", "is_sky": false},
-  {"lcn": 23, "name": "Rai 5", "is_sky": false},
-  {"lcn": 24, "name": "Rai Movie", "is_sky": false},
-  {"lcn": 25, "name": "Rai Premium", "is_sky": false},
-  {"lcn": 26, "name": "Cielo", "is_sky": false},
-  {"lcn": 27, "name": "27 Twentyseven", "is_sky": false},
-  {"lcn": 28, "name": "TV2000", "is_sky": false},
-  {"lcn": 29, "name": "LA7 Cinema / LA7d", "is_sky": false},
-  {"lcn": 30, "name": "La 5", "is_sky": false},
-  {"lcn": 31, "name": "Real Time", "is_sky": false},
-  {"lcn": 33, "name": "Food Network", "is_sky": false},
-  {"lcn": 34, "name": "Cine34", "is_sky": false},
-  {"lcn": 35, "name": "Focus", "is_sky": false},
-  {"lcn": 36, "name": "RTL 102.5 TV", "is_sky": false},
-  {"lcn": 37, "name": "Warner TV", "is_sky": false},
-  {"lcn": 38, "name": "Giallo", "is_sky": false},
-  {"lcn": 39, "name": "TOP Crime", "is_sky": false},
-  {"lcn": 40, "name": "Boing", "is_sky": false},
-  {"lcn": 41, "name": "K2", "is_sky": false},
-  {"lcn": 42, "name": "Rai Gulp", "is_sky": false},
-  {"lcn": 43, "name": "Rai Yoyo", "is_sky": false},
-  {"lcn": 44, "name": "Frisbee", "is_sky": false},
-  {"lcn": 46, "name": "Cartoonito", "is_sky": false},
-  {"lcn": 47, "name": "Super!", "is_sky": false},
-  {"lcn": 48, "name": "Rai News 24", "is_sky": false},
-  {"lcn": 49, "name": "Italia 2", "is_sky": false},
-  {"lcn": 50, "name": "Sky TG24", "is_sky": false},
-  {"lcn": 51, "name": "TGCOM24", "is_sky": false},
-  {"lcn": 52, "name": "DMAX", "is_sky": false},
-  {"lcn": 54, "name": "Rai Storia", "is_sky": false},
-  {"lcn": 55, "name": "Mediaset Extra", "is_sky": false},
-  {"lcn": 56, "name": "HGTV", "is_sky": false},
-  {"lcn": 58, "name": "Rai Sport", "is_sky": false},
-  {"lcn": 59, "name": "Motor Trend", "is_sky": false},
-  {"lcn": 60, "name": "Sportitalia", "is_sky": false},
-  {"lcn": 62, "name": "Donna TV", "is_sky": false},
-  {"lcn": 64, "name": "SuperTennis", "is_sky": false},
-  {"lcn": 65, "name": "Alma TV", "is_sky": false},
-  {"lcn": 67, "name": "MTV Music / R101", "is_sky": false},
-  {"lcn": 68, "name": "Travel TV", "is_sky": false},
-  {"lcn": 69, "name": "Deejay TV", "is_sky": false},
-  {"lcn": 70, "name": "RadioItaliaTV", "is_sky": false},
-  {"lcn": 108, "name": "Sky Uno", "is_sky": true},
-  {"lcn": 111, "name": "Sky Atlantic", "is_sky": true},
-  {"lcn": 112, "name": "Sky Serie", "is_sky": true},
-  {"lcn": 113, "name": "Sky Investigation", "is_sky": true},
-  {"lcn": 115, "name": "Sky Crime", "is_sky": true},
-  {"lcn": 117, "name": "Sky Documentaries", "is_sky": true},
-  {"lcn": 119, "name": "Sky Nature", "is_sky": true},
-  {"lcn": 120, "name": "Sky Arte", "is_sky": true},
-  {"lcn": 122, "name": "Sky Adventure", "is_sky": true},
-  {"lcn": 129, "name": "Comedy Central", "is_sky": true},
-  {"lcn": 301, "name": "Sky Cinema Uno", "is_sky": true},
-  {"lcn": 302, "name": "Sky Cinema Stories", "is_sky": true},
-  {"lcn": 303, "name": "Sky Cinema Collection", "is_sky": true},
-  {"lcn": 304, "name": "Sky Cinema Family", "is_sky": true},
-  {"lcn": 305, "name": "Sky Cinema Action", "is_sky": true},
-  {"lcn": 306, "name": "Sky Cinema Suspense", "is_sky": true},
-  {"lcn": 307, "name": "Sky Cinema Comedy", "is_sky": true},
-  {"lcn": 308, "name": "Sky Cinema Romance", "is_sky": true},
-  {"lcn": 309, "name": "Sky Cinema Drama", "is_sky": true},
-  {"lcn": 310, "name": "Sky Cinema Uno +24", "is_sky": true}
+  { "lcn": 1, "name": "Rai 1", "is_sky": false },
+  { "lcn": 2, "name": "Rai 2", "is_sky": false },
+  { "lcn": 3, "name": "Rai 3", "is_sky": false },
+  { "lcn": 4, "name": "Rete 4", "is_sky": false },
+  { "lcn": 5, "name": "Canale 5", "is_sky": false },
+  { "lcn": 6, "name": "Italia 1", "is_sky": false },
+  { "lcn": 7, "name": "LA7", "is_sky": false },
+  { "lcn": 8, "name": "TV8", "is_sky": false },
+  { "lcn": 9, "name": "NOVE", "is_sky": false },
+  { "lcn": 20, "name": "20 Mediaset", "is_sky": false },
+  { "lcn": 21, "name": "Rai 4", "is_sky": false },
+  { "lcn": 22, "name": "Iris", "is_sky": false },
+  { "lcn": 23, "name": "Rai 5", "is_sky": false },
+  { "lcn": 24, "name": "Rai Movie", "is_sky": false },
+  { "lcn": 25, "name": "Rai Premium", "is_sky": false },
+  { "lcn": 26, "name": "Cielo", "is_sky": false },
+  { "lcn": 27, "name": "27 Twentyseven", "is_sky": false },
+  { "lcn": 28, "name": "TV2000", "is_sky": false },
+  { "lcn": 29, "name": "LA7 Cinema / LA7d", "is_sky": false },
+  { "lcn": 30, "name": "La 5", "is_sky": false },
+  { "lcn": 31, "name": "Real Time", "is_sky": false },
+  { "lcn": 33, "name": "Food Network", "is_sky": false },
+  { "lcn": 34, "name": "Cine34", "is_sky": false },
+  { "lcn": 35, "name": "Focus", "is_sky": false },
+  { "lcn": 36, "name": "RTL 102.5 TV", "is_sky": false },
+  { "lcn": 37, "name": "Warner TV", "is_sky": false },
+  { "lcn": 38, "name": "Giallo", "is_sky": false },
+  { "lcn": 39, "name": "TOP Crime", "is_sky": false },
+  { "lcn": 40, "name": "Boing", "is_sky": false },
+  { "lcn": 41, "name": "K2", "is_sky": false },
+  { "lcn": 42, "name": "Rai Gulp", "is_sky": false },
+  { "lcn": 43, "name": "Rai Yoyo", "is_sky": false },
+  { "lcn": 44, "name": "Frisbee", "is_sky": false },
+  { "lcn": 46, "name": "Cartoonito", "is_sky": false },
+  { "lcn": 47, "name": "Super!", "is_sky": false },
+  { "lcn": 48, "name": "Rai News 24", "is_sky": false },
+  { "lcn": 49, "name": "Italia 2", "is_sky": false },
+  { "lcn": 50, "name": "Sky TG24", "is_sky": false },
+  { "lcn": 51, "name": "TGCOM24", "is_sky": false },
+  { "lcn": 52, "name": "DMAX", "is_sky": false },
+  { "lcn": 54, "name": "Rai Storia", "is_sky": false },
+  { "lcn": 55, "name": "Mediaset Extra", "is_sky": false },
+  { "lcn": 56, "name": "HGTV", "is_sky": false },
+  { "lcn": 58, "name": "Rai Sport", "is_sky": false },
+  { "lcn": 59, "name": "Motor Trend", "is_sky": false },
+  { "lcn": 60, "name": "Sportitalia", "is_sky": false },
+  { "lcn": 62, "name": "Donna TV", "is_sky": false },
+  { "lcn": 64, "name": "SuperTennis", "is_sky": false },
+  { "lcn": 65, "name": "Alma TV", "is_sky": false },
+  { "lcn": 67, "name": "MTV Music / R101", "is_sky": false },
+  { "lcn": 68, "name": "Travel TV", "is_sky": false },
+  { "lcn": 69, "name": "Deejay TV", "is_sky": false },
+  { "lcn": 70, "name": "RadioItaliaTV", "is_sky": false },
+  { "lcn": 108, "name": "Sky Uno", "is_sky": true },
+  { "lcn": 111, "name": "Sky Atlantic", "is_sky": true },
+  { "lcn": 112, "name": "Sky Serie", "is_sky": true },
+  { "lcn": 113, "name": "Sky Investigation", "is_sky": true },
+  { "lcn": 115, "name": "Sky Crime", "is_sky": true },
+  { "lcn": 117, "name": "Sky Documentaries", "is_sky": true },
+  { "lcn": 119, "name": "Sky Nature", "is_sky": true },
+  { "lcn": 120, "name": "Sky Arte", "is_sky": true },
+  { "lcn": 122, "name": "Sky Adventure", "is_sky": true },
+  { "lcn": 129, "name": "Comedy Central", "is_sky": true },
+  { "lcn": 301, "name": "Sky Cinema Uno", "is_sky": true },
+  { "lcn": 302, "name": "Sky Cinema Stories", "is_sky": true },
+  { "lcn": 303, "name": "Sky Cinema Collection", "is_sky": true },
+  { "lcn": 304, "name": "Sky Cinema Family", "is_sky": true },
+  { "lcn": 305, "name": "Sky Cinema Action", "is_sky": true },
+  { "lcn": 306, "name": "Sky Cinema Suspense", "is_sky": true },
+  { "lcn": 307, "name": "Sky Cinema Comedy", "is_sky": true },
+  { "lcn": 308, "name": "Sky Cinema Romance", "is_sky": true },
+  { "lcn": 309, "name": "Sky Cinema Drama", "is_sky": true },
+  { "lcn": 310, "name": "Sky Cinema Uno +24", "is_sky": true }
 ];
 
 function getCachedChannels() {
@@ -891,6 +891,7 @@ async function pullCloudSnapshotClient(syncCode) {
   const topic = `nextontv_sync_${code}`;
   try {
     const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`);
+    if (!res.ok) return null;
     const text = await res.text();
     const lines = text.trim().split("\n");
     let cloudSnap = null;
@@ -904,7 +905,39 @@ async function pullCloudSnapshotClient(syncCode) {
         if (ev.event !== "message") continue;
         const evTime = Number(ev.time || 0);
 
-        // 1. Direct attachment URL
+        // 1. Check for bytebin key in notice message
+        const msgRaw = (ev.message || "").trim();
+        if (msgRaw.startsWith("{") && msgRaw.endsWith("}")) {
+          try {
+            const msgObj = JSON.parse(msgRaw);
+            if (msgObj.bytebin_key) {
+              try {
+                const bbRes = await fetch(`https://bytebin.lucko.me/${msgObj.bytebin_key}`);
+                if (bbRes.ok) {
+                  const snapObj = await bbRes.json();
+                  if (snapObj && Array.isArray(snapObj.library)) {
+                    const uTs = Number(snapObj.updated_at || evTime);
+                    if (uTs >= latestTs) {
+                      latestTs = uTs;
+                      cloudSnap = snapObj;
+                      break;
+                    }
+                  }
+                }
+              } catch (_) { }
+            }
+            if (Array.isArray(msgObj.library)) {
+              const uTs = Number(msgObj.updated_at || evTime);
+              if (uTs >= latestTs) {
+                latestTs = uTs;
+                cloudSnap = msgObj;
+                break;
+              }
+            }
+          } catch (_) { }
+        }
+
+        // 2. Direct attachment URL on ntfy
         if (ev.attachment && ev.attachment.url) {
           try {
             const bRes = await fetch(ev.attachment.url);
@@ -919,25 +952,9 @@ async function pullCloudSnapshotClient(syncCode) {
                 }
               }
             }
-          } catch (e) { }
+          } catch (_) { }
         }
-
-        // 2. Direct JSON body in message
-        const msgRaw = (ev.message || "").trim();
-        if (msgRaw.startsWith("{") && msgRaw.endsWith("}")) {
-          try {
-            const snapObj = JSON.parse(msgRaw);
-            if (snapObj && Array.isArray(snapObj.library)) {
-              const uTs = Number(snapObj.updated_at || evTime);
-              if (uTs >= latestTs) {
-                latestTs = uTs;
-                cloudSnap = snapObj;
-                break;
-              }
-            }
-          } catch (e) { }
-        }
-      } catch (e) { }
+      } catch (_) { }
     }
 
     if (!cloudSnap || !Array.isArray(cloudSnap.library)) return null;
@@ -962,6 +979,26 @@ async function pushCloudSnapshotClient(syncCode, snap) {
   const topic = `nextontv_sync_${code}`;
   try {
     const rawPayload = JSON.stringify(snap);
+    let bytebinKey = null;
+
+    // 1. Upload snapshot to Bytebin (persistent mirror with CORS)
+    try {
+      const bController = new AbortController();
+      const bTimer = setTimeout(() => bController.abort(), 4000);
+      const bRes = await fetch("https://bytebin.lucko.me/post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: rawPayload,
+        signal: bController.signal,
+      });
+      clearTimeout(bTimer);
+      if (bRes.ok) {
+        const bData = await bRes.json();
+        bytebinKey = bData?.key || null;
+      }
+    } catch (_) { }
+
+    // 2. Upload snapshot file to ntfy.sh
     let attUrl = null;
     try {
       const c1 = new AbortController();
@@ -977,12 +1014,14 @@ async function pushCloudSnapshotClient(syncCode, snap) {
         const postData = await postRes.json();
         attUrl = postData?.attachment?.url || null;
       }
-    } catch (e) { }
+    } catch (_) { }
 
+    // 3. Post summary notice containing bytebin_key & attUrl
     try {
       const c2 = new AbortController();
       const t2 = setTimeout(() => c2.abort(), 3500);
       const notice = JSON.stringify({
+        bytebin_key: bytebinKey || "",
         attachment_url: attUrl || "",
         updated_at: (snap && snap.updated_at) || Date.now() / 1000,
         source: "mobile",
@@ -995,9 +1034,9 @@ async function pushCloudSnapshotClient(syncCode, snap) {
         signal: c2.signal,
       });
       clearTimeout(t2);
-    } catch (e) { }
+    } catch (_) { }
 
-    return attUrl || "ok";
+    return bytebinKey || attUrl || "ok";
   } catch (e) {
     return null;
   }
@@ -1198,7 +1237,10 @@ async function handleClientCloudGet(url) {
 
     if (state.syncCode) {
       const cloudSnap = await pullCloudSnapshotClient(state.syncCode);
-      if (cloudSnap) snap = cloudSnap;
+      if (cloudSnap) {
+        snap = cloudSnap;
+        saveLocalSnapshot(snap);
+      }
     }
     return {
       ok: true,
@@ -1259,6 +1301,8 @@ async function handleClientCloudGet(url) {
     const libByKey = {};
     const libByNormAny = {};
     const libByTokens = {};
+    const libPrefixCandidates = [];
+
     libItems.forEach((it) => {
       const mtype = it.media_type || "movie";
       const normIt = normalizeTitleClient(it.title_it);
@@ -1283,6 +1327,10 @@ async function handleClientCloudGet(url) {
         const toksDl = getSignificantTokensClient(leet);
         if (toks && toks.includes(" ")) libByTokens[toks] = it;
         if (toksDl && toksDl.includes(" ")) libByTokens[toksDl] = it;
+
+        if (nm.length >= 8 && nm.includes(" ")) {
+          libPrefixCandidates.push({ prefix: nm, item: it, itType: mtype });
+        }
       });
     });
 
@@ -1315,25 +1363,20 @@ async function handleClientCloudGet(url) {
       if (evToks && evToks.includes(" ") && libByTokens[evToks]) return libByTokens[evToks];
       if (evToksLeet && evToksLeet.includes(" ") && libByTokens[evToksLeet]) return libByTokens[evToksLeet];
 
-      // 4. Controlled prefix match: ONLY allow prefix matching if candidate has at least 8 chars & 2 words
-      for (let i = 0; i < libItems.length; i++) {
-        const it = libItems[i];
-        const itType = it.media_type || "movie";
-        if (evType !== "other" && itType !== evType) continue;
-
-        const itNorm = normalizeTitleClient(it.title_it);
-        const itOrig = normalizeTitleClient(it.title_original || "");
-        const allCandidates = [itNorm, itOrig, ...(it.aliases || []).map(normalizeTitleClient)].filter(Boolean);
-
-        for (const cand of allCandidates) {
-          if (cand.length >= 8 && cand.includes(" ") && evNorm.startsWith(cand)) {
-            const remainder = evNorm.slice(cand.length).trim();
+      // 4. Controlled prefix match for series ONLY (O(15) precomputed candidates, never loops full library)
+      if (evType !== "movie") {
+        for (let j = 0; j < libPrefixCandidates.length; j++) {
+          const pc = libPrefixCandidates[j];
+          if (evType !== "other" && pc.itType !== evType) continue;
+          if (evNorm.startsWith(pc.prefix)) {
+            const remainder = evNorm.slice(pc.prefix.length).trim();
             if (/^(s\d+|ep\d+|st\s*\d+|stagione\s*\d+|episodio\s*\d+|parte\s*\d+|pt\s*\d+|\d+|[ivx]+)$/i.test(remainder)) {
-              return it;
+              return pc.item;
             }
           }
         }
       }
+
       return null;
     };
 
@@ -2348,7 +2391,7 @@ async function handleClientCloudPost(url, body) {
     // Save locally immediately to guarantee persistence on reload
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
-    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
     return {
       ok: true,
       id: item.id,
@@ -2377,7 +2420,7 @@ async function handleClientCloudPost(url, body) {
     }
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
-    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
     return { ok: true, id: item.id, item: item, watched_episodes_count: item.watched_episodes_count || 0 };
   }
 
@@ -2423,7 +2466,7 @@ async function handleClientCloudPost(url, body) {
     }
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
-    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
     return { ok: true, id: item.id, item: item, watched_episodes_count: item.watched_episodes_count || 0 };
   }
 
@@ -2489,7 +2532,7 @@ async function handleClientCloudPost(url, body) {
     }
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
-    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
     return { ok: true, action };
   }
 
@@ -2542,14 +2585,14 @@ async function handleClientCloudPost(url, body) {
           if (idx !== -1) snap.library.splice(idx, 1);
           snap.updated_at = Date.now() / 1000;
           saveLocalSnapshot(snap);
-          pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+          pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
           return { ok: true, status: null, series_id: 0, watched_count: 0 };
         }
         item.status = "wishlist";
       }
       snap.updated_at = Date.now() / 1000;
       saveLocalSnapshot(snap);
-      pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+      pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
       return {
         ok: true,
         status: item.status,
@@ -2581,7 +2624,7 @@ async function handleClientCloudPost(url, body) {
         if (idx !== -1) snap.library.splice(idx, 1);
         snap.updated_at = Date.now() / 1000;
         saveLocalSnapshot(snap);
-        pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+        pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
         return { ok: true, status: null, series_id: 0, watched_count: 0 };
       }
       item.status = "wishlist";
@@ -2593,7 +2636,7 @@ async function handleClientCloudPost(url, body) {
 
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
-    pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
+    pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
     return {
       ok: true,
       status: item.status,
@@ -2676,6 +2719,14 @@ async function initApp() {
   populateChannelDropdowns();
   renderDaysStrips();
 
+  if (state.syncCode) {
+    if (state.isCloudMode) {
+      await pullCloudSnapshotClient(state.syncCode).catch(() => {});
+    } else {
+      await apiPost("/api/sync", { sync_code: state.syncCode }).catch(() => {});
+    }
+  }
+
   await Promise.all([loadMatches(false), loadLibrary()]);
 
   // Automatically check every 60s and on tab wake-up if the Italian date (Europe/Rome) has changed
@@ -2690,7 +2741,24 @@ async function initApp() {
   };
   setInterval(checkItalianDateRollover, 60000);
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) checkItalianDateRollover();
+    if (!document.hidden) {
+      checkItalianDateRollover();
+      if (state.syncCode) {
+        if (state.isCloudMode) {
+          pullCloudSnapshotClient(state.syncCode).then((s) => {
+            if (s) {
+              loadMatches(false);
+              loadLibrary();
+            }
+          }).catch(() => {});
+        } else {
+          apiPost("/api/sync", { sync_code: state.syncCode }).then(() => {
+            loadMatches(false);
+            loadLibrary();
+          }).catch(() => {});
+        }
+      }
+    }
   });
 
   const pendingReloadToast = sessionStorage.getItem("nextontv_reload_toast");
@@ -2809,19 +2877,7 @@ async function loadMatches(forceRefresh = false) {
     saveLocalSnapshot(snap);
   }
 
-  const skyBannerHtml = (!state.includeSky && (counts.sky_hidden || 0) > 0)
-    ? `
-      <div class="sky-hint-banner" style="background:linear-gradient(135deg,rgba(14,165,233,0.18),rgba(99,102,241,0.18));border:1px solid rgba(56,189,248,0.4);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-        <div style="font-size:0.88rem;color:#e2e8f0;line-height:1.4;">
-          🛰️ <strong>${counts.sky_hidden} programmi TV</strong> della tua libreria sono in programmazione sui canali <strong>Sky Cinema e Sky Serie</strong>!
-        </div>
-        <button type="button" class="btn-primary btn-sm" id="btn-activate-sky-banner" style="white-space:nowrap;padding:6px 14px;font-size:0.82rem;">
-          🛰️ Mostra Sky
-        </button>
-      </div>
-    `
-    : "";
-  
+
   if (matches.length === 0) {
     const modeLabel = {
       all: "nelle tue liste (Wishlist o Già visti)",
@@ -2830,19 +2886,12 @@ async function loadMatches(forceRefresh = false) {
       watched_series: "tra le Serie TV che hai già visto / segui",
     }[state.matchFilterMode];
 
-    container.innerHTML = skyBannerHtml + `
+    container.innerHTML = `
       <div class="empty-box">
         <p>Nessun programma TV trovato nei prossimi 7 giorni ${modeLabel} con i filtri attuali.</p>
         <p style="margin-top:8px;font-size:0.8rem;">💡 Suggerimento: prova a selezionare <strong>"Tutti i 7 giorni"</strong> o aggiungi nuovi film e serie TV dalla scheda <strong>"Cerca & Aggiungi"</strong>!</p>
       </div>
     `;
-    const btnAct = document.getElementById("btn-activate-sky-banner");
-    if (btnAct) {
-      btnAct.addEventListener("click", () => {
-        const toggleBtn = document.getElementById("btn-toggle-sky");
-        if (toggleBtn) toggleBtn.click();
-      });
-    }
     return;
   }
 
@@ -2853,7 +2902,7 @@ async function loadMatches(forceRefresh = false) {
     byDate[m.date].push(m);
   });
 
-  let html = skyBannerHtml;
+  let html = "";
   Object.keys(byDate)
     .sort()
     .forEach((d) => {
@@ -2871,14 +2920,6 @@ async function loadMatches(forceRefresh = false) {
 
   container.innerHTML = html;
   bindMatchCardEvents(container);
-
-  const btnAct = document.getElementById("btn-activate-sky-banner");
-  if (btnAct) {
-    btnAct.addEventListener("click", () => {
-      const toggleBtn = document.getElementById("btn-toggle-sky");
-      if (toggleBtn) toggleBtn.click();
-    });
-  }
 }
 
 function renderMatchCard(ev, matchIndex) {
@@ -3396,7 +3437,7 @@ async function refreshAllLibraryPostersAction() {
       await pushCloudSnapshotClient(state.syncCode, snap);
     }
     if (!state.isCloudMode) {
-      await apiPost("/api/library/batch", { action: "restore", items: lib }).catch(() => {});
+      await apiPost("/api/library/batch", { action: "restore", items: lib }).catch(() => { });
     }
 
     showToast(`✨ Locandine aggiornate con successo! (${upgraded > 0 ? upgraded + ' migliorate' : 'tutte in alta definizione'})`);

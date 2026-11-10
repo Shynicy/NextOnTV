@@ -1811,7 +1811,7 @@ def start_background_cloud_sync_daemon() -> None:
             try:
                 cfg = get_or_create_sync_config()
                 cloud_snap = pull_latest_snapshot_from_cloud(cfg["sync_code"])
-                if cloud_snap and cloud_snap.get("source") == "mobile":
+                if cloud_snap and cloud_snap.get("source") != "pc":
                     changes = merge_cloud_snapshot_into_db(cloud_snap)
                     if changes > 0:
                         push_snapshot_to_cloud(cfg["sync_code"], build_cloud_snapshot())
