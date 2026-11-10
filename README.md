@@ -29,3 +29,69 @@ python server.py
 1. Clicca sul pulsante **📱☁️** in alto a destra nell'app sul PC.
 2. Inquadra il **QR Code** con lo smartphone Android: contiene già il **Link Pubblico HTTPS (4G/5G)** e il tuo **Codice Cloud Sync** automatico.
 3. Su Chrome per Android, premi il menu **⋮** in alto a destra e tocca **"Aggiungi a schermata Home" / "Installa app"**.
+
+---
+
+## 💾 Gestione Backup e Aggiornamento Libreria su GitHub
+
+NextOnTV ti permette di scaricare in qualsiasi momento un backup completo in formato JSON di tutti i tuoi film e serie TV salvati, per poi caricarlo su GitHub e renderlo la copia ufficiale dell'app.
+
+### ❓ Quale file comanda e quale va modificato?
+
+Nella cartella `data/` del progetto ci sono due file:
+
+| File | Ruolo e Funzione | Viene letto dall'app? |
+| :--- | :--- | :---: |
+| **`data/library.json`** | **File PRINCIPALE ed EFFETTIVO.**<br>È il database operativo ufficiale. Quando apri NextOnTV da un nuovo dispositivo o clicchi *"Ripristina copia ufficiale da GitHub"*, l'app legge questo file. | **SÌ (Comanda tutto)** |
+| **`data/library_backup.json`** | **Copia di sicurezza a freddo ("paracadute").**<br>Serve come copia ridondante di emergenza nell'archivio Git nel caso in cui il file principale venga corrotto o cancellato per errore. | **NO (Solo riserva)** |
+
+> **Regola d'oro:** Il file che fa funzionare l'applicazione è **`library.json`**. Per sicurezza si tiene sempre aggiornato con lo stesso contenuto anche `library_backup.json`.
+
+---
+
+### 📥 1. Come scaricare il backup dall'app
+1. Apri l'app NextOnTV (sul telefono o su PC).
+2. Vai nella scheda **"Le Mie Liste"** (terza icona in basso).
+3. Clicca sul pulsante delle impostazioni / backup in alto a destra (icona del dischetto 💾).
+4. Tocca **"Esporta Backup JSON"**: verrà scaricato un file con un nome del tipo `NextOnTV_Backup_AAAA-MM-GG_OO-MM-SS.json` sul tuo dispositivo.
+
+---
+
+### 📤 2. Come caricare il backup su GitHub
+
+1. **Rinomina il file scaricato** esattamente in:
+   ```text
+   library.json
+   ```
+2. **Copialo nella cartella `data/`** del repository locale:
+   ```text
+   NextOnTV/data/library.json
+   ```
+   *(sostituendo il file esistente).*
+3. **Crea una copia identica di riserva** nella stessa cartella:
+   ```text
+   NextOnTV/data/library_backup.json
+   ```
+4. **Invia le modifiche su GitHub**:
+   - **Da terminale / VS Code:**
+     ```powershell
+     cd C:\Users\roberto\.gemini\antigravity\scratch\NextOnTV
+     git add data/library.json data/library_backup.json
+     git commit -m "Aggiornamento libreria film e serie TV"
+     git push origin main
+     ```
+   - **Oppure direttamente dal sito web di GitHub:**
+     - Apri il tuo repository `Shynicy/NextOnTV` su GitHub.
+     - Entra nella cartella `data`.
+     - Clicca su **Add file** $\rightarrow$ **Upload files**.
+     - Trascina il file `library.json` (e `library_backup.json`).
+     - Clicca su **Commit changes**.
+
+---
+
+### 🔄 3. Come ripristinare la libreria sui dispositivi
+
+Una volta caricato il file su GitHub:
+- **Automatico per nuovi accessi:** Aprendo NextOnTV su qualsiasi nuovo smartphone o browser, l'app scaricherà in automatico tutti i titoli aggiornati da GitHub.
+- **Ricarica manuale immediata:** Nel pannello di backup (icona 💾), basta premere il pulsante **"🔄 Ricarica copia ufficiale da GitHub"** per allineare all'istante la memoria locale del telefono con la copia ufficiale presente su GitHub.
+
