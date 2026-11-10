@@ -429,6 +429,31 @@ function stripConjunctionsClient(normStr) {
     .trim();
 }
 
+function shouldDisplayOriginalTitle(titleIt, titleOriginal) {
+  if (!titleOriginal) return false;
+  const it = (titleIt || "").trim();
+  const orig = (titleOriginal || "").trim();
+  if (!orig || !it) return false;
+  if (it.toLowerCase() === orig.toLowerCase()) return false;
+
+  // Clean titles: remove parentheses disambiguation (e.g. " (film 1997)"), normalize spaces and dashes
+  const cleanIt = it.replace(/\s*\([^)]*\)\s*$/, "").trim();
+  const cleanOrig = orig.replace(/\s*\([^)]*\)\s*$/, "").trim();
+  if (cleanIt.toLowerCase() === cleanOrig.toLowerCase()) return false;
+
+  const nIt = normalizeTitleClient(cleanIt);
+  const nOrig = normalizeTitleClient(cleanOrig);
+  if (nIt === nOrig) return false;
+
+  // If one is just "the <title>" and the other is "<title>", treat as identical
+  const stripThe = (s) => s.replace(/^(the|il|lo|la|i|gli|le|l)\s+/i, "").trim();
+  if (stripThe(nIt) === stripThe(nOrig) && (nIt.startsWith("the ") || nOrig.startsWith("the "))) {
+    return false;
+  }
+
+  return true;
+}
+
 function damerauLevenshteinClient(s1, s2, maxDist = 2) {
   if (s1 === s2) return 0;
   const len1 = s1.length;
@@ -1763,47 +1788,83 @@ async function directMobileSearch4G(query, libraryItems) {
         titleIt = mulLbl || enLbl || enwClean;
       }
 
-      // Resolve TRUE native original title (Italian for Italy, native language for Japan/France/Spain/etc.)
+      // Resolve TRUE native original title based on country/language of origin
       const p1476List = claims.P1476 || [];
       const p495List = (claims.P495 || []).map((c) => c.mainsnak?.datavalue?.value?.id).filter(Boolean);
-      const isItalianProd = p495List.includes("Q38");
+      const p364List = (claims.P364 || []).map((c) => c.mainsnak?.datavalue?.value?.id).filter(Boolean);
+      const isItalianProd = p495List.includes("Q38") || p364List.includes("Q652");
+      const isJapaneseProd = p495List.includes("Q17") || p364List.includes("Q5287");
+      const isFrenchProd = p495List.includes("Q142") || p364List.includes("Q150");
+      const isSpanishProd = p495List.includes("Q29") || p364List.includes("Q1321");
+      const isGermanProd = p495List.includes("Q183") || p364List.includes("Q188");
+      const isKoreanProd = p495List.includes("Q884") || p364List.includes("Q9176");
 
       let titleOrig = "";
       if (isItalianProd) {
         titleOrig = titleIt;
-      } else {
+      } else if (isJapaneseProd) {
         for (const c of p1476List) {
           const val = c.mainsnak?.datavalue?.value;
-          if (val && typeof val === "object" && val.language && val.language !== "en" && val.text) {
+          if (val && typeof val === "object" && val.language === "ja" && val.text) {
             titleOrig = val.text.trim();
             break;
           }
         }
-        if (!titleOrig && p1476List.length > 0) {
-          const v0 = p1476List[0]?.mainsnak?.datavalue?.value;
-          if (v0 && typeof v0 === "object" && v0.text) {
-            titleOrig = v0.text.trim();
-          }
+        if (!titleOrig && e.labels?.ja?.value) {
+          titleOrig = e.labels.ja.value.trim();
         }
         if (!titleOrig && claims.P1705?.[0]?.mainsnak?.datavalue?.value?.text) {
           titleOrig = claims.P1705[0].mainsnak.datavalue.value.text.trim();
         }
-        if (!titleOrig && p495List.includes("Q17") && e.labels?.ja?.value) {
-          titleOrig = e.labels.ja.value.trim();
+        if (!titleOrig) {
+          titleOrig = enLbl || enwClean || titleIt;
         }
-        if (!titleOrig && p495List.includes("Q142") && e.labels?.fr?.value) {
-          titleOrig = e.labels.fr.value.trim();
+      } else if (isFrenchProd) {
+        titleOrig = e.labels?.fr?.value || "";
+        if (!titleOrig) {
+          for (const c of p1476List) {
+            const val = c.mainsnak?.datavalue?.value;
+            if (val && typeof val === "object" && val.language === "fr" && val.text) {
+              titleOrig = val.text.trim();
+              break;
+            }
+          }
         }
-        if (!titleOrig && p495List.includes("Q29") && e.labels?.es?.value) {
-          titleOrig = e.labels.es.value.trim();
+        if (!titleOrig) titleOrig = enLbl || titleIt;
+      } else if (isSpanishProd) {
+        titleOrig = e.labels?.es?.value || "";
+        if (!titleOrig) {
+          for (const c of p1476List) {
+            const val = c.mainsnak?.datavalue?.value;
+            if (val && typeof val === "object" && val.language === "es" && val.text) {
+              titleOrig = val.text.trim();
+              break;
+            }
+          }
         }
-        if (!titleOrig && p495List.includes("Q183") && e.labels?.de?.value) {
-          titleOrig = e.labels.de.value.trim();
+        if (!titleOrig) titleOrig = enLbl || titleIt;
+      } else if (isGermanProd) {
+        titleOrig = e.labels?.de?.value || "";
+        if (!titleOrig) titleOrig = enLbl || titleIt;
+      } else if (isKoreanProd) {
+        titleOrig = e.labels?.ko?.value || "";
+        if (!titleOrig) titleOrig = enLbl || titleIt;
+      } else {
+        // English or default international productions: ALWAYS English! NEVER Japanese or random foreign languages!
+        for (const c of p1476List) {
+          const val = c.mainsnak?.datavalue?.value;
+          if (val && typeof val === "object" && val.language === "en" && val.text) {
+            titleOrig = val.text.trim();
+            break;
+          }
+        }
+        if (!titleOrig) {
+          titleOrig = enLbl || enwClean || titleIt;
         }
       }
 
-      if (!titleOrig) {
-        titleOrig = enLbl || enwClean || titleIt;
+      if (!titleOrig || normalizeTitleClient(titleOrig) === normalizeTitleClient(titleIt)) {
+        titleOrig = titleIt;
       }
       if (!titleIt) continue;
       const hasItTitle = Boolean(itLbl || itwClean);
@@ -3635,7 +3696,7 @@ function renderLibrary() {
         }
             </div>
             <h3 class="tv-title">${escapeHtml(it.title_it)}</h3>
-            ${it.title_original && it.title_original.toLowerCase() !== it.title_it.toLowerCase()
+            ${shouldDisplayOriginalTitle(it.title_it, it.title_original)
           ? `<div class="tv-ep-line">Titolo orig.: ${escapeHtml(it.title_original)}</div>`
           : ""
         }
@@ -3970,7 +4031,7 @@ function renderSearchResultCards(results, targetContainer, isCompactModal = fals
         }
             </div>
             <h3 class="tv-title">${escapeHtml(item.title_it)}</h3>
-            ${item.title_original && item.title_original.toLowerCase() !== item.title_it.toLowerCase()
+            ${shouldDisplayOriginalTitle(item.title_it, item.title_original)
           ? `<div class="tv-ep-line">Titolo originale: ${escapeHtml(item.title_original)}</div>`
           : ""
         }

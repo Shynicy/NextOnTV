@@ -1158,40 +1158,67 @@ def _search_wikidata_media(query: str, extra_queries: Optional[List[str]] = None
         else:
             title_it = mul_lbl or en_lbl or enw_clean
 
-        # Resolve TRUE native original title (Italian for Italy, native language for Japan/France/Spain/etc.)
+        # Resolve TRUE native original title based on country/language of origin
         p1476_list = claims.get("P1476") or []
         p495_ids = [(c.get("mainsnak") or {}).get("datavalue", {}).get("value", {}).get("id") for c in (claims.get("P495") or [])]
-        is_italian_prod = "Q38" in p495_ids
+        p364_ids = [(c.get("mainsnak") or {}).get("datavalue", {}).get("value", {}).get("id") for c in (claims.get("P364") or [])]
+        is_italian_prod = "Q38" in p495_ids or "Q652" in p364_ids
+        is_japanese_prod = "Q17" in p495_ids or "Q5287" in p364_ids
+        is_french_prod = "Q142" in p495_ids or "Q150" in p364_ids
+        is_spanish_prod = "Q29" in p495_ids or "Q1321" in p364_ids
+        is_german_prod = "Q183" in p495_ids or "Q188" in p364_ids
+        is_korean_prod = "Q884" in p495_ids or "Q9176" in p364_ids
 
+        labels = e.get("labels") or {}
         title_orig = ""
         if is_italian_prod:
             title_orig = title_it
-        else:
+        elif is_japanese_prod:
             for c in p1476_list:
                 val = (c.get("mainsnak") or {}).get("datavalue", {}).get("value")
-                if isinstance(val, dict) and val.get("language") != "en" and val.get("text"):
+                if isinstance(val, dict) and val.get("language") == "ja" and val.get("text"):
                     title_orig = val["text"].strip()
                     break
-            if not title_orig and p1476_list:
-                v0 = ((p1476_list[0].get("mainsnak") or {}).get("datavalue", {}).get("value"))
-                if isinstance(v0, dict) and v0.get("text"):
-                    title_orig = v0["text"].strip()
+            if not title_orig and labels.get("ja"):
+                title_orig = (labels["ja"].get("value") or "").strip()
             if not title_orig and claims.get("P1705"):
                 v1705 = ((claims["P1705"][0].get("mainsnak") or {}).get("datavalue", {}).get("value"))
                 if isinstance(v1705, dict) and v1705.get("text"):
                     title_orig = v1705["text"].strip()
-            labels = e.get("labels") or {}
-            if not title_orig and "Q17" in p495_ids and labels.get("ja"):
-                title_orig = (labels["ja"].get("value") or "").strip()
-            if not title_orig and "Q142" in p495_ids and labels.get("fr"):
+            if not title_orig:
+                title_orig = en_lbl or enw_clean or title_it
+        elif is_french_prod:
+            if labels.get("fr"):
                 title_orig = (labels["fr"].get("value") or "").strip()
-            if not title_orig and "Q29" in p495_ids and labels.get("es"):
+            if not title_orig:
+                title_orig = en_lbl or title_it
+        elif is_spanish_prod:
+            if labels.get("es"):
                 title_orig = (labels["es"].get("value") or "").strip()
-            if not title_orig and "Q183" in p495_ids and labels.get("de"):
+            if not title_orig:
+                title_orig = en_lbl or title_it
+        elif is_german_prod:
+            if labels.get("de"):
                 title_orig = (labels["de"].get("value") or "").strip()
+            if not title_orig:
+                title_orig = en_lbl or title_it
+        elif is_korean_prod:
+            if labels.get("ko"):
+                title_orig = (labels["ko"].get("value") or "").strip()
+            if not title_orig:
+                title_orig = en_lbl or title_it
+        else:
+            # English or default international productions: ALWAYS English! NEVER Japanese or random foreign languages!
+            for c in p1476_list:
+                val = (c.get("mainsnak") or {}).get("datavalue", {}).get("value")
+                if isinstance(val, dict) and val.get("language") == "en" and val.get("text"):
+                    title_orig = val["text"].strip()
+                    break
+            if not title_orig:
+                title_orig = en_lbl or enw_clean or title_it
 
-        if not title_orig:
-            title_orig = en_lbl or enw_clean or title_it
+        if not title_orig or normalize_title(title_orig) == normalize_title(title_it):
+            title_orig = title_it
         if not title_it:
             continue
         has_it = bool(it_lbl or itw_clean)
