@@ -30,11 +30,11 @@ python server.py
 2. Inquadra il **QR Code** con lo smartphone Android: contiene già il **Link Pubblico HTTPS (4G/5G)** e il tuo **Codice Cloud Sync** automatico.
 3. Su Chrome per Android, premi il menu **⋮** in alto a destra e tocca **"Aggiungi a schermata Home" / "Installa app"**.
 
----
 
 ## 💾 Gestione Backup e Aggiornamento Libreria su GitHub
 
 NextOnTV ti permette di scaricare in qualsiasi momento un backup completo in formato JSON di tutti i tuoi film e serie TV salvati, per poi caricarlo su GitHub e renderlo la copia ufficiale dell'app.
+
 
 ### 📥 1. Come scaricare il backup dall'app
 1. Apri l'app NextOnTV (sul telefono o su PC).
@@ -42,7 +42,6 @@ NextOnTV ti permette di scaricare in qualsiasi momento un backup completo in for
 3. Clicca sul pulsante delle impostazioni / backup in alto a destra (icona del dischetto 💾).
 4. Tocca **"Esporta Backup JSON"**: verrà scaricato un file con un nome del tipo `NextOnTV_Backup_AAAA-MM-GG_OO-MM-SS.json` sul tuo dispositivo.
 
----
 
 ### 📤 2. Come caricare il backup su GitHub
 
@@ -74,7 +73,6 @@ NextOnTV ti permette di scaricare in qualsiasi momento un backup completo in for
      - Trascina il file `library.json` (e `library_backup.json`).
      - Clicca su **Commit changes**.
 
----
 
 ### 🔄 3. Come ripristinare la libreria sui dispositivi
 
