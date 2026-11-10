@@ -1,13 +1,103 @@
+// ============================================================================
+// DEFAULT STATIC CHANNELS (OFFLINE & FAST FALLBACK - DTT LCN 1-70 + SKY)
+// ============================================================================
+const DEFAULT_CHANNELS = [
+  {"lcn": 1, "name": "Rai 1", "is_sky": false},
+  {"lcn": 2, "name": "Rai 2", "is_sky": false},
+  {"lcn": 3, "name": "Rai 3", "is_sky": false},
+  {"lcn": 4, "name": "Rete 4", "is_sky": false},
+  {"lcn": 5, "name": "Canale 5", "is_sky": false},
+  {"lcn": 6, "name": "Italia 1", "is_sky": false},
+  {"lcn": 7, "name": "LA7", "is_sky": false},
+  {"lcn": 8, "name": "TV8", "is_sky": false},
+  {"lcn": 9, "name": "NOVE", "is_sky": false},
+  {"lcn": 20, "name": "20 Mediaset", "is_sky": false},
+  {"lcn": 21, "name": "Rai 4", "is_sky": false},
+  {"lcn": 22, "name": "Iris", "is_sky": false},
+  {"lcn": 23, "name": "Rai 5", "is_sky": false},
+  {"lcn": 24, "name": "Rai Movie", "is_sky": false},
+  {"lcn": 25, "name": "Rai Premium", "is_sky": false},
+  {"lcn": 26, "name": "Cielo", "is_sky": false},
+  {"lcn": 27, "name": "27 Twentyseven", "is_sky": false},
+  {"lcn": 28, "name": "TV2000", "is_sky": false},
+  {"lcn": 29, "name": "LA7 Cinema / LA7d", "is_sky": false},
+  {"lcn": 30, "name": "La 5", "is_sky": false},
+  {"lcn": 31, "name": "Real Time", "is_sky": false},
+  {"lcn": 33, "name": "Food Network", "is_sky": false},
+  {"lcn": 34, "name": "Cine34", "is_sky": false},
+  {"lcn": 35, "name": "Focus", "is_sky": false},
+  {"lcn": 36, "name": "RTL 102.5 TV", "is_sky": false},
+  {"lcn": 37, "name": "Warner TV", "is_sky": false},
+  {"lcn": 38, "name": "Giallo", "is_sky": false},
+  {"lcn": 39, "name": "TOP Crime", "is_sky": false},
+  {"lcn": 40, "name": "Boing", "is_sky": false},
+  {"lcn": 41, "name": "K2", "is_sky": false},
+  {"lcn": 42, "name": "Rai Gulp", "is_sky": false},
+  {"lcn": 43, "name": "Rai Yoyo", "is_sky": false},
+  {"lcn": 44, "name": "Frisbee", "is_sky": false},
+  {"lcn": 46, "name": "Cartoonito", "is_sky": false},
+  {"lcn": 47, "name": "Super!", "is_sky": false},
+  {"lcn": 48, "name": "Rai News 24", "is_sky": false},
+  {"lcn": 49, "name": "Italia 2", "is_sky": false},
+  {"lcn": 50, "name": "Sky TG24", "is_sky": false},
+  {"lcn": 51, "name": "TGCOM24", "is_sky": false},
+  {"lcn": 52, "name": "DMAX", "is_sky": false},
+  {"lcn": 54, "name": "Rai Storia", "is_sky": false},
+  {"lcn": 55, "name": "Mediaset Extra", "is_sky": false},
+  {"lcn": 56, "name": "HGTV", "is_sky": false},
+  {"lcn": 58, "name": "Rai Sport", "is_sky": false},
+  {"lcn": 59, "name": "Motor Trend", "is_sky": false},
+  {"lcn": 60, "name": "Sportitalia", "is_sky": false},
+  {"lcn": 62, "name": "Donna TV", "is_sky": false},
+  {"lcn": 64, "name": "SuperTennis", "is_sky": false},
+  {"lcn": 65, "name": "Alma TV", "is_sky": false},
+  {"lcn": 67, "name": "MTV Music / R101", "is_sky": false},
+  {"lcn": 68, "name": "Travel TV", "is_sky": false},
+  {"lcn": 69, "name": "Deejay TV", "is_sky": false},
+  {"lcn": 70, "name": "RadioItaliaTV", "is_sky": false},
+  {"lcn": 108, "name": "Sky Uno", "is_sky": true},
+  {"lcn": 111, "name": "Sky Atlantic", "is_sky": true},
+  {"lcn": 112, "name": "Sky Serie", "is_sky": true},
+  {"lcn": 113, "name": "Sky Investigation", "is_sky": true},
+  {"lcn": 115, "name": "Sky Crime", "is_sky": true},
+  {"lcn": 117, "name": "Sky Documentaries", "is_sky": true},
+  {"lcn": 119, "name": "Sky Nature", "is_sky": true},
+  {"lcn": 120, "name": "Sky Arte", "is_sky": true},
+  {"lcn": 122, "name": "Sky Adventure", "is_sky": true},
+  {"lcn": 129, "name": "Comedy Central", "is_sky": true},
+  {"lcn": 301, "name": "Sky Cinema Uno", "is_sky": true},
+  {"lcn": 302, "name": "Sky Cinema Stories", "is_sky": true},
+  {"lcn": 303, "name": "Sky Cinema Collection", "is_sky": true},
+  {"lcn": 304, "name": "Sky Cinema Family", "is_sky": true},
+  {"lcn": 305, "name": "Sky Cinema Action", "is_sky": true},
+  {"lcn": 306, "name": "Sky Cinema Suspense", "is_sky": true},
+  {"lcn": 307, "name": "Sky Cinema Comedy", "is_sky": true},
+  {"lcn": 308, "name": "Sky Cinema Romance", "is_sky": true},
+  {"lcn": 309, "name": "Sky Cinema Drama", "is_sky": true},
+  {"lcn": 310, "name": "Sky Cinema Uno +24", "is_sky": true}
+];
+
+function getCachedChannels() {
+  try {
+    const raw = localStorage.getItem("nextontv_cached_channels");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) { }
+  return null;
+}
+
 const state = {
   startDate: "",
   days: [],
-  channels: [],
+  channels: getCachedChannels() || DEFAULT_CHANNELS,
   matchFilterMode: "all", // 'all' | 'wishlist' | 'watched_movies' | 'watched_series'
   matchDay: "all",
   matchTimeSlot: "all",
   matchChannel: "",
   matchOnlyUnwatched: false,
-  includeSky: false,
+  includeSky: localStorage.getItem("nextontv_include_sky") === "1",
   streamStatusMode: "all", // 'all' | 'wishlist' | 'watching' | 'watched'
   streamPlatforms: new Set(), // empty = all platforms
   streamMediaType: "all", // 'all' | 'movie' | 'series'
@@ -187,11 +277,29 @@ function convertRomanNumeralsClient(normStr) {
     .join(" ");
 }
 
+function normalizeLeetClient(str) {
+  if (!str) return "";
+  return str
+    .replace(/\bmercen4ri\b/gi, "mercenari 4")
+    .replace(/expend4bles/gi, "expendables 4")
+    .replace(/(?<=[a-z])4(?=[a-z])/gi, "a")
+    .replace(/(?<=[a-z])3(?=[a-z])/gi, "e")
+    .replace(/(?<=[a-z])1(?=[a-z])/gi, "i")
+    .replace(/(?<=[a-z])0(?=[a-z])/gi, "o");
+}
+
 const STOP_WORDS_CLIENT = new Set([
   "the", "il", "lo", "la", "l", "i", "gli", "le", "a", "an", "and", "e", "ed", "n",
   "di", "dei", "del", "della", "delle", "dello", "degli", "da", "dal", "dalla",
   "of", "in", "on", "per", "con", "su", "un", "uno", "una", "al", "alla", "ai", "agli", "alle"
 ]);
+
+function getSignificantTokensClient(str) {
+  if (!str) return "";
+  const cleaned = cleanSearchInputClient(str).toLowerCase();
+  const words = cleaned.split(" ").filter((w) => w && !STOP_WORDS_CLIENT.has(w) && w.length >= 2);
+  return Array.from(new Set(words)).sort().join(" ");
+}
 
 function cleanSearchInputClient(q) {
   return String(q || "")
@@ -1111,10 +1219,16 @@ async function handleClientCloudGet(url) {
       const cRes = await fetch(resolveAssetUrl("data/channels.json"), { cache: "no-cache" });
       if (cRes.ok) {
         const cData = await cRes.json();
-        if (cData && cData.channels) return cData;
+        if (cData && Array.isArray(cData.channels) && cData.channels.length > 0) {
+          try {
+            localStorage.setItem("nextontv_cached_channels", JSON.stringify(cData.channels));
+          } catch (_) { }
+          return cData;
+        }
       }
     } catch (e) { }
-    return { channels: state.channels || [] };
+    const cached = getCachedChannels();
+    return { channels: cached || DEFAULT_CHANNELS };
   }
 
   if (path === "/api/library" || path === "/api/streaming") {
@@ -1143,66 +1257,75 @@ async function handleClientCloudGet(url) {
 
     // Pre-build lightning-fast normalized search index for library items & aliases (O(1) hash lookups)
     const libByKey = {};
+    const libByNormAny = {};
+    const libByTokens = {};
     libItems.forEach((it) => {
       const mtype = it.media_type || "movie";
       const normIt = normalizeTitleClient(it.title_it);
       const normOrig = normalizeTitleClient(it.title_original || "");
-      if (normIt) {
-        libByKey[`${mtype}_${normIt}`] = it;
-        libByKey[`${mtype}_${convertRomanNumeralsClient(normIt)}`] = it;
-        libByKey[`${mtype}_${stripConjunctionsClient(normIt)}`] = it;
-      }
-      if (normOrig) {
-        libByKey[`${mtype}_${normOrig}`] = it;
-        libByKey[`${mtype}_${convertRomanNumeralsClient(normOrig)}`] = it;
-        libByKey[`${mtype}_${stripConjunctionsClient(normOrig)}`] = it;
-      }
+      const allNames = [normIt, normOrig];
       if (it.aliases && Array.isArray(it.aliases)) {
-        it.aliases.forEach((al) => {
-          const normAl = normalizeTitleClient(al);
-          if (normAl) {
-            libByKey[`${mtype}_${normAl}`] = it;
-            libByKey[`${mtype}_${convertRomanNumeralsClient(normAl)}`] = it;
-            libByKey[`${mtype}_${stripConjunctionsClient(normAl)}`] = it;
-          }
-        });
+        it.aliases.forEach((al) => allNames.push(normalizeTitleClient(al)));
       }
+
+      allNames.filter(Boolean).forEach((nm) => {
+        const rom = convertRomanNumeralsClient(nm);
+        const conj = stripConjunctionsClient(nm);
+        const leet = normalizeLeetClient(nm);
+
+        [nm, rom, conj, leet].forEach((v) => {
+          if (!v) return;
+          libByKey[`${mtype}_${v}`] = it;
+          if (!libByNormAny[v]) libByNormAny[v] = it;
+        });
+
+        const toks = getSignificantTokensClient(nm);
+        const toksDl = getSignificantTokensClient(leet);
+        if (toks && toks.includes(" ")) libByTokens[toks] = it;
+        if (toksDl && toksDl.includes(" ")) libByTokens[toksDl] = it;
+      });
     });
 
     const isMatch = (ev) => {
-      const evNorm = ev.norm_title || normalizeTitleClient(ev.title || "");
+      let rawTitle = ev.title || "";
+      if (!rawTitle) return null;
+      if (/mercen4ri/i.test(rawTitle)) {
+        rawTitle = rawTitle.replace(/mercen4ri/gi, "mercenari 4");
+      }
+      const evNorm = ev.norm_title || normalizeTitleClient(rawTitle);
       if (!evNorm) return null;
       const evType = ev.media_type || "movie";
+      const evRoman = convertRomanNumeralsClient(evNorm);
+      const evConj = stripConjunctionsClient(evNorm);
+      const evLeet = normalizeLeetClient(evNorm);
 
       // 1. Strict typed lookup: movie against movie, series against series
-      let matched = libByKey[`${evType}_${evNorm}`];
-      if (matched) return matched;
+      for (const k of [evNorm, evRoman, evConj, evLeet]) {
+        if (k && libByKey[`${evType}_${k}`]) return libByKey[`${evType}_${k}`];
+      }
 
-      const evRoman = convertRomanNumeralsClient(evNorm);
-      if (libByKey[`${evType}_${evRoman}`]) return libByKey[`${evType}_${evRoman}`];
+      // 2. Cross-type lookup: if evType is "other" OR exact title across types (e.g. Baywatch)
+      for (const k of [evNorm, evRoman, evConj, evLeet]) {
+        if (k && libByNormAny[k]) return libByNormAny[k];
+      }
 
-      const evConj = stripConjunctionsClient(evNorm);
-      if (libByKey[`${evType}_${evConj}`]) return libByKey[`${evType}_${evConj}`];
+      // 3. Significant token set match (e.g. "mercenari 4 expendables", min 2 significant words)
+      const evToks = getSignificantTokensClient(evNorm);
+      const evToksLeet = getSignificantTokensClient(evLeet);
+      if (evToks && evToks.includes(" ") && libByTokens[evToks]) return libByTokens[evToks];
+      if (evToksLeet && evToksLeet.includes(" ") && libByTokens[evToksLeet]) return libByTokens[evToksLeet];
 
-      // 2. Controlled match ONLY within the same media_type:
-      // STRICT RULE: Series NEVER matches Movie! Movie NEVER matches Series!
+      // 4. Controlled prefix match: ONLY allow prefix matching if candidate has at least 8 chars & 2 words
       for (let i = 0; i < libItems.length; i++) {
         const it = libItems[i];
         const itType = it.media_type || "movie";
-        if (itType !== evType) continue;
+        if (evType !== "other" && itType !== evType) continue;
 
         const itNorm = normalizeTitleClient(it.title_it);
         const itOrig = normalizeTitleClient(it.title_original || "");
         const allCandidates = [itNorm, itOrig, ...(it.aliases || []).map(normalizeTitleClient)].filter(Boolean);
 
         for (const cand of allCandidates) {
-          // Roman numerals or conjunction equivalence
-          if (evRoman === convertRomanNumeralsClient(cand)) return it;
-          if (evConj === stripConjunctionsClient(cand)) return it;
-
-          // Controlled prefix match: ONLY allow prefix matching if:
-          // A. The candidate has at least 8 characters AND at least 2 words (not a single word like 'Lupin'!)
-          // B. The remaining suffix in evNorm is ONLY season/episode/part indicators (e.g. "st 1", "ep 2", "pt 2", "1", "2")
           if (cand.length >= 8 && cand.includes(" ") && evNorm.startsWith(cand)) {
             const remainder = evNorm.slice(cand.length).trim();
             if (/^(s\d+|ep\d+|st\s*\d+|stagione\s*\d+|episodio\s*\d+|parte\s*\d+|pt\s*\d+|\d+|[ivx]+)$/i.test(remainder)) {
@@ -1216,13 +1339,17 @@ async function handleClientCloudGet(url) {
 
     // First pass: match all events against library and deduplicate identical/near broadcast slots on same channel
     const dedupedMap = new Map();
+    let skyHiddenCount = 0;
 
     allEvents.forEach((ev) => {
       const isSkyEv = Boolean(ev.is_sky || Number(ev.lcn || 0) >= 100);
-      if (!includeSky && isSkyEv) return;
-
       const lib = isMatch(ev);
       if (!lib) return;
+
+      if (!includeSky && isSkyEv) {
+        skyHiddenCount++;
+        return;
+      }
 
       const chanKey = String(ev.lcn || ev.channel_name || "");
       const dateKey = ev.date || "";
@@ -1310,7 +1437,7 @@ async function handleClientCloudGet(url) {
       return Number(a.lcn || 0) - Number(b.lcn || 0);
     });
 
-    let counts = { all: 0, wishlist: 0, watched_movies: 0, watched_series: 0 };
+    let counts = { all: 0, wishlist: 0, watched_movies: 0, watched_series: 0, sky_hidden: skyHiddenCount };
     const matchedEvents = [];
 
     uniqueMatches.forEach((ev) => {
@@ -2251,7 +2378,7 @@ async function handleClientCloudPost(url, body) {
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
     pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
-    return { ok: true };
+    return { ok: true, id: item.id, item: item, watched_episodes_count: item.watched_episodes_count || 0 };
   }
 
   if (url === "/api/library/delete") {
@@ -2297,7 +2424,7 @@ async function handleClientCloudPost(url, body) {
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
     pushCloudSnapshotClient(state.syncCode, snap).catch(() => {});
-    return { ok: true };
+    return { ok: true, id: item.id, item: item, watched_episodes_count: item.watched_episodes_count || 0 };
   }
 
   if (url === "/api/library/batch") {
@@ -2516,6 +2643,7 @@ async function initApp() {
   }
 
   setupNavigationAndEvents();
+  populateChannelDropdowns();
 
   const [chRes, stRes, remRes] = await Promise.all([
     apiGet("/api/channels"),
@@ -2523,7 +2651,14 @@ async function initApp() {
     apiGet("/api/reminders"),
   ]);
 
-  state.channels = chRes.channels || [];
+  if (chRes && Array.isArray(chRes.channels) && chRes.channels.length > 0) {
+    state.channels = chRes.channels;
+    try {
+      localStorage.setItem("nextontv_cached_channels", JSON.stringify(chRes.channels));
+    } catch (_) { }
+  } else if (!state.channels || state.channels.length === 0) {
+    state.channels = getCachedChannels() || DEFAULT_CHANNELS;
+  }
   state.startDate = stRes.start_date || getCurrentItalianDateIso();
   state.days = stRes.days || [];
   state.reminders = remRes.reminders || [];
@@ -2570,7 +2705,10 @@ async function initApp() {
 function populateChannelDropdowns() {
   const selMatch = document.getElementById("match-channel");
   if (!selMatch) return;
-  const visibleChannels = (state.channels || []).filter(
+  if (!Array.isArray(state.channels) || state.channels.length === 0) {
+    state.channels = getCachedChannels() || DEFAULT_CHANNELS;
+  }
+  const visibleChannels = (state.channels || DEFAULT_CHANNELS).filter(
     (c) => state.includeSky || (!c.is_sky && Number(c.lcn || 0) < 100)
   );
   if (!state.includeSky && state.matchChannel && Number(state.matchChannel) >= 100) {
@@ -2671,6 +2809,19 @@ async function loadMatches(forceRefresh = false) {
     saveLocalSnapshot(snap);
   }
 
+  const skyBannerHtml = (!state.includeSky && (counts.sky_hidden || 0) > 0)
+    ? `
+      <div class="sky-hint-banner" style="background:linear-gradient(135deg,rgba(14,165,233,0.18),rgba(99,102,241,0.18));border:1px solid rgba(56,189,248,0.4);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div style="font-size:0.88rem;color:#e2e8f0;line-height:1.4;">
+          🛰️ <strong>${counts.sky_hidden} programmi TV</strong> della tua libreria sono in programmazione sui canali <strong>Sky Cinema e Sky Serie</strong>!
+        </div>
+        <button type="button" class="btn-primary btn-sm" id="btn-activate-sky-banner" style="white-space:nowrap;padding:6px 14px;font-size:0.82rem;">
+          🛰️ Mostra Sky
+        </button>
+      </div>
+    `
+    : "";
+
   if (matches.length === 0) {
     const modeLabel = {
       all: "nelle tue liste (Wishlist o Già visti)",
@@ -2679,12 +2830,19 @@ async function loadMatches(forceRefresh = false) {
       watched_series: "tra le Serie TV che hai già visto / segui",
     }[state.matchFilterMode];
 
-    container.innerHTML = `
+    container.innerHTML = skyBannerHtml + `
       <div class="empty-box">
         <p>Nessun programma TV trovato nei prossimi 7 giorni ${modeLabel} con i filtri attuali.</p>
         <p style="margin-top:8px;font-size:0.8rem;">💡 Suggerimento: prova a selezionare <strong>"Tutti i 7 giorni"</strong> o aggiungi nuovi film e serie TV dalla scheda <strong>"Cerca & Aggiungi"</strong>!</p>
       </div>
     `;
+    const btnAct = document.getElementById("btn-activate-sky-banner");
+    if (btnAct) {
+      btnAct.addEventListener("click", () => {
+        const toggleBtn = document.getElementById("btn-toggle-sky");
+        if (toggleBtn) toggleBtn.click();
+      });
+    }
     return;
   }
 
@@ -2695,7 +2853,7 @@ async function loadMatches(forceRefresh = false) {
     byDate[m.date].push(m);
   });
 
-  let html = "";
+  let html = skyBannerHtml;
   Object.keys(byDate)
     .sort()
     .forEach((d) => {
@@ -2713,6 +2871,14 @@ async function loadMatches(forceRefresh = false) {
 
   container.innerHTML = html;
   bindMatchCardEvents(container);
+
+  const btnAct = document.getElementById("btn-activate-sky-banner");
+  if (btnAct) {
+    btnAct.addEventListener("click", () => {
+      const toggleBtn = document.getElementById("btn-toggle-sky");
+      if (toggleBtn) toggleBtn.click();
+    });
+  }
 }
 
 function renderMatchCard(ev, matchIndex) {
@@ -3883,14 +4049,12 @@ async function addCatalogItemToLibrary(item, status, buttonElement) {
     } finally {
       if (buttonElement) {
         buttonElement.disabled = false;
-        if (!item.in_library_status) {
-          buttonElement.classList.remove("active-watched");
-          if (status === "wishlist") {
-            buttonElement.classList.add("btn-primary", "btn-sm");
-            buttonElement.textContent = "🎯 Aggiungi in Wishlist";
-          } else {
-            buttonElement.textContent = "✅ Aggiungi in Visti";
-          }
+        buttonElement.classList.remove("active-watched");
+        if (status === "wishlist") {
+          buttonElement.classList.add("btn-primary", "btn-sm");
+          buttonElement.textContent = "🎯 Aggiungi in Wishlist";
+        } else {
+          buttonElement.textContent = "✅ Aggiungi in Visti";
         }
       }
     }
@@ -4867,8 +5031,16 @@ function setupNavigationAndEvents() {
 
   const btnToggleSky = document.getElementById("btn-toggle-sky");
   if (btnToggleSky) {
+    if (state.includeSky) {
+      btnToggleSky.classList.add("active");
+      const stateTextEl = document.getElementById("sky-toggle-state-text");
+      if (stateTextEl) stateTextEl.textContent = "ON";
+    }
     btnToggleSky.addEventListener("click", () => {
       state.includeSky = !state.includeSky;
+      try {
+        localStorage.setItem("nextontv_include_sky", state.includeSky ? "1" : "0");
+      } catch (_) { }
       btnToggleSky.classList.toggle("active", state.includeSky);
       const stateTextEl = document.getElementById("sky-toggle-state-text");
       if (stateTextEl) {

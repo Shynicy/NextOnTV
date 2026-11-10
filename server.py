@@ -425,6 +425,7 @@ def match_epg_with_library(
         "wishlist": 0,
         "watched_movies": 0,
         "watched_series": 0,
+        "sky_hidden": 0,
     }
 
     full_exact_map: Dict[str, List[Dict]] = {}
@@ -442,12 +443,10 @@ def match_epg_with_library(
     deduped_slot_map: Dict[str, Dict] = {}
 
     for ev in events:
-        if ev.get("media_type") not in ("movie", "series"):
-            continue
-        is_sky_ev = bool(ev.get("is_sky") or (ev.get("lcn") or 0) >= 100)
-        if not include_sky and is_sky_ev:
-            continue
-        ev_norm = ev.get("norm_title") or ""
+        ev_raw = ev.get("title") or ""
+        if "mercen4ri" in ev_raw.lower():
+            ev_raw = re.sub(r'mercen4ri\b', 'mercenari 4', ev_raw, flags=re.I)
+        ev_norm = normalize_title(ev_raw) or (ev.get("norm_title") or "")
         if not ev_norm:
             continue
 
@@ -462,10 +461,17 @@ def match_epg_with_library(
 
         lib_item = None
         for cand in candidates:
-            if cand["media_type"] == ev["media_type"]:
+            if cand["media_type"] == ev.get("media_type") or ev.get("media_type") not in ("movie", "series"):
                 lib_item = cand
                 break
+        if not lib_item and candidates:
+            lib_item = candidates[0]
         if not lib_item:
+            continue
+
+        is_sky_ev = bool(ev.get("is_sky") or (ev.get("lcn") or 0) >= 100)
+        if not include_sky and is_sky_ev:
+            counts_by_category["sky_hidden"] += 1
             continue
 
         chan_key = str(ev.get("lcn") or ev.get("channel_name") or "")
