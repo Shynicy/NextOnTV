@@ -4335,6 +4335,18 @@ function setupNavigationAndEvents() {
       btn.classList.add("active");
       const targetId = btn.dataset.tab;
       document.getElementById(targetId).classList.add("active");
+
+      // Auto-clear search and filter bars when switching between sections
+      const libFilter = document.getElementById("lib-filter-input");
+      if (libFilter && (libFilter.value || state.libQuery)) {
+        libFilter.value = "";
+        state.libQuery = "";
+      }
+      const catalogSearch = document.getElementById("catalog-search-input");
+      if (catalogSearch && catalogSearch.value) {
+        catalogSearch.value = "";
+      }
+
       if (targetId === "tab-explore") {
         loadExploreEpg();
       } else if (targetId === "tab-streaming") {
@@ -4456,10 +4468,22 @@ function setupNavigationAndEvents() {
     });
   });
 
-  document.getElementById("lib-filter-input").addEventListener("input", (e) => {
-    state.libQuery = e.target.value;
-    renderLibrary();
-  });
+  const libFilterInput = document.getElementById("lib-filter-input");
+  if (libFilterInput) {
+    const clearLibFilter = () => {
+      if (libFilterInput.value || state.libQuery) {
+        libFilterInput.value = "";
+        state.libQuery = "";
+        renderLibrary();
+      }
+    };
+    libFilterInput.addEventListener("click", clearLibFilter);
+    libFilterInput.addEventListener("focus", clearLibFilter);
+    libFilterInput.addEventListener("input", (e) => {
+      state.libQuery = e.target.value;
+      renderLibrary();
+    });
+  }
 
   const libSortSelect = document.getElementById("lib-sort-select");
   if (libSortSelect) {
