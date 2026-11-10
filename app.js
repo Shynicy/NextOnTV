@@ -481,15 +481,97 @@ function escapeHtml(str) {
     .replace(/'/g, "&#39;");
 }
 
-function showToast(msg) {
+function showToast(msg, duration = 3500) {
   const container = document.getElementById("toast-container");
+  if (!container) return;
+
   const el = document.createElement("div");
   el.className = "toast";
-  el.textContent = msg;
+
+  const textSpan = document.createElement("span");
+  textSpan.textContent = msg;
+  el.appendChild(textSpan);
+
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "toast-close-btn";
+  closeBtn.setAttribute("aria-label", "Chiudi");
+  closeBtn.setAttribute("title", "Scorri o tocca per chiudere");
+  closeBtn.innerHTML = "&times;";
+  el.appendChild(closeBtn);
+
   container.appendChild(el);
-  setTimeout(() => {
-    el.remove();
-  }, 3200);
+
+  let dismissTimer = null;
+  const dismissToast = (direction = 0) => {
+    if (el._dismissed) return;
+    el._dismissed = true;
+    if (dismissTimer) clearTimeout(dismissTimer);
+    el.style.transition = "transform 0.24s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.24s ease-out";
+    const travel = direction !== 0 ? (direction > 0 ? 320 : -320) : 0;
+    el.style.transform = `translateX(${travel}px)${direction === 0 ? " scale(0.92)" : ""}`;
+    el.style.opacity = "0";
+    setTimeout(() => {
+      try { el.remove(); } catch (_) { }
+    }, 250);
+  };
+
+  dismissTimer = setTimeout(() => dismissToast(0), duration);
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dismissToast(0);
+  });
+
+  // Swipe / Drag to dismiss horizontally (mouse & touch via Pointer Events)
+  let startX = 0;
+  let currentX = 0;
+  let isDragging = false;
+  let hasSwiped = false;
+
+  el.addEventListener("pointerdown", (e) => {
+    if (e.target && e.target.classList.contains("toast-close-btn")) return;
+    startX = e.clientX;
+    currentX = e.clientX;
+    isDragging = true;
+    hasSwiped = false;
+    if (dismissTimer) clearTimeout(dismissTimer);
+    el.style.transition = "none";
+    try { el.setPointerCapture(e.pointerId); } catch (_) { }
+  });
+
+  el.addEventListener("pointermove", (e) => {
+    if (!isDragging) return;
+    currentX = e.clientX;
+    const diffX = currentX - startX;
+    if (Math.abs(diffX) > 4) {
+      hasSwiped = true;
+    }
+    el.style.transform = `translateX(${diffX}px)`;
+    const progress = Math.min(Math.abs(diffX) / 180, 0.85);
+    el.style.opacity = String(1 - progress);
+  });
+
+  const onPointerEnd = (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    try { el.releasePointerCapture(e.pointerId); } catch (_) { }
+    const diffX = currentX - startX;
+    const threshold = Math.min(el.offsetWidth * 0.25, 60);
+
+    if (hasSwiped && Math.abs(diffX) > threshold) {
+      dismissToast(diffX > 0 ? 1 : -1);
+    } else {
+      // Snap back if threshold wasn't reached
+      el.style.transition = "transform 0.2s ease-out, opacity 0.2s ease-out";
+      el.style.transform = "translateX(0px)";
+      el.style.opacity = "1";
+      dismissTimer = setTimeout(() => dismissToast(0), duration);
+    }
+  };
+
+  el.addEventListener("pointerup", onPointerEnd);
+  el.addEventListener("pointercancel", onPointerEnd);
 }
 
 function buildGoogleCalendarUrl(ev) {
@@ -2109,6 +2191,14 @@ async function initApp() {
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) checkItalianDateRollover();
   });
+
+  const pendingReloadToast = sessionStorage.getItem("nextontv_reload_toast");
+  if (pendingReloadToast) {
+    sessionStorage.removeItem("nextontv_reload_toast");
+    setTimeout(() => {
+      showToast(pendingReloadToast);
+    }, 400);
+  }
 }
 
 function populateChannelDropdowns() {
@@ -4269,17 +4359,20 @@ function setupNavigationAndEvents() {
     btnExportBackup.addEventListener("click", () => {
       const snap = getLocalSnapshot();
       const lib = (snap.library && snap.library.length > 0) ? snap.library : state.libraryItems;
-      const dateStr = new Date().toISOString().slice(0, 10);
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+      const filename = `NextOnTV_Backup_${dateStr}.json`;
       const blob = new Blob([JSON.stringify(lib, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `NextOnTV_Backup_${dateStr}.json`;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast(`💾 Backup salvato con successo! (${lib.length} titoli scaricati in NextOnTV_Backup_${dateStr}.json)`);
+      showToast(`💾 Backup salvato con successo! (${lib.length} titoli in ${filename})`);
     });
   }
 
@@ -4319,9 +4412,11 @@ function setupNavigationAndEvents() {
             } catch (err) { }
           }
 
-          renderLibrary();
-          loadMatches(false);
-          showToast(`✅ Ripristinati con successo ${items.length} titoli dal backup!`);
+          sessionStorage.setItem("nextontv_reload_toast", `✅ Ripristinati con successo ${items.length} titoli dal backup!`);
+          showToast(`✅ Backup acquisito (${items.length} titoli)! Ricarica pagina in corso...`);
+          setTimeout(() => {
+            window.location.reload();
+          }, 600);
         } catch (err) {
           showToast("❌ Errore nella lettura del file backup: " + err.message);
         } finally {
@@ -4347,6 +4442,8 @@ function setupNavigationAndEvents() {
 
         const snap = getLocalSnapshot();
         snap.library = defLib;
+        snap.deleted_keys = [];
+        snap.updated_at = Date.now() / 1000;
         saveLocalSnapshot(snap);
         state.libraryItems = defLib;
 
@@ -4358,9 +4455,11 @@ function setupNavigationAndEvents() {
           } catch (err) { }
         }
 
-        renderLibrary();
-        loadMatches(false);
-        showToast(`🔄 Copia ufficiale ripristinata da GitHub (${defLib.length} titoli)!`);
+        sessionStorage.setItem("nextontv_reload_toast", `🔄 Copia ufficiale ripristinata da GitHub (${defLib.length} titoli)!`);
+        showToast(`🔄 Copia GitHub acquisita (${defLib.length} titoli)! Ricarica pagina in corso...`);
+        setTimeout(() => {
+          window.location.reload();
+        }, 600);
       } catch (err) {
         showToast("❌ Impossibile caricare da GitHub: " + err.message);
       } finally {
