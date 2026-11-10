@@ -3058,6 +3058,36 @@ function attachQuickMultiSelectEvents(containerEl, cardSelector, keyAttr, select
   });
 }
 
+window.goToSearchAndAddFromLibrary = function () {
+  const libFilter = document.getElementById("lib-filter-input");
+  const q = (state.libQuery || (libFilter ? libFilter.value : "") || "").trim();
+
+  // Clear 3rd tab filter so it's clean when user returns to library
+  state.libQuery = "";
+  if (libFilter) libFilter.value = "";
+
+  // Switch to Tab 4 (tab-search)
+  document.querySelectorAll(".nav-item").forEach((b) => b.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+  const searchNavBtn = document.querySelector('.nav-item[data-tab="tab-search"]');
+  if (searchNavBtn) searchNavBtn.classList.add("active");
+  const searchPanel = document.getElementById("tab-search");
+  if (searchPanel) searchPanel.classList.add("active");
+
+  const catalogSearch = document.getElementById("catalog-search-input");
+  if (catalogSearch) {
+    catalogSearch.value = q;
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  if (q) {
+    executeCatalogSearch(q);
+  } else if (catalogSearch) {
+    setTimeout(() => catalogSearch.focus(), 150);
+  }
+};
+
 function renderLibrary() {
   const items = state.libraryItems;
   const validIds = new Set(items.map((x) => Number(x.id)));
@@ -3113,11 +3143,15 @@ function renderLibrary() {
 
   const container = document.getElementById("library-list-container");
   if (filtered.length === 0) {
+    const rawQ = (state.libQuery || (document.getElementById("lib-filter-input") ? document.getElementById("lib-filter-input").value : "") || "").trim();
+    const btnLabel = rawQ
+      ? `🔍 Cerca "${escapeHtml(rawQ.length > 25 ? rawQ.slice(0, 22) + "..." : rawQ)}" in Cerca & Aggiungi`
+      : "🔍 Vai a Cerca & Aggiungi";
     container.innerHTML = `
       <div class="empty-box" style="grid-column:1/-1;">
         <p>Nessun titolo trovato in questa vista.</p>
-        <button type="button" class="btn-primary btn-sm" style="margin-top:10px;" onclick="document.querySelector('.nav-item[data-tab=\\'tab-search\\']').click()">
-          🔍 Vai a Cerca & Aggiungi
+        <button type="button" class="btn-primary btn-sm" style="margin-top:10px;" onclick="goToSearchAndAddFromLibrary()">
+          ${btnLabel}
         </button>
       </div>
     `;
