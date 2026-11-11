@@ -176,18 +176,36 @@ def pull_latest_snapshot_from_cloud(sync_code: str) -> Optional[Dict]:
                         
                         b_key = msg_obj.get("bytebin_key")
                         if b_key:
-                            req_blob = urllib.request.Request(
-                                f"https://bytebin.lucko.me/{b_key}",
-                                headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
-                            )
-                            with urllib.request.urlopen(req_blob, timeout=8, context=SSL_CTX) as resp_b:
-                                snap_obj = json.loads(resp_b.read().decode("utf-8", errors="ignore"))
-                                if isinstance(snap_obj, dict) and isinstance(snap_obj.get("library"), list):
-                                    u_ts = float(snap_obj.get("updated_at") or ev_time)
-                                    if u_ts >= latest_ts:
-                                        latest_ts = u_ts
-                                        latest_snap = snap_obj
-                                        continue
+                            try:
+                                req_blob = urllib.request.Request(
+                                    f"https://bytebin.lucko.me/{b_key}",
+                                    headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+                                )
+                                with urllib.request.urlopen(req_blob, timeout=8, context=SSL_CTX) as resp_b:
+                                    snap_obj = json.loads(resp_b.read().decode("utf-8", errors="ignore"))
+                                    if isinstance(snap_obj, dict) and isinstance(snap_obj.get("library"), list):
+                                        u_ts = float(snap_obj.get("updated_at") or ev_time)
+                                        if u_ts >= latest_ts:
+                                            latest_ts = u_ts
+                                            latest_snap = snap_obj
+                                            continue
+                            except Exception:
+                                pass
+
+                        att_url_alt = msg_obj.get("attachment_url")
+                        if att_url_alt:
+                            try:
+                                req_att = urllib.request.Request(att_url_alt, headers={"User-Agent": USER_AGENT})
+                                with urllib.request.urlopen(req_att, timeout=8, context=SSL_CTX) as a_resp:
+                                    snap_obj = json.loads(a_resp.read().decode("utf-8", errors="ignore"))
+                                    if isinstance(snap_obj, dict) and isinstance(snap_obj.get("library"), list):
+                                        u_ts = float(snap_obj.get("updated_at") or ev_time)
+                                        if u_ts >= latest_ts:
+                                            latest_ts = u_ts
+                                            latest_snap = snap_obj
+                                            continue
+                            except Exception:
+                                pass
                     except Exception:
                         pass
             except Exception:

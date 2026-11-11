@@ -18,6 +18,7 @@ except ImportError:
     from backports import zoneinfo  # type: ignore
 
 from catalog_service import ITALIAN_ORIGINAL_ALIASES, enrich_items_with_streaming
+from cloud_sync import pull_latest_snapshot_from_cloud
 from epg_engine import ALL_CHANNELS, DTT_CHANNELS, SKY_CHANNELS, fetch_7day_epg
 
 
@@ -32,72 +33,86 @@ def get_italian_today() -> datetime.date:
         return datetime.datetime.now(tz_fallback).date()
 
 
-
-def sync_cloud_backup_to_github(data_dir: str, sync_code: str = "shynicy_nextontv"):
+def sync_cloud_backup_to_github(data_dir: str, default_sync_code: str = "shynicy_nextontv") -> bool:
     """
-    Recupera l'ultimo snapshot della libreria dal cloud (ntfy.sh + bytebin) salvato da cellulare
+    Recupera l'ultimo snapshot della libreria dal cloud (ntfy.sh + bytebin) salvato da cellulare o PC
     e aggiorna automaticamente data/library.json e data/library_backup.json prima del commit GitHub.
+    Ritorna True se sono state salvate nuove modifiche, False altrimenti.
     """
-    import urllib.request
-    import urllib.error
-
-    topic = f"nextontv_sync_{sync_code.strip().lower()}"
-    ntfy_url = f"https://ntfy.sh/{topic}/json?poll=1&since=all"
-    print(f"[Cloud Backup] Controllo salvataggi da cellulare su topic cloud: {topic}...")
-
-    try:
-        req = urllib.request.Request(ntfy_url, headers={"User-Agent": "NextOnTV-Bot/1.0"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            raw_text = resp.read().decode("utf-8")
-
-        snap_data = None
-        for line in reversed(raw_text.strip().split("\n")):
-            line = line.strip()
-            if not line:
-                continue
+    sync_code = os.environ.get("NEXTONTV_SYNC_CODE", "").strip().lower()
+    if not sync_code:
+        cfg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sync_config.json")
+        if os.path.isfile(cfg_path):
             try:
-                msg = json.loads(line)
-                if msg.get("attachment") and msg["attachment"].get("url"):
-                    attachment_url = msg["attachment"]["url"]
-                    try:
-                        with urllib.request.urlopen(urllib.request.Request(attachment_url, headers={"User-Agent": "NextOnTV-Bot/1.0"}), timeout=10) as b_resp:
-                            data_parsed = json.loads(b_resp.read().decode("utf-8"))
-                            if isinstance(data_parsed, dict) and isinstance(data_parsed.get("library"), list):
-                                snap_data = data_parsed
-                                break
-                    except Exception:
-                        pass
-                
-                # Check inlined JSON message
-                msg_body = (msg.get("message") or "").strip()
-                if msg_body.startswith("{") and msg_body.endswith("}"):
-                    try:
-                        data_parsed = json.loads(msg_body)
-                        if isinstance(data_parsed, dict) and isinstance(data_parsed.get("library"), list):
-                            snap_data = data_parsed
-                            break
-                    except Exception:
-                        pass
+                with open(cfg_path, "r", encoding="utf-8") as f:
+                    cfg = json.load(f)
+                    sync_code = (cfg.get("sync_code") or "").strip().lower()
             except Exception:
                 pass
+    if not sync_code:
+        sync_code = default_sync_code
 
-        if not snap_data or not isinstance(snap_data.get("library"), list) or len(snap_data["library"]) == 0:
-            print("[Cloud Backup] Nessun nuovo snapshot remoto su topic (i file locali restano validi).")
-            return
+    topic = f"nextontv_sync_{sync_code}"
+    print(f"[Cloud Backup] Controllo modifiche liste salvate nel cloud (topic: {topic})...")
+
+    lib_path = os.path.join(data_dir, "library.json")
+    backup_path = os.path.join(data_dir, "library_backup.json")
+
+    existing_items = []
+    if os.path.isfile(lib_path):
+        try:
+            with open(lib_path, "r", encoding="utf-8") as f:
+                loaded = json.load(f)
+                if isinstance(loaded, list):
+                    existing_items = loaded
+        except Exception:
+            pass
+
+    try:
+        snap_data = pull_latest_snapshot_from_cloud(sync_code)
+        if not snap_data or not isinstance(snap_data.get("library"), list):
+            print(f"[Cloud Backup] Nessun nuovo snapshot remoto su cloud (la libreria locale con {len(existing_items)} titoli resta invariata).")
+            return False
 
         cloud_lib = snap_data.get("library")
-        if isinstance(cloud_lib, list) and len(cloud_lib) > 0:
-            lib_path = os.path.join(data_dir, "library.json")
-            backup_path = os.path.join(data_dir, "library_backup.json")
+        if len(cloud_lib) == 0:
+            print("[Cloud Backup] ⚠️ Snapshot remoto vuoto: ignorato per sicurezza per preservare la libreria esistente.")
+            return False
 
-            with open(lib_path, "w", encoding="utf-8") as f:
-                json.dump(cloud_lib, f, ensure_ascii=False, indent=2)
-            with open(backup_path, "w", encoding="utf-8") as f:
-                json.dump(cloud_lib, f, ensure_ascii=False, indent=2)
+        # Protezione anti-cancellazione accidentale
+        if len(existing_items) > 100 and len(cloud_lib) < 10:
+            print(f"[Cloud Backup] ⚠️ Snapshot remoto con soli {len(cloud_lib)} titoli a fronte dei {len(existing_items)} locali: ignorato per sicurezza.")
+            return False
 
-            print(f"[Cloud Backup] ✅ Backup automatico da telefono completato: {len(cloud_lib)} titoli aggiornati in library.json.")
+        # Verifica se ci sono reali differenze rispetto ai file locali
+        def _lib_signature(items):
+            return [
+                (
+                    it.get("id"),
+                    (it.get("title_it") or "").strip().lower(),
+                    it.get("status"),
+                    it.get("watched_episodes_count"),
+                    len(it.get("watched_episodes") or []),
+                )
+                for it in items
+            ]
+
+        if existing_items and _lib_signature(existing_items) == _lib_signature(cloud_lib):
+            print(f"[Cloud Backup] Le liste locali sono già perfettamente allineate con il cloud ({len(cloud_lib)} titoli).")
+            return False
+
+        with open(lib_path, "w", encoding="utf-8") as f:
+            json.dump(cloud_lib, f, ensure_ascii=False, indent=2)
+        with open(backup_path, "w", encoding="utf-8") as f:
+            json.dump(cloud_lib, f, ensure_ascii=False, indent=2)
+
+        source = snap_data.get("source") or "remoto"
+        print(f"[Cloud Backup] ✅ Nuove modifiche rilevate da {source}! Aggiornati {len(cloud_lib)} titoli in library.json e library_backup.json.")
+        return True
+
     except Exception as e:
-        print(f"[Cloud Backup] Controllo completato (nessun errore bloccante): {e}")
+        print(f"[Cloud Backup] Controllo completato con avviso (nessun errore bloccante): {e}")
+        return False
 
 def main():
     print("=" * 60)
@@ -142,6 +157,9 @@ def main():
     with open(channels_path, "w", encoding="utf-8") as f:
         json.dump({"channels": ALL_CHANNELS}, f, ensure_ascii=False, indent=2)
     print(f"Salvati {len(ALL_CHANNELS)} canali in {channels_path}")
+
+    # 2a. Sincronizza modifiche delle liste dal Cloud (salvate da telefono o PC il giorno prima)
+    cloud_synced = sync_cloud_backup_to_github(data_dir)
 
     # 2b. Aggiorna catalogo Piattaforme Streaming (JustWatch IT gratuito) per Le Mie Liste + Saghe
     lib_path = os.path.join(data_dir, "library.json")
@@ -198,6 +216,8 @@ def main():
         "total_epg_events": len(events),
         "movies_count": len(movies),
         "series_count": len(series),
+        "library_count": len(lib_items),
+        "library_synced_from_cloud": bool(cloud_synced),
         "generator": "NextOnTV GitHub Actions Bot",
     }
     with open(status_path, "w", encoding="utf-8") as f:

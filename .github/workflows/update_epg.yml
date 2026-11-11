@@ -1,4 +1,4 @@
-name: Aggiornamento Palinsesti TV Giornaliero (NextOnTV)
+name: Aggiornamento Palinsesti TV Giornaliero e Liste (NextOnTV)
 
 on:
   schedule:
@@ -26,14 +26,16 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Esegui aggiornamento palinsesti TV 7 giorni
+      - name: Esegui aggiornamento palinsesti TV 7 giorni e sincronizzazione liste
+        env:
+          NEXTONTV_SYNC_CODE: ${{ secrets.NEXTONTV_SYNC_CODE || 'shynicy_nextontv' }}
         run: |
           python update_epg.py
 
-      - name: Commit e Push dei palinsesti aggiornati su GitHub Pages
+      - name: Commit e Push dei palinsesti e liste aggiornate su GitHub Pages
         run: |
           git config user.name "NextOnTV Bot"
           git config user.email "bot@nextontv.local"
           git add data/ .nojekyll
-          git diff --staged --quiet || (git commit -m "Aggiornamento automatico palinsesti TV 7 giorni ($(date +'%Y-%m-%d %H:%M'))" && git push)
+          git diff --staged --quiet || (git commit -m "Aggiornamento automatico palinsesti TV 7 giorni e liste ($(date +'%Y-%m-%d %H:%M'))" && git push)
 
