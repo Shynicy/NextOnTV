@@ -1,5 +1,210 @@
 [
   {
+    "id": 1794346572141,
+    "external_id": "wd_Q241218",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Star Trek V - L'ultima frontiera",
+    "title_original": "Star trek V: l'ultima frontiera",
+    "aliases": [
+      "star trek v l ultima frontiera",
+      "star trek v l ultima frontiera"
+    ],
+    "year": "1989",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/7/7c/Star_Trek_V_The_Final_Frontier.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1989 diretto da William Shatner (1989)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:36:12.141Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794346568409,
+    "external_id": "wd_Q15929448",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Star Trek Beyond",
+    "title_original": "Star Trek: Más allá",
+    "aliases": [
+      "star trek beyond",
+      "star trek mas alla"
+    ],
+    "year": "2016",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/ba/Star_Trek_Beyond_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2016 diretto da Justin Lin (2016)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:36:08.409Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794346556270,
+    "external_id": "wd_Q221305",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Star Trek III - Alla ricerca di Spock",
+    "title_original": "Star Trek III: Alla ricerca di Spock",
+    "aliases": [
+      "star trek iii alla ricerca di spock",
+      "star trek iii alla ricerca di spock"
+    ],
+    "year": "1984",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/b6/Star_Trek_III_The_Search_for_Spock.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1984 diretto da Leonard Nimoy (1984)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:35:56.270Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794346547864,
+    "external_id": "wd_Q107940",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Star Trek",
+    "title_original": "劇場版スタートレック",
+    "aliases": [
+      "star trek",
+      ""
+    ],
+    "year": "1979",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/d/df/Star_Trek_The_Motion_Picture_poster.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1979 diretto da Robert Wise (1979)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:35:47.864Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794346542879,
+    "external_id": "wd_Q465478",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Star Trek II - L'ira di Khan",
+    "title_original": "Star Trek II",
+    "aliases": [
+      "star trek ii l ira di khan",
+      "star trek ii"
+    ],
+    "year": "1982",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/9/9a/Star_Trek_II_The_Wrath_of_Khan.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1982 diretto da Nicholas Meyer (1982)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:35:42.879Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794344852963,
+    "external_id": "wd_Q10307713",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Hunger Games - Il canto della rivolta - Parte 2",
+    "title_original": "The Hunger Games: Mockingjay – Part 2",
+    "aliases": [
+      "hunger games il canto della rivolta parte 2",
+      "the hunger games mockingjay part 2"
+    ],
+    "year": "2015",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/9/9d/Mockingjay_Part_2_Poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2015 diretto da Francis Lawrence (2015)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:07:32.963Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794344845792,
+    "external_id": "wd_Q4142083",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Hunger Games - Il canto della rivolta - Parte 1",
+    "title_original": "The Hunger Games: Mockingjay – Part 1",
+    "aliases": [
+      "hunger games il canto della rivolta parte 1",
+      "the hunger games mockingjay part 1"
+    ],
+    "year": "2014",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/6/63/MockingjayPart1Poster3.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2014 diretto da Francis Lawrence (2014)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:07:25.792Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794344842760,
+    "external_id": "wd_Q574583",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Hunger Games: La ragazza di fuoco",
+    "title_original": "The Hunger Games: Catching Fire",
+    "aliases": [
+      "hunger games la ragazza di fuoco",
+      "the hunger games catching fire"
+    ],
+    "year": "2013",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/12/Catching-Fire_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2013 diretto da Francis Lawrence (2013)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:07:22.760Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.2f5a750f-526c-44d2-8884-ae484b3e9dec"
+      }
+    ]
+  },
+  {
+    "id": 1794344837253,
+    "external_id": "wd_Q212965",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Hunger Games",
+    "title_original": "The Hunger Games",
+    "aliases": [
+      "hunger games",
+      "the hunger games"
+    ],
+    "year": "2012",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/4/42/HungerGamesPoster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2012 diretto da Gary Ross (2012)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T21:07:17.253Z",
+    "streaming_providers": []
+  },
+  {
     "id": 1794343966643,
     "external_id": "wd_Q23628",
     "tvmaze_id": 527,
@@ -184,7 +389,7 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Lo chiamavano Jeeg Robot",
-    "title_original": "Lo chiamavano Jeeg Robot",
+    "title_original": "They Call Me Jeeg",
     "aliases": [
       "lo chiamavano jeeg robot",
       "they call me jeeg"
@@ -307,7 +512,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T20:42:36.548Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "disney",
+        "name": "Disney+",
+        "monetization": "FLATRATE",
+        "url": "https://www.disneyplus.com/browse/entity-2d6036d7-f3b4-42c3-b1d3-cd5dd79bf307"
+      }
+    ]
   },
   {
     "id": 1794343310420,
@@ -747,7 +959,38 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T20:27:58.191Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/60004480"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.84a9f6d5-bc3f-73a3-e41f-a82b4ff83e67"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-signore-degli-anelli-la-compagnia-dellanello/R_192125_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/fb9f961f-6302-4776-91d7-f1b7a69fb61d"
+      }
+    ]
   },
   {
     "id": 1794342475391,
@@ -769,7 +1012,38 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T20:27:55.391Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/60004484"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.91d91081-a2e1-4004-af7d-4efb31e99e27"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-signore-degli-anelli-il-ritorno-del-re/R_192127_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/ad704585-6774-4d37-8c61-1bd41154173f"
+      }
+    ]
   },
   {
     "id": 1794342471614,
@@ -791,7 +1065,38 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T20:27:51.614Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/60004483"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.a2a9f6ce-d700-f70b-88bf-54f0968a48d5"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-signore-degli-anelli-le-due-torri/R_192130_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/1b73bd19-1229-4e5f-986a-ae38ac0f5476"
+      }
+    ]
   },
   {
     "id": 1794342457404,
@@ -1099,7 +1404,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T20:17:55.043Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "timvision",
+        "name": "TIMVISION",
+        "monetization": "FLATRATE",
+        "url": "https://www.timvision.it/h/9060118900_92900005?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
+      }
+    ]
   },
   {
     "id": 1794341866947,
@@ -2243,7 +2555,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T11:55:58.518Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/81902148"
+      }
+    ]
   },
   {
     "id": 1794311755725,
@@ -2265,7 +2584,26 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T11:55:55.725Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.ddc039e3-a01f-4530-b91e-014a7846926b"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-gladiatore/R_564435_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      }
+    ]
   },
   {
     "id": 1794311730890,
@@ -2912,7 +3250,7 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Notte prima degli esami - Oggi",
-    "title_original": "Notte prima degli esami - Oggi",
+    "title_original": "Notte prima degli esami – Oggi",
     "aliases": [
       "notte prima degli esami oggi",
       "notte prima degli esami oggi"
@@ -3454,7 +3792,7 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Perfetti sconosciuti",
-    "title_original": "Perfetti sconosciuti",
+    "title_original": "Perfect Strangers",
     "aliases": [
       "perfetti sconosciuti",
       "perfect strangers"
@@ -4664,7 +5002,7 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "La vita è bella",
-    "title_original": "La vita è bella",
+    "title_original": "Life Is Beautiful",
     "aliases": [
       "la vita e bella",
       "life is beautiful"
@@ -5403,7 +5741,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T11:20:04.013Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.b2ac0356-dbd2-4d0b-9840-4d627e72d8bc"
+      }
+    ]
   },
   {
     "id": 1794309595709,
@@ -5425,7 +5770,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T11:19:55.709Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.818b1c85-1e1a-4909-a736-e3ef5ccd2ede"
+      }
+    ]
   },
   {
     "id": 1794309593427,
@@ -5447,7 +5799,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T11:19:53.427Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.2bbef2f9-c4c4-472c-944c-a0ac276fe117"
+      }
+    ]
   },
   {
     "id": 1794309583247,
@@ -6239,7 +6598,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:54:08.102Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/70021641"
+      }
+    ]
   },
   {
     "id": 1794308038216,
@@ -6688,7 +7054,7 @@
     "media_type": "movie",
     "status": "watched",
     "title_it": "Che bella giornata",
-    "title_original": "Che bella giornata",
+    "title_original": "What a Beautiful Day",
     "aliases": [
       "che bella giornata",
       "what a beautiful day"
@@ -7163,7 +7529,38 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:38:30.392Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.9ea9f6e4-c7d9-319f-e828-d79a8bb85e05"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/batman-begins/R_179063_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/9cd867d4-81e5-433a-839a-a1c111b2623d"
+      },
+      {
+        "id": "timvision",
+        "name": "TIMVISION",
+        "monetization": "FLATRATE",
+        "url": "https://www.timvision.it/h/9050298543_92900001?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
+      }
+    ]
   },
   {
     "id": 1794307052786,
@@ -7185,7 +7582,38 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:37:32.786Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.1ea9f6f7-7781-df4e-60bf-d24b8365b375"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-cavaliere-oscuro-il-ritorno/R_179066_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/6ce5965d-cdb2-4f9c-b22b-ae7a091d95a8"
+      },
+      {
+        "id": "timvision",
+        "name": "TIMVISION",
+        "monetization": "FLATRATE",
+        "url": "https://www.timvision.it/h/9050296700_92900001?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
+      }
+    ]
   },
   {
     "id": 1794307051228,
@@ -7207,7 +7635,38 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:37:31.228Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.4aa9f68b-5e9d-1955-a451-d4d0087ef56c"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-cavaliere-oscuro/R_179065_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/52217243-a137-45d6-9c6a-0dfab4633034"
+      },
+      {
+        "id": "timvision",
+        "name": "TIMVISION",
+        "monetization": "FLATRATE",
+        "url": "https://www.timvision.it/h/9050378514_92900001?autoplay=true&utm_source=googleAssistant&utm_medium=app-to-app"
+      }
+    ]
   },
   {
     "id": 1794307039459,
@@ -7449,7 +7908,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:35:00.083Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "paramount",
+        "name": "Paramount+",
+        "monetization": "FLATRATE",
+        "url": "https://www.paramountplus.com/movies/godfather-coda-the-death-of-michael-corleone/J3IVh0C0m2S90F6F_KIdr8CgVQe0m7CT?searchReferral="
+      }
+    ]
   },
   {
     "id": 1794306898274,
@@ -7471,7 +7937,26 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:34:58.274Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-padrino-parte-ii/R_598365_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      },
+      {
+        "id": "paramount",
+        "name": "Paramount+",
+        "monetization": "FLATRATE",
+        "url": "https://www.paramountplus.com/movies/godfather-part-ii/twIUt5S_aWTT9aZwsytwqkIf92Gpr77C?searchReferral="
+      }
+    ]
   },
   {
     "id": 1794306894876,
@@ -7493,7 +7978,20 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:34:54.876Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/il-padrino/R_598364_HD"
+      },
+      {
+        "id": "paramount",
+        "name": "Paramount+",
+        "monetization": "FLATRATE",
+        "url": "https://www.paramountplus.com/movies/godfather/gUufhVPlJy5i5HLTbS8li1LruEeMH_3x?searchReferral="
+      }
+    ]
   },
   {
     "id": 1794306881167,
@@ -7537,94 +8035,6 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:34:28.046Z",
-    "streaming_providers": []
-  },
-  {
-    "id": 1794306829660,
-    "external_id": "wd_Q10307713",
-    "tvmaze_id": null,
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Hunger Games - Il canto della rivolta - Parte 2",
-    "title_original": "The Hunger Games: Mockingjay – Part 2",
-    "aliases": [
-      "hunger games il canto della rivolta parte 2",
-      "the hunger games mockingjay part 2"
-    ],
-    "year": "2015",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/b/bc/Katniss_Il_canto_della_rivolta_-_Parte_2.png/500px-Katniss_Il_canto_della_rivolta_-_Parte_2.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "genre": "Film",
-    "description": "Film del 2015 diretto da Francis Lawrence (2015)",
-    "watched_episodes": [],
-    "watched_episodes_count": 0,
-    "upcoming_airings": [],
-    "created_at": "2026-11-10T10:33:49.660Z",
-    "streaming_providers": []
-  },
-  {
-    "id": 1794306802904,
-    "external_id": "wd_Q4142083",
-    "tvmaze_id": null,
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Hunger Games - Il canto della rivolta - Parte 1",
-    "title_original": "The Hunger Games: Mockingjay – Part 1",
-    "aliases": [
-      "hunger games il canto della rivolta parte 1",
-      "the hunger games mockingjay part 1"
-    ],
-    "year": "2014",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/c/cf/Katniss_Il_canto_della_Rivolta.jpeg/500px-Katniss_Il_canto_della_Rivolta.jpeg?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "genre": "Film",
-    "description": "Film del 2014 diretto da Francis Lawrence (2014)",
-    "watched_episodes": [],
-    "watched_episodes_count": 0,
-    "upcoming_airings": [],
-    "created_at": "2026-11-10T10:33:22.904Z",
-    "streaming_providers": []
-  },
-  {
-    "id": 1794306801052,
-    "external_id": "wd_Q574583",
-    "tvmaze_id": null,
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Hunger Games: La ragazza di fuoro",
-    "title_original": "The Hunger Games: Catching Fire",
-    "aliases": [
-      "hunger games la ragazza di fuoro",
-      "the hunger games catching fire"
-    ],
-    "year": "2013",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/9/94/CatchingFire.png/500px-CatchingFire.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "genre": "Film",
-    "description": "Film del 2013 diretto da Francis Lawrence (2013)",
-    "watched_episodes": [],
-    "watched_episodes_count": 0,
-    "upcoming_airings": [],
-    "created_at": "2026-11-10T10:33:21.052Z",
-    "streaming_providers": []
-  },
-  {
-    "id": 1794306789995,
-    "external_id": "wd_Q212965",
-    "tvmaze_id": null,
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Hunger Games",
-    "title_original": "The Hunger Games",
-    "aliases": [
-      "hunger games",
-      "the hunger games"
-    ],
-    "year": "2012",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/a/a2/Hunger_Games.png/500px-Hunger_Games.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "genre": "Film",
-    "description": "Film del 2012 diretto da Gary Ross (2012)",
-    "watched_episodes": [],
-    "watched_episodes_count": 0,
-    "upcoming_airings": [],
-    "created_at": "2026-11-10T10:33:09.995Z",
     "streaming_providers": []
   },
   {
@@ -8041,7 +8451,14 @@
     "watched_episodes_count": 41,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:28:54.290Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/80192098"
+      }
+    ]
   },
   {
     "id": 1794306512425,
@@ -9954,7 +10371,14 @@
     "watched_episodes_count": 208,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:02:50.148Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "disney",
+        "name": "Disney+",
+        "monetization": "FLATRATE",
+        "url": "https://www.disneyplus.com/browse/entity-bc68ac79-3ace-4427-9ec0-5ee6f314d194"
+      }
+    ]
   },
   {
     "id": 1794304932479,
@@ -10961,7 +11385,26 @@
     "watched_episodes_count": 89,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:00:29.904Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/70299043"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.a5a01910-f5bd-435f-8fb8-6b804b1fd39f"
+      },
+      {
+        "id": "crunchyroll",
+        "name": "Crunchyroll",
+        "monetization": "FLATRATE",
+        "url": "https://www.crunchyroll.com/watch/GJWUQ2038"
+      }
+    ]
   },
   {
     "id": 1794304793836,
@@ -12324,7 +12767,32 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-09T22:16:57.402Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/70044885"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.b2a9f667-0999-214b-4450-2a6122bb1a1b"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/the-fast-and-the-furious-tokyo-drift/R_570253_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      }
+    ]
   },
   {
     "id": 1794147107793,
@@ -13217,6 +13685,48 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-08T18:51:59.815Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.a0a9f68b-222e-8332-81bc-52300b2adbf7"
+      },
+      {
+        "id": "hbo",
+        "name": "HBO / Max",
+        "monetization": "FLATRATE",
+        "url": "https://www.hbomax.com/it/en/movie/25768909-39b8-4cb2-a39f-e059460f7add"
+      }
+    ]
+  },
+  {
+    "id": 1794306801052,
+    "external_id": "wd_Q574583",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Hunger Games: La ragazza di fuoco",
+    "title_original": "The Hunger Games: Catching Fire",
+    "aliases": [
+      "hunger games la ragazza di fuoco",
+      "the hunger games catching fire"
+    ],
+    "year": "2013",
+    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/9/94/CatchingFire.png/500px-CatchingFire.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "genre": "Film",
+    "description": "Film del 2013 diretto da Francis Lawrence (2013)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-10T10:33:21.052Z",
+    "streaming_providers": [
+      {
+        "id": "prime",
+        "name": "Prime Video",
+        "monetization": "FLATRATE",
+        "url": "https://app.primevideo.com/detail?gti=amzn1.dv.gti.2f5a750f-526c-44d2-8884-ae484b3e9dec"
+      }
+    ]
   }
 ]
