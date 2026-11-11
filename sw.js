@@ -1,4 +1,4 @@
-const CACHE_NAME = "nextontv-v48";
+const CACHE_NAME = "nextontv-v49";
 const STATIC_ASSETS = [
   "./",
   "./index.html",

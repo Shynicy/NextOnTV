@@ -1352,16 +1352,28 @@ async function handleClientCloudGet(url) {
         if (k && libByKey[`${evType}_${k}`]) return libByKey[`${evType}_${k}`];
       }
 
-      // 2. Cross-type lookup: if evType is "other" OR exact title across types (e.g. Baywatch)
-      for (const k of [evNorm, evRoman, evConj, evLeet]) {
-        if (k && libByNormAny[k]) return libByNormAny[k];
+      // 2. Cross-type lookup ONLY if evType is "other" or undefined (never cross-match known movie with known series!)
+      if (evType === "other" || !evType) {
+        for (const k of [evNorm, evRoman, evConj, evLeet]) {
+          if (k && libByNormAny[k]) return libByNormAny[k];
+        }
       }
 
       // 3. Significant token set match (e.g. "mercenari 4 expendables", min 2 significant words)
       const evToks = getSignificantTokensClient(evNorm);
       const evToksLeet = getSignificantTokensClient(evLeet);
-      if (evToks && evToks.includes(" ") && libByTokens[evToks]) return libByTokens[evToks];
-      if (evToksLeet && evToksLeet.includes(" ") && libByTokens[evToksLeet]) return libByTokens[evToksLeet];
+      if (evToks && evToks.includes(" ") && libByTokens[evToks]) {
+        const cand = libByTokens[evToks];
+        if (evType === "other" || !cand.media_type || cand.media_type === "other" || cand.media_type === evType) {
+          return cand;
+        }
+      }
+      if (evToksLeet && evToksLeet.includes(" ") && libByTokens[evToksLeet]) {
+        const cand = libByTokens[evToksLeet];
+        if (evType === "other" || !cand.media_type || cand.media_type === "other" || cand.media_type === evType) {
+          return cand;
+        }
+      }
 
       // 4. Controlled prefix match for series ONLY (O(15) precomputed candidates, never loops full library)
       if (evType !== "movie") {
@@ -2421,7 +2433,7 @@ async function handleClientCloudPost(url, body) {
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
     pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
-    return { ok: true, id: item.id, item: item, watched_episodes_count: item.watched_episodes_count || 0 };
+    return { ok: true, id: item ? item.id : Number(body.id), item: item || null, watched_episodes_count: item ? (item.watched_episodes_count || 0) : 0 };
   }
 
   if (url === "/api/library/delete") {
@@ -2453,8 +2465,9 @@ async function handleClientCloudPost(url, body) {
       return false;
     });
 
+    let removed = null;
     if (idx !== -1) {
-      const removed = snap.library[idx];
+      removed = snap.library[idx];
       const remNorm = normalizeTitleClient(removed.title_it);
       const remType = removed.media_type || "movie";
       snap.deleted_keys.push(`${remType}_${remNorm}`);
@@ -2467,7 +2480,7 @@ async function handleClientCloudPost(url, body) {
     snap.updated_at = Date.now() / 1000;
     saveLocalSnapshot(snap);
     pushCloudSnapshotClient(state.syncCode, snap).catch(() => { });
-    return { ok: true, id: item.id, item: item, watched_episodes_count: item.watched_episodes_count || 0 };
+    return { ok: true, id: targetId || (removed ? removed.id : null), item: removed || null };
   }
 
   if (url === "/api/library/batch") {
@@ -3960,15 +3973,19 @@ function renderLibrary() {
       const confirmed = await askDeleteConfirmation([targetItem]);
       if (!confirmed) return;
 
-      await apiPost("/api/library/delete", {
-        id: targetItem.id,
-        title_it: targetItem.title_it,
-        media_type: targetItem.media_type,
-      });
-      selSet.delete(targetId);
-      showToast(`🗑️ "${targetItem.title_it}" eliminato dalla lista!`);
-      await loadLibrary();
-      loadMatches(false);
+      try {
+        await apiPost("/api/library/delete", {
+          id: targetItem.id,
+          title_it: targetItem.title_it,
+          media_type: targetItem.media_type,
+        });
+        selSet.delete(targetId);
+        showToast(`🗑️ "${targetItem.title_it}" eliminato dalla lista!`);
+        await loadLibrary();
+        loadMatches(false);
+      } catch (e) {
+        showToast(`❌ Errore durante l'eliminazione di "${targetItem.title_it}".`);
+      }
     });
   });
 

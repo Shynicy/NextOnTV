@@ -464,7 +464,7 @@ def match_epg_with_library(
             if cand["media_type"] == ev.get("media_type") or ev.get("media_type") not in ("movie", "series"):
                 lib_item = cand
                 break
-        if not lib_item and candidates:
+        if not lib_item and candidates and ev.get("media_type") not in ("movie", "series"):
             lib_item = candidates[0]
         if not lib_item:
             continue
