@@ -1,5 +1,269 @@
 [
   {
+    "id": 1794611596513,
+    "external_id": "wd_Q18199332",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Animali fantastici - I segreti di Silente",
+    "title_original": "Fantastic Beasts: The Secrets of Dumbledore",
+    "aliases": [
+      "animali fantastici i segreti di silente",
+      "fantastic beasts the secrets of dumbledore"
+    ],
+    "year": "2022",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/3/34/Fantastic_Beasts-_The_Secrets_of_Dumbledore.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2022 diretto da David Yates (2022)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-13T23:13:16.513Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794611583197,
+    "external_id": "wd_Q18199330",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Animali fantastici e dove trovarli",
+    "title_original": "Fantastic Beasts and Where to Find Them",
+    "aliases": [
+      "animali fantastici e dove trovarli",
+      "fantastic beasts and where to find them"
+    ],
+    "year": "2016",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/0/0b/FBAWTFT-poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2016 diretto da David Yates (2016)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-13T23:13:03.197Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794611571831,
+    "external_id": "wd_Q18199331",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "wishlist",
+    "title_it": "Animali fantastici - I crimini di Grindelwald",
+    "title_original": "Fantastic Beasts: The Crimes of Grindelwald",
+    "aliases": [
+      "animali fantastici i crimini di grindelwald",
+      "fantastic beasts the crimes of grindelwald"
+    ],
+    "year": "2018",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/3/3c/Fantastic_Beasts_-_The_Crimes_of_Grindelwald_Poster.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "📡 In onda su Italia 1 (Canale 6) • .. Grindelwald - In un mondo magico sempre piu' diviso, Scamander e Silente si alleano contro il mago oscuro Grindelwald. Secondo Capitolo del prequel di Harry Potter. Regia di D. Yate",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-13T23:12:51.831Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794461155777,
+    "external_id": "saga_the_hunger_games_catching_fire",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Hunger Games: La ragazza di fuoco",
+    "title_original": "The Hunger Games: Catching Fire",
+    "aliases": [
+      "hunger games la ragazza di fuoco",
+      "the hunger games catching fire"
+    ],
+    "year": "2013",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/1/12/Catching-Fire_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2013 diretto da Francis Lawrence (2013)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-12T05:25:55.777Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794422672072,
+    "external_id": "wd_Q188652",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Rocky",
+    "title_original": "Rocky",
+    "aliases": [
+      "rocky",
+      "rocky"
+    ],
+    "year": "1976",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNTBkMjg2MjYtYTZjOS00YzQxLWEzZGQtZDAyNDAtZmZiAUY4Mzg2XkEyXkFqcGc@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film del 1976 diretto da John G. Avildsen (1976)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T18:44:32.072Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794422670982,
+    "external_id": "wd_Q82949",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Rocky V",
+    "title_original": "Rocky V",
+    "aliases": [
+      "rocky v",
+      "rocky v"
+    ],
+    "year": "1990",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMTYwNDk2OTQxNV5BMl5BanBnXkFtZTgwNzU5NzM2MDE@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film del 1990 diretto da John G. Avildsen (1990)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T18:44:30.982Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794422669888,
+    "external_id": "wd_Q387638",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Rocky IV",
+    "title_original": "Rocky IV",
+    "aliases": [
+      "rocky iv",
+      "rocky iv"
+    ],
+    "year": "1985",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMTY2OTI5NTg4Nl5BMl5BanBnXkFtZTgwODU5NzM2MDE@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film del 1985 diretto da Sylvester Stallone (1985)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T18:44:29.888Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794422668842,
+    "external_id": "wd_Q241504",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Rocky III",
+    "title_original": "Rocky III",
+    "aliases": [
+      "rocky iii",
+      "rocky iii"
+    ],
+    "year": "1982",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMTY0MDgwODU1OV5BMl5BanBnXkFtZTgwNjU5NzM2MDE@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film del 1982 diretto da Sylvester Stallone (1982)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T18:44:28.843Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794422667402,
+    "external_id": "wd_Q478366",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Rocky II",
+    "title_original": "Rocky II",
+    "aliases": [
+      "rocky ii",
+      "rocky ii"
+    ],
+    "year": "1979",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMjA4NjQ1MTkxN15BMl5BanBnXkFtZTgwNTU5NzM2MDE@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film del 1979 diretto da Sylvester Stallone (1979)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T18:44:27.402Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794422666077,
+    "external_id": "wd_Q724455",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Rocky Balboa",
+    "title_original": "Rocky Balboa",
+    "aliases": [
+      "rocky balboa",
+      "rocky balboa"
+    ],
+    "year": "2006",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNzg5ZjM1OGQtNmY3NS00MzkxLTg2ODQtY2Y4NzI0NTU2M2VlXkEyXkFqcGc@._V1_UX400_.jpg",
+    "genre": "Film",
+    "description": "Film del 2006 diretto da Sylvester Stallone (2006)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T18:44:26.077Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794422631552,
+    "external_id": "wd_Q47075",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Scarface",
+    "title_original": "Scarface",
+    "aliases": [
+      "scarface",
+      "scarface"
+    ],
+    "year": "1983",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/7/71/Scarface_-_1983_film.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 1983 diretto da Brian De Palma (1983)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T18:43:51.552Z",
+    "streaming_providers": []
+  },
+  {
+    "id": 1794419209930,
+    "external_id": "wd_Q124393313",
+    "tvmaze_id": null,
+    "media_type": "movie",
+    "status": "watched",
+    "title_it": "Norimberga",
+    "title_original": "Nuremberg",
+    "aliases": [
+      "norimberga",
+      "nuremberg"
+    ],
+    "year": "2025",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/2/25/Nuremberg_2025_film_theatrical_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "genre": "Film",
+    "description": "Film del 2025 diretto da James Vanderbilt (2025)",
+    "watched_episodes": [],
+    "watched_episodes_count": 0,
+    "upcoming_airings": [],
+    "created_at": "2026-11-11T17:46:49.930Z",
+    "streaming_providers": []
+  },
+  {
     "id": 1794346572141,
     "external_id": "wd_Q241218",
     "tvmaze_id": null,
@@ -151,28 +415,6 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T21:07:25.792Z",
-    "streaming_providers": []
-  },
-  {
-    "id": 1794344842760,
-    "external_id": "wd_Q574583",
-    "tvmaze_id": null,
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Hunger Games: La ragazza di fuoco",
-    "title_original": "The Hunger Games: Catching Fire",
-    "aliases": [
-      "hunger games la ragazza di fuoco",
-      "the hunger games catching fire"
-    ],
-    "year": "2013",
-    "poster": "https://upload.wikimedia.org/wikipedia/en/1/12/Catching-Fire_poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "genre": "Film",
-    "description": "Film del 2013 diretto da Francis Lawrence (2013)",
-    "watched_episodes": [],
-    "watched_episodes_count": 0,
-    "upcoming_airings": [],
-    "created_at": "2026-11-10T21:07:22.760Z",
     "streaming_providers": []
   },
   {
@@ -3790,7 +4032,7 @@
       "i can quit whenever i want"
     ],
     "year": "2014",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/a/a2/Smetto_quando_voglio.png/500px-Smetto_quando_voglio.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "poster": "https://upload.wikimedia.org/wikipedia/en/b/b0/Smetto_quando_voglio.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "genre": "Film",
     "description": "📡 In onda su Rai Movie (Canale 24) • Roma, giorni nostri. Pietro Zinni, brillante ricercatore universitario, perde il posto a causa dei tagli all'università. Insieme ad sei altri brillanti cervelli - tutti finiti male -",
     "watched_episodes": [],
@@ -13327,28 +13569,6 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-08T18:51:59.815Z",
-    "streaming_providers": []
-  },
-  {
-    "id": 1794306801052,
-    "external_id": "wd_Q574583",
-    "tvmaze_id": null,
-    "media_type": "movie",
-    "status": "watched",
-    "title_it": "Hunger Games: La ragazza di fuoco",
-    "title_original": "The Hunger Games: Catching Fire",
-    "aliases": [
-      "hunger games la ragazza di fuoco",
-      "the hunger games catching fire"
-    ],
-    "year": "2013",
-    "poster": "https://thumb.wikimedia.org/wikipedia/it/thumb/9/94/CatchingFire.png/500px-CatchingFire.png?utm_source=it.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
-    "genre": "Film",
-    "description": "Film del 2013 diretto da Francis Lawrence (2013)",
-    "watched_episodes": [],
-    "watched_episodes_count": 0,
-    "upcoming_airings": [],
-    "created_at": "2026-11-10T10:33:21.052Z",
     "streaming_providers": []
   }
 ]
