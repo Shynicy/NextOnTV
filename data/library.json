@@ -615,14 +615,7 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T20:45:24.598Z",
-    "streaming_providers": [
-      {
-        "id": "netflix",
-        "name": "Netflix",
-        "monetization": "FLATRATE",
-        "url": "https://www.netflix.com/title/80993105"
-      }
-    ]
+    "streaming_providers": []
   },
   {
     "id": 1794343497865,
@@ -7148,7 +7141,32 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T10:45:34.625Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/81003432"
+      },
+      {
+        "id": "disney",
+        "name": "Disney+",
+        "monetization": "FLATRATE",
+        "url": "https://www.disneyplus.com/browse/entity-561c4d2d-3dfc-4f19-b151-5b481e531f40"
+      },
+      {
+        "id": "now",
+        "name": "NOW",
+        "monetization": "FLATRATE",
+        "url": "https://www.nowtv.it/watch/asset/che-bella-giornata/R_593312_HD"
+      },
+      {
+        "id": "sky",
+        "name": "Sky Go",
+        "monetization": "FLATRATE",
+        "url": "https://skygo.sky.it/"
+      }
+    ]
   },
   {
     "id": 1794307519872,
