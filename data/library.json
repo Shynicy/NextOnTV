@@ -615,7 +615,14 @@
     "watched_episodes_count": 0,
     "upcoming_airings": [],
     "created_at": "2026-11-10T20:45:24.598Z",
-    "streaming_providers": []
+    "streaming_providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix",
+        "monetization": "FLATRATE",
+        "url": "https://www.netflix.com/title/80993105"
+      }
+    ]
   },
   {
     "id": 1794343497865,
