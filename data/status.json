@@ -1,7 +1,7 @@
 {
   "ok": true,
   "start_date": "2026-11-22",
-  "fetched_at": "22/11/2026 03:04 (Ora Italiana)",
+  "fetched_at": "22/11/2026 03:50 (Ora Italiana)",
   "days": [
     "2026-11-22",
     "2026-11-23",
@@ -12,7 +12,7 @@
     "2026-11-28"
   ],
   "channels_count": 72,
-  "total_epg_events": 13033,
+  "total_epg_events": 13039,
   "movies_count": 1381,
   "series_count": 6377,
   "library_count": 506,
